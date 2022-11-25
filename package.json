@@ -1,0 +1,24 @@
+{
+  "name": "snkrs-scraper",
+  "version": "1.0.0",
+  "description": "Node SNKRS web scraper",
+  "main": "index.js",
+  "scripts": {
+    "start": "node src/snkrs.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ryguy34/snkrs-scraper.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ryguy34/snkrs-scraper/issues"
+  },
+  "homepage": "https://github.com/ryguy34/snkrs-scraper#readme",
+  "dependencies": {
+    "axios": "^1.2.0",
+    "cheerio": "^1.0.0-rc.12",
+    "node-cron": "^3.0.2"
+  }
+}
