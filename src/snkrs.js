@@ -1,13 +1,24 @@
 const axios = require("axios");
 const cheerio = require("cheerio");
+const snkrsDropInfo = require("./vo/snkrsDropInfo");
+const constants = require("./constants");
 
-console.log("SNKRS Scraper");
+class SNKRS {
+	constructor() {
+		this.snkrsDropInfo = new snkrsDropInfo();
+	}
 
-// cron expression would wrap this logic
+	async getSnkrsDropInfo() {
+		try {
+			const response = await axios.get(constants.SNKRS_URL);
+			const $ = cheerio.load(response.data);
+			var ele = $.find('[aria-label="Feed filter"]');
+			console.log(ele.test());
+		} catch (error) {
+			console.log("Some error: " + error);
+		}
+		return;
+	}
+}
 
-const response = axios.get("https://cheerio.js.org");
-
-const html = response.data;
-
-const $ = cheerio.load(String(response.data));
-//console.log($.html());
+module.exports = SNKRS;
