@@ -10,14 +10,11 @@ class SNKRS {
 
 	async getSnkrsDropInfo() {
 		try {
-			const response = await axios.get(constants.SNKRS_URL);
+			const response = await axios.get(constants.SNKRS_URL, constants.params);
 			const $ = cheerio.load(response.data);
-			var ele = $.find('[aria-label="Feed filter"]');
-			console.log(ele.test());
 		} catch (error) {
 			console.log("Some error: " + error);
 		}
-		return;
 	}
 }
 
