@@ -57,7 +57,8 @@ class Supreme {
 
 			$(".catalog-item").each((_, ele) => {
 				var productInfo = new SupremeDropInfo();
-				const itemId = $(".a").attr("data-itemid");
+				//const itemId = $(".a").attr("data-itemid");
+				var itemId = $(ele).find("a").attr("data-itemid");
 				console.log("ItemId: " + itemId);
 				//const itemId = $(ele).children("catalog-item__thumb").attr("data-src");
 				//console.log("ItemId: " + itemId);

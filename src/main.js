@@ -1,6 +1,6 @@
 const Discord = require("./discord");
 const SNKRS = require("./snkrs");
-const Supreme = require("./Supreme");
+const Supreme = require("./supreme");
 var cron = require("node-cron");
 
 const snkrs = new SNKRS();
