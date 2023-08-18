@@ -47,7 +47,8 @@ class Discord {
 			const discordServer = client.guilds.cache.get(process.env.SERVER_ID);
 			channelNames = discordServer.channels.cache.map((channel) => {
 				console.log(channel.name);
-				if (channel.name === channelName) {
+				if (channel.name == channelName) {
+					console.log("Channel is found");
 					channel.name;
 				}
 			});
