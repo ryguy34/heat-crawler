@@ -5,6 +5,35 @@ const constants = require("./constants");
 const SupremeDropInfo = require("./vo/SupremeDropInfo");
 const SupremeTextChannelInfo = require("./vo/SupremeTextChannelInfo");
 
+/*
+<div id="list">
+  <div class="item-level-a">
+    <div class="item-level-b">
+      <a href="http://www.example.com/1"></a>
+    </div>
+  </div>
+
+  <div class="item-level-a">
+    <div class="item-level-b">
+      <a href="http://www.example.com/2"></a>
+    </div>
+  </div>
+
+  <div class="item-level-a">
+    <div class="item-level-b">
+      <a href="http://www.example.com/3"></a>
+    </div>
+  </div>
+</div>
+
+var list = [];
+$('div[id="list"]').find('div > div > a').each(function (index, element) {
+  list.push($(element).attr('href'));
+});
+console.dir(list);
+
+*/
+
 class Supreme {
 	constructor() {}
 
@@ -26,8 +55,12 @@ class Supreme {
 			supremeTextChannelInfo.openingMessage = title;
 			supremeTextChannelInfo.channelName = channelName;
 
-			$(".catalog-list").each((index, ele) => {
+			$(".catalog-item").each((_, ele) => {
 				var productInfo = new SupremeDropInfo();
+				const itemId = $(".a").attr("data-itemid");
+				console.log("ItemId: " + itemId);
+				//const itemId = $(ele).children("catalog-item__thumb").attr("data-src");
+				//console.log("ItemId: " + itemId);
 				const prodName = $(ele)
 					.find(".catalog-item__title")
 					.first()
@@ -40,8 +73,8 @@ class Supreme {
 					.text()
 					.replace(/(\r\n|\n|\r)/gm, "");
 
-				productInfo.productName = prodName;
-				productInfo.price = price;
+				productInfo.productName = prodName === "" ? "?" : prodName;
+				productInfo.price = price === "" ? "Free or Unknown" : price;
 
 				productList.push(productInfo);
 			});

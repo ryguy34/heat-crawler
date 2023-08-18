@@ -39,14 +39,14 @@ class Discord {
 		return;
 	}
 
-	doesChannelExist(channelName) {
+	async doesChannelExist(channelName) {
 		console.log("Searched for channel: " + channelName);
 		var exists = false;
 		var channelNames = [];
-		client.on("ready", () => {
+		await client.on("ready", () => {
 			const discordServer = client.guilds.cache.get(process.env.SERVER_ID);
 			channelNames = discordServer.channels.cache.map((channel) => {
-				//console.log(channel.name);
+				console.log(channel.name);
 				if (channel.name === channelName) {
 					channel.name;
 				}
