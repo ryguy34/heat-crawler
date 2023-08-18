@@ -4,7 +4,7 @@ Node web scraper to add upcoming SNKRS drops to Discord server channel
 
 # Discord
 
-    * need to see if channel already exists
+    * need to see if channel already exists (DONE)
 
 # CRON Expression
 
@@ -18,6 +18,7 @@ Node web scraper to add upcoming SNKRS drops to Discord server channel
     * name of sneaker
     * cost
     * release time
+    * link to collection (Supreme)
 
 # SNKRS
 

@@ -5,44 +5,22 @@ const constants = require("./constants");
 const SupremeDropInfo = require("./vo/SupremeDropInfo");
 const SupremeTextChannelInfo = require("./vo/SupremeTextChannelInfo");
 
-/*
-<div id="list">
-  <div class="item-level-a">
-    <div class="item-level-b">
-      <a href="http://www.example.com/1"></a>
-    </div>
-  </div>
-
-  <div class="item-level-a">
-    <div class="item-level-b">
-      <a href="http://www.example.com/2"></a>
-    </div>
-  </div>
-
-  <div class="item-level-a">
-    <div class="item-level-b">
-      <a href="http://www.example.com/3"></a>
-    </div>
-  </div>
-</div>
-
-var list = [];
-$('div[id="list"]').find('div > div > a').each(function (index, element) {
-  list.push($(element).attr('href'));
-});
-console.dir(list);
-
-*/
-
 class Supreme {
 	constructor() {}
 
-	async parseSupremeDrop() {
+	async parseSupremeDrop(currentDate, currentYear, currentSeason) {
 		var supremeTextChannelInfo = new SupremeTextChannelInfo();
 		var productList = [];
 
 		try {
-			const res = await axios.get(constants.SUPREME_URL, constants.params);
+			const res = await axios.get(
+				constants.SUPREME_DROPS_URL +
+					"/season/" +
+					currentSeason +
+					currentYear +
+					"/droplist/2023-08-17", // TODO: will need to swap this with current date once cron expression executes every thursday
+				constants.params
+			);
 			const htmlData = res.data;
 			const $ = cheerio.load(htmlData);
 			var title = $("title").text();
@@ -57,16 +35,9 @@ class Supreme {
 
 			$(".catalog-item").each((_, ele) => {
 				var productInfo = new SupremeDropInfo();
-				//const itemId = $(".a").attr("data-itemid");
 				var itemId = $(ele).find("a").attr("data-itemid");
-				console.log("ItemId: " + itemId);
-				//const itemId = $(ele).children("catalog-item__thumb").attr("data-src");
-				//console.log("ItemId: " + itemId);
-				const prodName = $(ele)
-					.find(".catalog-item__title")
-					.first()
-					.text()
-					.replace(/(\r\n|\n|\r)/gm, "");
+				var itemSlug = $(ele).find("a").attr("data-itemslug");
+				var itemName = $(ele).find("a").attr("data-itemname");
 
 				const price = $(ele)
 					.find(".catalog-label-price")
@@ -74,20 +45,32 @@ class Supreme {
 					.text()
 					.replace(/(\r\n|\n|\r)/gm, "");
 
-				productInfo.productName = prodName === "" ? "?" : prodName;
+				productInfo.productName = itemName === "" ? "?" : itemName;
 				productInfo.price = price === "" ? "Free or Unknown" : price;
+				productInfo.productInfoUrl =
+					constants.SUPREME_DROPS_URL +
+					"season/itemdetails/" +
+					itemId +
+					"/" +
+					itemSlug;
+				productInfo.imageUrl =
+					constants.SUPREME_DROPS_URL +
+					"season/itemdetails/" +
+					itemId +
+					"/" +
+					itemSlug +
+					"/#gallery-1";
 
 				productList.push(productInfo);
 			});
-			//TODO: parse 'data-itemid' and 'data-itemslug' 'data-itemname'
+
 			supremeTextChannelInfo.products = productList;
-			console.log(supremeTextChannelInfo);
 		} catch (error) {
 			console.error(error);
 		}
-	}
 
-	async getChannelName() {}
+		return supremeTextChannelInfo;
+	}
 }
 
 module.exports = Supreme;

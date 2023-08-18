@@ -1,7 +1,6 @@
 require("dotenv").config();
 const { Client, GatewayIntentBits, messageLink } = require("discord.js");
 const { Webhook, MessageBuilder } = require("discord-webhook-node");
-const SnkrsDropInfo = require("./vo/snkrsDropInfo");
 const client = new Client({
 	intents: [
 		GatewayIntentBits.Guilds,
@@ -12,57 +11,50 @@ const client = new Client({
 });
 
 class Discord {
-	constructor() {
-		this.hook = new Webhook(process.env.CHANNEL_URL);
-		// client.on("ready", () => {
-		// 	console.log(`Logged in as ${client.user.tag}!`);
-		// });
+	constructor() {}
 
-		client.login(process.env.CLIENT_TOKEN);
+	sendNotification() {
+		const embed = this.makeSupremeEmbed();
+		this.hook.send(embed);
 	}
 
-	sendNotification(snkrsDropInfo) {
-		if (this.doesChannelExist("channelName")) {
-			const embed = this.makeEmbed(snkrsDropInfo);
-			this.hook.send(embed);
-		}
-	}
+	makeSupremeEmbedList(supremeDropInfo) {
+		var embedList = [];
+		supremeDropInfo.products.each((_, product) => {
+			embedList.push(
+				new MessageBuilder()
+					.setTitle(product.productName)
+					.setDescription("Oh look a description :)")
+					.setTimestamp()
+			);
+		});
 
-	makeEmbed(snkrsDropInfo) {
-		return new MessageBuilder()
-			.setTitle("Title")
-			.setDescription("Oh look a description :)")
-			.setTimestamp();
+		return embedList;
 	}
 
 	createTextChannel() {
 		return;
 	}
 
-	async doesChannelExist(channelName) {
-		console.log("Searched for channel: " + channelName);
-		var exists = false;
-		var channelNames = [];
-		await client.on("ready", () => {
-			const discordServer = client.guilds.cache.get(process.env.SERVER_ID);
-			channelNames = discordServer.channels.cache.map((channel) => {
-				console.log(channel.name);
-				if (channel.name == channelName) {
-					console.log("Channel is found");
-					channel.name;
-				}
+	async doesChannelExist(name) {
+		console.log("Searching for channel: " + name);
+
+		return new Promise((resolve, reject) => {
+			client.on("ready", () => {
+				const discordServer = client.guilds.cache.get(process.env.SERVER_ID);
+
+				const channelExists = discordServer.channels.cache.some((channel) => {
+					return channel.name == name;
+				});
+
+				console.log("Channel exists!!!");
+				resolve(channelExists);
 			});
 
-			// console.log(channelNames);
-
-			// //exists = channelNames.includes(channelName);
-			// exists = Array.isArray(channelName);
-			// console.log("asasasa: " + exists);
+			client.on("error", (error) => {
+				reject(error);
+			});
 		});
-
-		console.log(channelNames);
-
-		return true;
 	}
 }
 
