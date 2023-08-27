@@ -1,6 +1,7 @@
 require("dotenv").config();
 
 const { Webhook, MessageBuilder } = require("discord-webhook-node");
+const { ChannelType } = require("discord.js");
 
 class Discord {
 	constructor() {}
@@ -30,8 +31,35 @@ class Discord {
 		return embedList;
 	}
 
-	createTextChannel() {
-		return;
+	async createTextChannel(client, channelName) {
+		// TODO: change this to be the correct category name
+		const categoryName = "test";
+
+		const guild = client.guilds.cache.get(process.env.SERVER_ID);
+
+		if (!guild) {
+			return console.log(`Guild not found.`);
+		}
+
+		const category = guild.channels.cache.find((channel) => {
+			return channel.name === categoryName && channel.type === 4;
+		});
+
+		if (!category) {
+			return console.log(`Category "${categoryName}" not found.`);
+		}
+
+		//Create a new text channel in the specified category
+		const newChannel = await guild.channels.create({
+			name: channelName,
+			type: ChannelType.GuildText,
+			parent: category.id,
+			reason: "Creating a new weekly release for Supreme",
+		});
+
+		console.log(
+			`Channel "${newChannel.name}" created in category "${category.name}".`
+		);
 	}
 
 	/**
