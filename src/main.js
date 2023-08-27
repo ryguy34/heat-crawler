@@ -34,7 +34,7 @@ async function mainSupremeNotifications() {
 			currentSeason
 		);
 
-		//console.log(supremeDiscordTextChannelInfo);
+		console.log(supremeDiscordTextChannelInfo);
 
 		const value = await discord.doesChannelExist(
 			client,

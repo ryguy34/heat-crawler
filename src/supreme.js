@@ -14,7 +14,7 @@ class Supreme {
 
 		try {
 			const res = await axios.get(
-				constants.SUPREME_DROPS_URL +
+				constants.SUPREME_COMMUNITY_BASE_URL +
 					"/season/" +
 					currentSeason +
 					currentYear +
@@ -51,13 +51,13 @@ class Supreme {
 				productInfo.categoryUrl =
 					constants.SUPREME_BASE_URL + "collections/" + category;
 				productInfo.productInfoUrl =
-					constants.SUPREME_DROPS_URL +
+					constants.SUPREME_COMMUNITY_BASE_URL +
 					"season/itemdetails/" +
 					itemId +
 					"/" +
 					itemSlug;
 				productInfo.imageUrl =
-					constants.SUPREME_DROPS_URL +
+					constants.SUPREME_COMMUNITY_BASE_URL +
 					"season/itemdetails/" +
 					itemId +
 					"/" +
