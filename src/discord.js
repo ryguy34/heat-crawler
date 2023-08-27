@@ -1,14 +1,6 @@
 require("dotenv").config();
-const { Client, GatewayIntentBits, messageLink } = require("discord.js");
+
 const { Webhook, MessageBuilder } = require("discord-webhook-node");
-const client = new Client({
-	intents: [
-		GatewayIntentBits.Guilds,
-		GatewayIntentBits.GuildMessages,
-		GatewayIntentBits.MessageContent,
-		GatewayIntentBits.GuildMembers,
-	],
-});
 
 class Discord {
 	constructor() {}
@@ -18,6 +10,12 @@ class Discord {
 		this.hook.send(embed);
 	}
 
+	/**
+	 * makes a list of embeds of supreme products
+	 *
+	 * @param {*} supremeDropInfo
+	 * @returns
+	 */
 	makeSupremeEmbedList(supremeDropInfo) {
 		var embedList = [];
 		supremeDropInfo.products.each((_, product) => {
@@ -36,24 +34,29 @@ class Discord {
 		return;
 	}
 
-	async doesChannelExist(name) {
+	/**
+	 * returns a boolean of whether or not the channel exists
+	 *
+	 * @param {*} client
+	 * @param {*} name
+	 * @returns
+	 */
+	async doesChannelExist(client, name) {
 		console.log("Searching for channel: " + name);
 
-		return new Promise((resolve, reject) => {
-			client.on("ready", () => {
-				const discordServer = client.guilds.cache.get(process.env.SERVER_ID);
+		return new Promise((resolve) => {
+			const discordServer = client.guilds.cache.get(process.env.SERVER_ID);
 
-				const channelExists = discordServer.channels.cache.some((channel) => {
-					return channel.name == name;
-				});
-
-				console.log("Channel exists!!!");
-				resolve(channelExists);
+			const channelExists = discordServer.channels.cache.some((channel) => {
+				return channel.name == name;
 			});
 
-			client.on("error", (error) => {
-				reject(error);
-			});
+			if (channelExists) {
+				console.log("Channel " + name + " exists");
+			} else {
+				console.log("Channel " + name + " doesn't exist");
+			}
+			resolve(channelExists);
 		});
 	}
 }

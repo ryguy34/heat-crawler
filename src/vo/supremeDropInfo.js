@@ -1,9 +1,10 @@
 class SupremeDropInfo {
-	constructor(productName, productInfoUrl, imageUrl, price) {
+	constructor(productName, productInfoUrl, imageUrl, price, categoryUrl) {
 		this.productName = productName;
 		this.productInfoUrl = productInfoUrl;
 		this.imageUrl = imageUrl;
 		this.price = price;
+		this.categoryUrl = categoryUrl;
 	}
 }
 

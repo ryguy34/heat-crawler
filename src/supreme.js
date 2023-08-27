@@ -38,6 +38,7 @@ class Supreme {
 				var itemId = $(ele).find("a").attr("data-itemid");
 				var itemSlug = $(ele).find("a").attr("data-itemslug");
 				var itemName = $(ele).find("a").attr("data-itemname");
+				var category = $(ele).attr("data-category");
 
 				const price = $(ele)
 					.find(".catalog-label-price")
@@ -47,6 +48,8 @@ class Supreme {
 
 				productInfo.productName = itemName === "" ? "?" : itemName;
 				productInfo.price = price === "" ? "Free or Unknown" : price;
+				productInfo.categoryUrl =
+					constants.SUPREME_BASE_URL + "collections/" + category;
 				productInfo.productInfoUrl =
 					constants.SUPREME_DROPS_URL +
 					"season/itemdetails/" +
