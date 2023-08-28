@@ -1,39 +1,53 @@
 require("dotenv").config();
 
-const { Webhook, MessageBuilder } = require("discord-webhook-node");
-const { ChannelType } = require("discord.js");
+const { ChannelType, EmbedBuilder } = require("discord.js");
 
 class Discord {
 	constructor() {}
-
-	sendNotification() {
-		const embed = this.makeSupremeEmbed();
-		this.hook.send(embed);
-	}
 
 	/**
 	 * makes a list of embeds of supreme products
 	 *
 	 * @param {*} supremeDropInfo
+	 * @param {*} channel
 	 * @returns
 	 */
-	makeSupremeEmbedList(supremeDropInfo) {
-		var embedList = [];
-		supremeDropInfo.products.each((_, product) => {
-			embedList.push(
-				new MessageBuilder()
-					.setTitle(product.productName)
-					.setDescription("Oh look a description :)")
-					.setTimestamp()
-			);
-		});
+	sendSupremeDropInfo(supremeTextChannelInfo, channel) {
+		// TODO: need to send initial channel message
+		channel.send(supremeTextChannelInfo.openingMessage);
 
-		return embedList;
+		for (const product of supremeTextChannelInfo.products) {
+			const embed = new EmbedBuilder()
+				.setColor(0x0099ff)
+				.setTitle(product.productName)
+				.setURL(product.productInfoUrl)
+				.setThumbnail("https://i.imgur.com/AfFp7pu.png")
+				.addFields(
+					{ name: "Price", value: product.price },
+					// TODO: need to make name also be a link
+					{ name: "Supreme Category URL", value: product.categoryUrl }
+				)
+				.setImage(product.imageUrl)
+				.setTimestamp()
+				.setFooter({
+					text: "Goodluck on this weeks drops!!!",
+					iconURL: "https://i.imgur.com/AfFp7pu.png",
+				});
+
+			channel.send({ embeds: [embed] });
+		}
 	}
 
-	async createTextChannel(client, channelName) {
+	/**
+	 * creates a new channel given the category and channel name
+	 *
+	 * @param {*} client
+	 * @param {*} categoryName
+	 * @param {*} channelName
+	 * @returns
+	 */
+	async createTextChannel(client, categoryName, channelName) {
 		// TODO: change this to be the correct category name
-		const categoryName = "test";
 
 		const guild = client.guilds.cache.get(process.env.SERVER_ID);
 
@@ -60,6 +74,8 @@ class Discord {
 		console.log(
 			`Channel "${newChannel.name}" created in category "${category.name}".`
 		);
+
+		return newChannel;
 	}
 
 	/**
@@ -73,9 +89,9 @@ class Discord {
 		console.log("Searching for channel: " + name);
 
 		return new Promise((resolve) => {
-			const discordServer = client.guilds.cache.get(process.env.SERVER_ID);
+			const guild = client.guilds.cache.get(process.env.SERVER_ID);
 
-			const channelExists = discordServer.channels.cache.some((channel) => {
+			const channelExists = guild.channels.cache.some((channel) => {
 				return channel.name == name;
 			});
 

@@ -34,7 +34,7 @@ async function mainSupremeNotifications() {
 			currentSeason
 		);
 
-		//console.log(supremeDiscordTextChannelInfo);
+		console.log(supremeDiscordTextChannelInfo);
 
 		const value = await discord.doesChannelExist(
 			client,
@@ -44,14 +44,12 @@ async function mainSupremeNotifications() {
 		// channel not found
 		// TODO: reverse this logic as this is for testing
 		if (value) {
-			// discord create channel
-			await discord.createTextChannel(
+			const newChannel = await discord.createTextChannel(
 				client,
+				"test",
 				supremeDiscordTextChannelInfo.channelName
 			);
-			// const embedList = discord.makeSupremeEmbedList(
-			// 	supremeDiscordTextChannelInfo
-			// );
+			discord.sendSupremeDropInfo(supremeDiscordTextChannelInfo, newChannel);
 		}
 	} catch (error) {
 		console.error(error);
