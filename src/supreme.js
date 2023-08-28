@@ -19,7 +19,7 @@ class Supreme {
 					"/season/" +
 					currentSeason +
 					currentYear +
-					"/droplist/2023-08-17", // TODO: will need to swap this with current date once cron expression executes every thursday
+					"/droplist/2023-08-31", // TODO: will need to swap this with current date once cron expression executes every thursday
 				constants.params
 			);
 			const htmlData = res.data;
@@ -29,7 +29,8 @@ class Supreme {
 				.substring(title.indexOf("-") + 1, title.lastIndexOf("-"))
 				.trim()
 				.toLocaleLowerCase()
-				.replace(" ", "-"); // TODO: might need to change this logic when using this field to create discord channel
+				.replace(" ", "-");
+			// TODO: might need to change this logic when using this field to create discord channel
 
 			supremeTextChannelInfo.openingMessage = title;
 			supremeTextChannelInfo.channelName = channelName;

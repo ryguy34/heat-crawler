@@ -42,8 +42,7 @@ async function mainSupremeNotifications() {
 		);
 
 		// channel not found
-		// TODO: reverse this logic as this is for testing
-		if (value) {
+		if (!value) {
 			const newChannel = await discord.createTextChannel(
 				client,
 				"test",

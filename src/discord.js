@@ -14,7 +14,11 @@ class Discord {
 	 * @returns
 	 */
 	async sendSupremeDropInfo(supremeTextChannelInfo, channel) {
-		channel.send(supremeTextChannelInfo.openingMessage);
+		let channelMessage = supremeTextChannelInfo.openingMessage.replace(
+			"Supreme",
+			"<@&834439456421314560>"
+		);
+		channel.send(channelMessage);
 
 		for (const product of supremeTextChannelInfo.products) {
 			const embed = new EmbedBuilder()
@@ -55,8 +59,6 @@ class Discord {
 	 * @returns
 	 */
 	async createTextChannel(client, categoryName, channelName) {
-		// TODO: change this to be the correct category name
-
 		const guild = client.guilds.cache.get(process.env.SERVER_ID);
 
 		if (!guild) {
