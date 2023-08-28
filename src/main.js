@@ -41,13 +41,14 @@ async function mainSupremeNotifications() {
 			supremeDiscordTextChannelInfo.channelName
 		);
 
-		// channel is not found
+		// channel not found
 		if (!value) {
-			console.log(value);
-			// discord create channel
-			// const embedList = discord.makeSupremeEmbedList(
-			// 	supremeDiscordTextChannelInfo
-			// );
+			const newChannel = await discord.createTextChannel(
+				client,
+				"test",
+				supremeDiscordTextChannelInfo.channelName
+			);
+			discord.sendSupremeDropInfo(supremeDiscordTextChannelInfo, newChannel);
 		}
 	} catch (error) {
 		console.error(error);

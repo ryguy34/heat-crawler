@@ -1,4 +1,5 @@
 require("dotenv").config();
+
 const axios = require("axios");
 const cheerio = require("cheerio");
 const constants = require("./constants");
@@ -18,7 +19,7 @@ class Supreme {
 					"/season/" +
 					currentSeason +
 					currentYear +
-					"/droplist/2023-08-17", // TODO: will need to swap this with current date once cron expression executes every thursday
+					"/droplist/2023-08-31", // TODO: will need to swap this with current date once cron expression executes every thursday
 				constants.params
 			);
 			const htmlData = res.data;
@@ -28,7 +29,8 @@ class Supreme {
 				.substring(title.indexOf("-") + 1, title.lastIndexOf("-"))
 				.trim()
 				.toLocaleLowerCase()
-				.replace(" ", "-"); // TODO: might need to change this logic when using this field to create discord channel
+				.replace(" ", "-");
+			// TODO: might need to change this logic when using this field to create discord channel
 
 			supremeTextChannelInfo.openingMessage = title;
 			supremeTextChannelInfo.channelName = channelName;
@@ -39,6 +41,7 @@ class Supreme {
 				var itemSlug = $(ele).find("a").attr("data-itemslug");
 				var itemName = $(ele).find("a").attr("data-itemname");
 				var category = $(ele).attr("data-category");
+				var png = $(ele).find("img").attr("src");
 
 				const price = $(ele)
 					.find(".catalog-label-price")
@@ -46,6 +49,8 @@ class Supreme {
 					.text()
 					.replace(/(\r\n|\n|\r)/gm, "");
 
+				productInfo.imageUrl =
+					constants.SUPREME_COMMUNITY_BASE_URL + "resize/576" + png;
 				productInfo.productName = itemName === "" ? "?" : itemName;
 				productInfo.price = price === "" ? "Free or Unknown" : price;
 				productInfo.categoryUrl =
@@ -56,13 +61,6 @@ class Supreme {
 					itemId +
 					"/" +
 					itemSlug;
-				productInfo.imageUrl =
-					constants.SUPREME_COMMUNITY_BASE_URL +
-					"season/itemdetails/" +
-					itemId +
-					"/" +
-					itemSlug +
-					"/#gallery-1";
 
 				productList.push(productInfo);
 			});
