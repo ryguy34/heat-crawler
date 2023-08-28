@@ -19,9 +19,10 @@ class Supreme {
 					"/season/" +
 					currentSeason +
 					currentYear +
-					"/droplist/2023-08-31", // TODO: will need to swap this with current date once cron expression executes every thursday
+					"/droplist/2023-09-31", // TODO: will need to swap this with current date once cron expression executes every thursday
 				constants.params
 			);
+
 			const htmlData = res.data;
 			const $ = cheerio.load(htmlData);
 			var title = $("title").text();
@@ -67,6 +68,14 @@ class Supreme {
 
 			supremeTextChannelInfo.products = productList;
 		} catch (error) {
+			if (error.response && error.response.status === 404) {
+				console.log(
+					"The requested resource was not found for " +
+						error.response.config.url
+				);
+
+				return null;
+			}
 			console.error(error);
 		}
 

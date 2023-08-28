@@ -37,21 +37,23 @@ async function mainSupremeNotifications() {
 			currentSeason
 		);
 
-		console.log(supremeDiscordTextChannelInfo);
+		if (supremeDiscordTextChannelInfo) {
+			console.log(supremeDiscordTextChannelInfo);
 
-		const value = await discord.doesChannelExist(
-			client,
-			supremeDiscordTextChannelInfo.channelName
-		);
-
-		// channel not found
-		if (!value) {
-			const newChannel = await discord.createTextChannel(
+			const value = await discord.doesChannelExist(
 				client,
-				"test",
 				supremeDiscordTextChannelInfo.channelName
 			);
-			discord.sendSupremeDropInfo(supremeDiscordTextChannelInfo, newChannel);
+
+			if (!value) {
+				const newChannel = await discord.createTextChannel(
+					client,
+					"test",
+					supremeDiscordTextChannelInfo.channelName
+				);
+
+				discord.sendSupremeDropInfo(supremeDiscordTextChannelInfo, newChannel);
+			}
 		}
 	} catch (error) {
 		console.error(error);
@@ -61,7 +63,7 @@ async function mainSupremeNotifications() {
 client.on("ready", () => {
 	console.log("Bot is ready");
 
-	cron.schedule("* * * * *", () => {
-		mainSupremeNotifications();
-	});
+	// cron.schedule("* * * * *", () => {
+	mainSupremeNotifications();
+	//});
 });
