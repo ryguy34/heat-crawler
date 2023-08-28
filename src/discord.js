@@ -1,5 +1,6 @@
 require("dotenv").config();
 
+const fs = require("fs");
 const { ChannelType, EmbedBuilder } = require("discord.js");
 
 class Discord {
@@ -12,8 +13,7 @@ class Discord {
 	 * @param {*} channel
 	 * @returns
 	 */
-	sendSupremeDropInfo(supremeTextChannelInfo, channel) {
-		// TODO: need to send initial channel message
+	async sendSupremeDropInfo(supremeTextChannelInfo, channel) {
 		channel.send(supremeTextChannelInfo.openingMessage);
 
 		for (const product of supremeTextChannelInfo.products) {
@@ -21,20 +21,27 @@ class Discord {
 				.setColor(0x0099ff)
 				.setTitle(product.productName)
 				.setURL(product.productInfoUrl)
-				.setThumbnail("https://i.imgur.com/AfFp7pu.png")
+				.setThumbnail("attachment://image.png")
 				.addFields(
 					{ name: "Price", value: product.price },
-					// TODO: need to make name also be a link
-					{ name: "Supreme Category URL", value: product.categoryUrl }
+					{
+						name: " ",
+						value: `[Supreme Category](${product.categoryUrl})`,
+					}
 				)
 				.setImage(product.imageUrl)
 				.setTimestamp()
 				.setFooter({
-					text: "Goodluck on this weeks drops!!!",
-					iconURL: "https://i.imgur.com/AfFp7pu.png",
+					text: `Goodluck on ${supremeTextChannelInfo.channelName}'s drops!!!`,
+					iconURL: "attachment://image.png",
 				});
 
-			channel.send({ embeds: [embed] });
+			const image = fs.readFileSync("./resources/image.png");
+
+			await channel.send({
+				embeds: [embed],
+				files: [{ attachment: image, name: "image.png" }],
+			});
 		}
 	}
 
