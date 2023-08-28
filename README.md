@@ -1,6 +1,4 @@
-# snkrs-scraper
-
-Node web scraper to add upcoming SNKRS drops to Discord server channel
+# `SNKRS-SCRAPER` - Node web scraper to add upcoming SNKRS and Supreme drops to Discord server channel
 
 # Discord
 

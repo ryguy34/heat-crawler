@@ -22,6 +22,9 @@ const client = new DiscordJS.Client({
 
 client.login(process.env.CLIENT_TOKEN);
 
+/**
+ * main function for Supreme notifications to Discord channel
+ */
 async function mainSupremeNotifications() {
 	try {
 		const currentDate = Utility.getDate();
@@ -56,6 +59,9 @@ async function mainSupremeNotifications() {
 }
 
 client.on("ready", () => {
-	console.log("Ready");
-	mainSupremeNotifications();
+	console.log("Bot is ready");
+
+	cron.schedule("* * * * *", () => {
+		mainSupremeNotifications();
+	});
 });
