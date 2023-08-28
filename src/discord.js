@@ -21,6 +21,7 @@ class Discord {
 				.setColor(0x0099ff)
 				.setTitle(product.productName)
 				.setURL(product.productInfoUrl)
+				//TODO: need to get an image logo for bot
 				.setThumbnail("attachment://image.png")
 				.addFields(
 					{ name: "Price", value: product.price },
