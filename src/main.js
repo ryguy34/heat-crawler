@@ -31,6 +31,8 @@ async function mainSupremeNotifications() {
 		const currentYear = Utility.getFullYear();
 		const currentSeason = Utility.getCurrentSeason();
 
+		console.log("Date: " + currentDate);
+
 		const supremeDiscordTextChannelInfo = await supreme.parseSupremeDrop(
 			currentDate,
 			currentYear,
@@ -52,7 +54,10 @@ async function mainSupremeNotifications() {
 					supremeDiscordTextChannelInfo.channelName
 				);
 
-				discord.sendSupremeDropInfo(supremeDiscordTextChannelInfo, newChannel);
+				discord.sendSupremeDropInfo(
+					supremeDiscordTextChannelInfo,
+					newChannel
+				);
 			}
 		}
 	} catch (error) {

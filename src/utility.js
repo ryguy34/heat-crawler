@@ -18,6 +18,8 @@ class Utility {
 			return "spring-summer";
 		}
 	}
+
+	// TODO: make method to get current week Thursday date
 }
 
 module.exports = Utility;
