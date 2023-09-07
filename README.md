@@ -7,7 +7,7 @@ In this guide, we will walk you through the process of creating a web scraper us
 - [SNKRS](#snkrs)
 - [Supreme](#supreme)
 - [Palace](#palace)
-- [Setup](#Setup)
+- [Setup](#setup)
 
 ## SNKRS
 
