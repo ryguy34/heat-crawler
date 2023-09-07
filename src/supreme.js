@@ -9,7 +9,7 @@ const SupremeTextChannelInfo = require("./vo/SupremeTextChannelInfo");
 class Supreme {
 	constructor() {}
 
-	async parseSupremeDrop(currentDate, currentYear, currentSeason) {
+	async parseSupremeDrop(currentWeekThursdayDate, currentYear, currentSeason) {
 		var supremeTextChannelInfo = new SupremeTextChannelInfo();
 		var productList = [];
 
@@ -19,7 +19,8 @@ class Supreme {
 					"/season/" +
 					currentSeason +
 					currentYear +
-					"/droplist/2023-09-31", // TODO: will need to swap this with current date + 1 day once cron expression executes every wednesday
+					"/droplist/" +
+					currentWeekThursdayDate,
 				constants.params
 			);
 
