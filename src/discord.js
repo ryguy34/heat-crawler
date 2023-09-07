@@ -37,7 +37,7 @@ class Discord {
 				.setImage(product.imageUrl)
 				.setTimestamp()
 				.setFooter({
-					text: `Goodluck on ${supremeTextChannelInfo.channelName}'s drops!!!`,
+					text: `Good luck on ${supremeTextChannelInfo.channelName}'s drops!!!`,
 					iconURL: "attachment://image.png",
 				});
 
@@ -89,27 +89,34 @@ class Discord {
 	}
 
 	/**
-	 * returns a boolean of whether or not the channel exists
+	 * returns a boolean of whether or not the channel exists under the given category
 	 *
 	 * @param {*} client
 	 * @param {*} name
 	 * @returns
 	 */
-	async doesChannelExist(client, name) {
-		console.log("Searching for channel: " + name);
+	async doesChannelExistUnderCategory(client, channelName, categoryId) {
+		console.log(`Searching for channel: ${channelName}`);
 
 		return new Promise((resolve) => {
 			const guild = client.guilds.cache.get(process.env.SERVER_ID);
 
 			const channelExists = guild.channels.cache.some((channel) => {
-				return channel.name == name;
+				return (
+					channel.name === channelName && channel.parentId === categoryId
+				);
 			});
 
 			if (channelExists) {
-				console.log("Channel " + name + " exists");
+				console.log(
+					`Channel ${channelName} exists under categoryId ${categoryId}`
+				);
 			} else {
-				console.log("Channel " + name + " doesn't exist");
+				console.log(
+					`Channel ${channelName} doesn't exist under categoryId ${categoryId}`
+				);
 			}
+
 			resolve(channelExists);
 		});
 	}

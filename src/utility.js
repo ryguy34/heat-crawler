@@ -18,6 +18,22 @@ class Utility {
 			return "spring-summer";
 		}
 	}
+
+	static getThursdayOfCurrentWeek() {
+		const today = new Date();
+		const currentDayOfWeek = today.getDay(); // 0 for Sunday, 1 for Monday, ..., 6 for Saturday
+		const daysUntilThursday = (4 - currentDayOfWeek + 7) % 7; // Calculate how many days to Thursday
+
+		// Set the date to Thursday of the current week
+		today.setDate(today.getDate() + daysUntilThursday);
+
+		// Format the date as YYYY-MM-DD
+		const year = today.getFullYear();
+		const month = String(today.getMonth() + 1).padStart(2, "0");
+		const day = String(today.getDate()).padStart(2, "0");
+
+		return `${year}-${month}-${day}`;
+	}
 }
 
 module.exports = Utility;
