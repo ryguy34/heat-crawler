@@ -120,6 +120,30 @@ class Discord {
 			resolve(channelExists);
 		});
 	}
+
+	/**
+	 * returns full category name by its substring
+	 * @param {*} client
+	 * @param {*} partialCategoryName
+	 * @returns
+	 */
+	async getFullCategoryNameBySubstring(client, partialCategoryName) {
+		const guild = client.guilds.cache.get(process.env.SERVER_ID);
+
+		const category = guild.channels.cache.find(
+			(channel) =>
+				channel.type === 4 && channel.name.includes(partialCategoryName)
+		);
+
+		if (category) {
+			console.log(`Full category name ${category.name}`);
+		} else {
+			console.log(`Full category name not found for ${partialCategoryName}`);
+			return;
+		}
+
+		return category.name;
+	}
 }
 
 module.exports = Discord;

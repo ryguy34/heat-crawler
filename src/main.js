@@ -29,7 +29,7 @@ client.login(process.env.CLIENT_TOKEN);
 async function mainSupremeNotifications() {
 	try {
 		const currentWeekThursdayDate = Utility.getThursdayOfCurrentWeek(); // returns format: YYYY-MM-DD
-		const currentYear = Utility.getFullYear();
+		const currentYear = Utility.getFullYear(); // YYYY
 		const currentSeason = Utility.getCurrentSeason();
 
 		const supremeDiscordTextChannelInfo = await supreme.parseSupremeDrop(
@@ -68,7 +68,9 @@ async function mainSupremeNotifications() {
 client.on("ready", () => {
 	console.log("Bot is ready");
 
-	// runs every Wednesday at 8PM
+	//discord.getFullCategoryNameBySubstring(client, "SUPREME");
+
+	//runs every Wednesday at 8PM
 	cron.schedule("0 20 * * 3", () => {
 		console.log("Running Supreme cron job");
 		mainSupremeNotifications();
