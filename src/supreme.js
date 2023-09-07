@@ -51,14 +51,14 @@ class Supreme {
 					.replace(/(\r\n|\n|\r)/gm, "");
 
 				productInfo.imageUrl =
-					constants.SUPREME_COMMUNITY_BASE_URL + "resize/576" + png;
+					constants.SUPREME_COMMUNITY_BASE_URL + "/resize/576" + png;
 				productInfo.productName = itemName === "" ? "?" : itemName;
 				productInfo.price = price === "" ? "Free or Unknown" : price;
 				productInfo.categoryUrl =
 					constants.SUPREME_BASE_URL + "collections/" + category;
 				productInfo.productInfoUrl =
 					constants.SUPREME_COMMUNITY_BASE_URL +
-					"season/itemdetails/" +
+					"/season/itemdetails/" +
 					itemId +
 					"/" +
 					itemSlug;

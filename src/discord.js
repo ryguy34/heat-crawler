@@ -58,19 +58,11 @@ class Discord {
 	 * @param {*} channelName
 	 * @returns
 	 */
-	async createTextChannel(client, categoryName, channelName) {
+	async createTextChannel(client, category, channelName) {
 		const guild = client.guilds.cache.get(process.env.SERVER_ID);
 
 		if (!guild) {
 			return console.log(`Guild not found.`);
-		}
-
-		const category = guild.channels.cache.find((channel) => {
-			return channel.name === categoryName && channel.type === 4;
-		});
-
-		if (!category) {
-			return console.log(`Category "${categoryName}" not found.`);
 		}
 
 		//Create a new text channel in the specified category
@@ -78,7 +70,7 @@ class Discord {
 			name: channelName,
 			type: ChannelType.GuildText,
 			parent: category.id,
-			reason: "Creating a new weekly release for Supreme",
+			reason: `Creating a new weekly release ${channelName} under ${category.name}`,
 		});
 
 		console.log(
@@ -122,7 +114,7 @@ class Discord {
 	}
 
 	/**
-	 * returns full category name by its substring
+	 * returns full category by its substring
 	 *
 	 * @param {*} client
 	 * @param {*} partialCategoryName
@@ -137,13 +129,13 @@ class Discord {
 		);
 
 		if (category) {
-			console.log(`Full category name ${category.name}`);
+			console.log(`Category name ${category.name}`);
 		} else {
-			console.log(`Full category name not found for ${partialCategoryName}`);
+			console.log(`Category name not found for ${partialCategoryName}`);
 			return;
 		}
 
-		return category.name;
+		return category;
 	}
 }
 
