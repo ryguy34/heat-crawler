@@ -123,6 +123,7 @@ class Discord {
 
 	/**
 	 * returns full category name by its substring
+	 *
 	 * @param {*} client
 	 * @param {*} partialCategoryName
 	 * @returns
