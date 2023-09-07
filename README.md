@@ -1,25 +1,50 @@
-# snkrs-scraper
+# Web Scraping Guide: SNKRS, Supreme, and Palace
 
-Node web scraper to add upcoming SNKRS drops to Discord server channel
+In this guide, we will walk you through the process of creating a web scraper using Node.js to extract data from SNKRS, Supreme, and Palace websites. We'll also provide an overview of each website and highlight their key features.
 
-# Discord
+## Table of Contents
 
-    * need to see if channel already exists (DONE)
+- [SNKRS](#snkrs)
+- [Supreme](#supreme)
+- [Palace](#palace)
+- [Setup](#setup)
 
-# CRON Expression
+## SNKRS
 
-    * need to do logic
-    * how many days before do we want to notify
+The SNKRS website is a popular platform for sneaker enthusiasts. It features limited-edition and exclusive sneaker releases from various brands.
 
-# WebHook
+Key Features:
 
-    * image
-    * date
-    * name of sneaker
-    * cost
-    * release time
-    * link to collection (Supreme)
+- Exclusive Sneaker Releases
+- Limited-Edition Products
+- Sneaker Release Calendar
 
-# SNKRS
+## Supreme
 
-    * need to find the right <div> </div>
+Supreme is a streetwear brand known for its highly sought-after apparel, accessories, and collaborations.
+
+Key Features:
+
+- Weekly Product Drops
+- Collaborations with Artists and Brands
+- Hypebeast Culture Icon
+
+## Palace
+
+Palace Skateboards is a British streetwear brand with a focus on skateboarding culture and bold designs.
+
+Key Features:
+
+- Skateboarding Apparel and Accessories
+- Unique Graphic Designs
+- Limited Product Releases
+
+## Setup
+
+Clone the repository and navigate to the project directory:
+
+```bash
+git clone REPO_URL
+cd project-directory
+npm install
+node main.js # or run npm script "start" from package.json

@@ -22,7 +22,11 @@ const client = new DiscordJS.Client({
 
 client.login(process.env.CLIENT_TOKEN);
 
+/**
+ * main function for Supreme notifications to Discord channel
+ */
 async function mainSupremeNotifications() {
+	console.log("Running Supreme notification job");
 	try {
 		const currentDate = Utility.getDate();
 		const currentYear = Utility.getFullYear();
@@ -45,7 +49,7 @@ async function mainSupremeNotifications() {
 		if (!value) {
 			const newChannel = await discord.createTextChannel(
 				client,
-				"test",
+				"SUPREME FALL/WINTER 2023",
 				supremeDiscordTextChannelInfo.channelName
 			);
 			discord.sendSupremeDropInfo(supremeDiscordTextChannelInfo, newChannel);
@@ -56,6 +60,9 @@ async function mainSupremeNotifications() {
 }
 
 client.on("ready", () => {
-	console.log("Ready");
+	console.log("Bot is ready");
+
+	// cron.schedule("* * * * *", () => {
 	mainSupremeNotifications();
+	//});
 });
