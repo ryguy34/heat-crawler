@@ -29,7 +29,7 @@ client.login(process.env.CLIENT_TOKEN);
 async function mainSupremeNotifications() {
 	try {
 		const currentWeekThursdayDate = Utility.getThursdayOfCurrentWeek(); // returns format: YYYY-MM-DD
-		const currentYear = Utility.getFullYear();
+		const currentYear = Utility.getFullYear(); // YYYY
 		const currentSeason = Utility.getCurrentSeason();
 
 		const supremeDiscordTextChannelInfo = await supreme.parseSupremeDrop(
@@ -38,26 +38,36 @@ async function mainSupremeNotifications() {
 			currentSeason
 		);
 
-		if (supremeDiscordTextChannelInfo) {
-			//console.log(supremeDiscordTextChannelInfo);
+		//console.log(supremeDiscordTextChannelInfo);
 
+		if (supremeDiscordTextChannelInfo) {
 			const value = await discord.doesChannelExistUnderCategory(
 				client,
 				supremeDiscordTextChannelInfo.channelName,
 				constants.SUPREME_DROPS_CATEGORY_ID
+				//constants.TEST_CATEGORY_ID
 			);
-			// TODO: get correct category name here and pass as 2nd parameter
-			if (!value) {
-				const newChannel = await discord.createTextChannel(
-					client,
-					"SUPREME FALL/WINTER 2023",
-					supremeDiscordTextChannelInfo.channelName
-				);
 
-				discord.sendSupremeDropInfo(
-					supremeDiscordTextChannelInfo,
-					newChannel
-				);
+			if (!value) {
+				const supremeCategory =
+					await discord.getFullCategoryNameBySubstring(
+						client,
+						"SUPREME"
+						//"TEST"
+					);
+
+				if (supremeCategory) {
+					const newChannel = await discord.createTextChannel(
+						client,
+						supremeCategory,
+						supremeDiscordTextChannelInfo.channelName
+					);
+
+					discord.sendSupremeDropInfo(
+						supremeDiscordTextChannelInfo,
+						newChannel
+					);
+				}
 			}
 		}
 	} catch (error) {
@@ -68,9 +78,9 @@ async function mainSupremeNotifications() {
 client.on("ready", () => {
 	console.log("Bot is ready");
 
-	// runs every Wednesday at 8PM
-	cron.schedule("0 20 * * 3", () => {
-		console.log("Running Supreme cron job");
-		mainSupremeNotifications();
-	});
+	//runs every Wednesday at 8PM
+	// cron.schedule("0 20 * * 3", () => {
+	console.log("Running Supreme cron job");
+	mainSupremeNotifications();
+	//});
 });
