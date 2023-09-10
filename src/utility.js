@@ -38,10 +38,10 @@ class Utility {
 	static getFridayOfCurrentWeek() {
 		const today = new Date();
 		const currentDayOfWeek = today.getDay(); // 0 for Sunday, 1 for Monday, ..., 6 for Saturday
-		const daysUntilThursday = (5 - currentDayOfWeek + 7) % 7; // Calculate how many days to Friday
+		const daysUntilFriday = (5 - currentDayOfWeek + 7) % 7; // Calculate how many days to Friday
 
 		// Set the date to Thursday of the current week
-		today.setDate(today.getDate() + daysUntilThursday);
+		today.setDate(today.getDate() + daysUntilFriday);
 
 		// Format the date as YYYY-MM-DD
 		const year = today.getFullYear();
