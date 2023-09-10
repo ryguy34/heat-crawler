@@ -1,6 +1,7 @@
 module.exports = Object.freeze({
 	SNKRS_URL: "https://www.nike.com/launch?s=upcoming",
 	SUPREME_COMMUNITY_BASE_URL: "https://www.supremecommunity.com",
+	PALACE_COMMUNITY_BASE_URL: "https://www.palacecmty.com",
 	SUPREME_BASE_URL: "https://us.supreme.com/",
 	SUPREME_DROPS_CATEGORY_ID: "867052008094826546",
 	TEST_CATEGORY_ID: "1145474605205688412",

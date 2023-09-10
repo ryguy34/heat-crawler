@@ -4,6 +4,7 @@ const Discord = require("./discord");
 const DiscordJS = require("discord.js");
 const SNKRS = require("./snkrs");
 const Supreme = require("./supreme");
+const Palace = require("./palace");
 const Utility = require("./utility");
 const cron = require("node-cron");
 const { GatewayIntentBits } = require("discord.js");
@@ -12,6 +13,7 @@ const constants = require("./constants");
 const snkrs = new SNKRS();
 const supreme = new Supreme();
 const discord = new Discord();
+const palace = new Palace();
 const client = new DiscordJS.Client({
 	intents: [
 		GatewayIntentBits.Guilds,
@@ -75,12 +77,27 @@ async function mainSupremeNotifications() {
 	}
 }
 
+async function mainPalaceNotifications() {
+	const currentWeekFridayDate = Utility.getFridayOfCurrentWeek(); // returns format: YYYY-MM-DD
+
+	try {
+		const palaceDiscordTextChannelInfo = await palace.parsePalaceDrop(
+			// currentWeekFridayDate
+			"2023-09-08"
+		);
+	} catch (error) {
+		console.error(error);
+	}
+}
+
 client.on("ready", () => {
 	console.log("Bot is ready");
 
 	//runs every Wednesday at 8PM
 	// cron.schedule("0 20 * * 3", () => {
-	console.log("Running Supreme cron job");
-	mainSupremeNotifications();
-	//});
+	// 	console.log("Running Supreme cron job");
+	// 	mainSupremeNotifications();
+	// });
+
+	mainPalaceNotifications();
 });
