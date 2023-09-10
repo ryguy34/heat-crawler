@@ -4,6 +4,7 @@ const Discord = require("./discord");
 const DiscordJS = require("discord.js");
 const SNKRS = require("./snkrs");
 const Supreme = require("./supreme");
+const Palace = require("./palace");
 const Utility = require("./utility");
 const cron = require("node-cron");
 const { GatewayIntentBits } = require("discord.js");
@@ -12,6 +13,7 @@ const constants = require("./constants");
 const snkrs = new SNKRS();
 const supreme = new Supreme();
 const discord = new Discord();
+const palace = new Palace();
 const client = new DiscordJS.Client({
 	intents: [
 		GatewayIntentBits.Guilds,
@@ -63,9 +65,56 @@ async function mainSupremeNotifications() {
 						supremeDiscordTextChannelInfo.channelName
 					);
 
-					discord.sendSupremeDropInfo(
+					discord.sendDropInfo(
 						supremeDiscordTextChannelInfo,
-						newChannel
+						newChannel,
+						"Supreme"
+					);
+				}
+			}
+		}
+	} catch (error) {
+		console.error(error);
+	}
+}
+
+async function mainPalaceNotifications() {
+	const currentWeekFridayDate = Utility.getFridayOfCurrentWeek(); // returns format: YYYY-MM-DD
+
+	try {
+		const palaceDiscordTextChannelInfo = await palace.parsePalaceDrop(
+			// currentWeekFridayDate
+			"2023-09-08"
+		);
+
+		console.log(palaceDiscordTextChannelInfo);
+
+		if (palaceDiscordTextChannelInfo) {
+			const value = await discord.doesChannelExistUnderCategory(
+				client,
+				palaceDiscordTextChannelInfo.channelName,
+				constants.PALACE_DROPS_CATEGORY_ID
+				//constants.TEST_CATEGORY_ID
+			);
+
+			if (!value) {
+				const palaceCategory = await discord.getFullCategoryNameBySubstring(
+					client,
+					//"PALACE"
+					"TEST"
+				);
+
+				if (palaceCategory) {
+					const newChannel = await discord.createTextChannel(
+						client,
+						palaceCategory,
+						palaceDiscordTextChannelInfo.channelName
+					);
+
+					discord.sendDropInfo(
+						palaceDiscordTextChannelInfo,
+						newChannel,
+						"Palace"
 					);
 				}
 			}
@@ -80,7 +129,15 @@ client.on("ready", () => {
 
 	//runs every Wednesday at 8PM
 	// cron.schedule("0 20 * * 3", () => {
-	console.log("Running Supreme cron job");
-	mainSupremeNotifications();
+	// 	console.log("Running Supreme cron job");
+	// 	mainSupremeNotifications();
+	//  console.log("Supreme drops are done");
+	// });
+
+	//runs every Thursday at 8PM
+	//cron.schedule("0 20 * * 4", () => {
+	console.log("Running Palace cron job");
+	mainPalaceNotifications();
+	console.log("Palace drops are done");
 	//});
 });
