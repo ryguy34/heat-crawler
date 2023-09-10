@@ -85,6 +85,8 @@ async function mainPalaceNotifications() {
 			// currentWeekFridayDate
 			"2023-09-08"
 		);
+
+		console.log(palaceDiscordTextChannelInfo);
 	} catch (error) {
 		console.error(error);
 	}
@@ -99,5 +101,6 @@ client.on("ready", () => {
 	// 	mainSupremeNotifications();
 	// });
 
+	console.log("Running Palace cron job");
 	mainPalaceNotifications();
 });

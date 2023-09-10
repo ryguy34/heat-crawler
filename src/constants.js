@@ -3,6 +3,7 @@ module.exports = Object.freeze({
 	SUPREME_COMMUNITY_BASE_URL: "https://www.supremecommunity.com",
 	PALACE_COMMUNITY_BASE_URL: "https://www.palacecmty.com",
 	SUPREME_BASE_URL: "https://us.supreme.com/",
+	PALACE_BASE_URL: "https://shop-usa.palaceskateboards.com",
 	SUPREME_DROPS_CATEGORY_ID: "867052008094826546",
 	TEST_CATEGORY_ID: "1145474605205688412",
 	params: {

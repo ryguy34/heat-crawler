@@ -9,6 +9,7 @@ class Palace {
 
 	async parsePalaceDrop(currentWeekFridayDate) {
 		var palaceDiscordTextChannelInfo = new PalaceTextChannelInfo();
+		var productList = [];
 
 		try {
 			const res = await axios.get(
@@ -22,7 +23,12 @@ class Palace {
 			const $ = cheerio.load(htmlData);
 
 			var title = $(".title-font h1").text();
-			const channelName = title.substring(title.indexOf(",") + 1).trim();
+			// TODO: clean up channel name to look better as a text channel
+			const channelName = title
+				.substring(title.indexOf(",") + 1)
+				.trim()
+				.replace(" ", "-")
+				.toLowerCase();
 
 			palaceDiscordTextChannelInfo.channelName = channelName;
 			palaceDiscordTextChannelInfo.openingMessage = title;
@@ -33,14 +39,37 @@ class Palace {
 				var itemSlug = $(ele).find("a").attr("data-itemslug");
 				var itemName = $(ele).find("a").attr("data-itemname");
 				var category = $(ele).attr("data-category");
+				var price = $(ele)
+					.find(".catalog-label-price")
+					.first()
+					.text()
+					.replace(/(\r\n|\n|\r)/gm, "")
+					.replace("€", "$")
+					.trim();
+				var png = $(ele).find("img").attr("data-src");
 
-				// TODO: find price and image url
+				var parts = itemSlug.split("-");
+				var season = `${parts[0]}-${parts[1]}`;
+
+				palaceDropInfo.imageUrl = constants.PALACE_COMMUNITY_BASE_URL + png;
+				palaceDropInfo.productInfoUrl = `${constants.PALACE_COMMUNITY_BASE_URL}/collections/${season}/items/${itemId}/${itemSlug}`;
+				palaceDropInfo.productName = itemName;
+				palaceDropInfo.categoryUrl = `${
+					constants.PALACE_BASE_URL
+				}/collections/${category.toLowerCase()}`;
+				palaceDropInfo.price = price;
+
+				//console.log(palaceDropInfo);
+
+				productList.push(palaceDropInfo);
 			});
 
-			console.log(channelName);
+			palaceDiscordTextChannelInfo.products = productList;
 		} catch (error) {
 			console.log(error);
 		}
+
+		return palaceDiscordTextChannelInfo;
 	}
 }
 
