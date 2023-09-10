@@ -7,7 +7,7 @@ class Discord {
 	constructor() {}
 
 	/**
-	 * makes a list of embeds for teh upcoming products
+	 * makes a list of embeds for the upcoming products
 	 *
 	 * @param {*} textChannelInfo
 	 * @param {*} channel
