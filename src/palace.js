@@ -59,8 +59,6 @@ class Palace {
 				}/collections/${category.toLowerCase()}`;
 				palaceDropInfo.price = price;
 
-				//console.log(palaceDropInfo);
-
 				productList.push(palaceDropInfo);
 			});
 

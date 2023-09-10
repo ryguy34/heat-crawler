@@ -7,20 +7,28 @@ class Discord {
 	constructor() {}
 
 	/**
-	 * makes a list of embeds of supreme products
+	 * makes a list of embeds for teh upcoming products
 	 *
-	 * @param {*} supremeDropInfo
+	 * @param {*} textChannelInfo
 	 * @param {*} channel
+	 * @param {*} siteName
 	 * @returns
 	 */
-	async sendSupremeDropInfo(supremeTextChannelInfo, channel) {
-		let channelMessage = supremeTextChannelInfo.openingMessage.replace(
-			"Supreme",
-			"<@&834439456421314560>"
-		);
+	async sendDropInfo(textChannelInfo, channel, siteName) {
+		let channelMessage = "";
+		if (siteName === "Supreme") {
+			channelMessage = textChannelInfo.openingMessage.replace(
+				"Supreme",
+				"<@&834439456421314560>"
+			);
+		} else if (siteName === "Palace") {
+			channelMessage =
+				textChannelInfo.openingMessage + " <@&834439872499417088>";
+		}
+
 		channel.send(channelMessage);
 
-		for (const product of supremeTextChannelInfo.products) {
+		for (const product of textChannelInfo.products) {
 			const embed = new EmbedBuilder()
 				.setColor(0x0099ff)
 				.setTitle(product.productName)
@@ -31,13 +39,13 @@ class Discord {
 					{ name: "Price", value: product.price },
 					{
 						name: " ",
-						value: `[Supreme Category](${product.categoryUrl})`,
+						value: `[${siteName} Category](${product.categoryUrl})`,
 					}
 				)
 				.setImage(product.imageUrl)
 				.setTimestamp()
 				.setFooter({
-					text: `Good luck on ${supremeTextChannelInfo.channelName}'s drops!!!`,
+					text: `Good luck on ${textChannelInfo.channelName}'s drops!!!`,
 					iconURL: "attachment://image.png",
 				});
 

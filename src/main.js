@@ -65,9 +65,10 @@ async function mainSupremeNotifications() {
 						supremeDiscordTextChannelInfo.channelName
 					);
 
-					discord.sendSupremeDropInfo(
+					discord.sendDropInfo(
 						supremeDiscordTextChannelInfo,
-						newChannel
+						newChannel,
+						"Supreme"
 					);
 				}
 			}
@@ -87,6 +88,37 @@ async function mainPalaceNotifications() {
 		);
 
 		console.log(palaceDiscordTextChannelInfo);
+
+		if (palaceDiscordTextChannelInfo) {
+			const value = await discord.doesChannelExistUnderCategory(
+				client,
+				palaceDiscordTextChannelInfo.channelName,
+				constants.PALACE_DROPS_CATEGORY_ID
+				//constants.TEST_CATEGORY_ID
+			);
+
+			if (!value) {
+				const palaceCategory = await discord.getFullCategoryNameBySubstring(
+					client,
+					//"PALACE"
+					"TEST"
+				);
+
+				if (palaceCategory) {
+					const newChannel = await discord.createTextChannel(
+						client,
+						palaceCategory,
+						palaceDiscordTextChannelInfo.channelName
+					);
+
+					discord.sendDropInfo(
+						palaceDiscordTextChannelInfo,
+						newChannel,
+						"Palace"
+					);
+				}
+			}
+		}
 	} catch (error) {
 		console.error(error);
 	}
@@ -99,8 +131,13 @@ client.on("ready", () => {
 	// cron.schedule("0 20 * * 3", () => {
 	// 	console.log("Running Supreme cron job");
 	// 	mainSupremeNotifications();
+	//  console.log("Supreme drops are done");
 	// });
 
+	//runs every Thursday at 8PM
+	//cron.schedule("0 20 * * 4", () => {
 	console.log("Running Palace cron job");
 	mainPalaceNotifications();
+	console.log("Palace drops are done");
+	//});
 });
