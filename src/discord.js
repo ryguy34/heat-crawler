@@ -33,8 +33,7 @@ class Discord {
 				.setColor(0x0099ff)
 				.setTitle(product.productName)
 				.setURL(product.productInfoUrl)
-				//TODO: need to get an image logo for bot
-				.setThumbnail("attachment://image.png")
+				.setThumbnail("attachment://logo.png")
 				.addFields(
 					{ name: "Price", value: product.price },
 					{
@@ -46,14 +45,14 @@ class Discord {
 				.setTimestamp()
 				.setFooter({
 					text: `Good luck on ${textChannelInfo.channelName}'s drops!!!`,
-					iconURL: "attachment://image.png",
+					iconURL: "attachment://logo.png",
 				});
 
-			const image = fs.readFileSync("./resources/image.png");
+			const image = fs.readFileSync("./resources/logo.png");
 
 			await channel.send({
 				embeds: [embed],
-				files: [{ attachment: image, name: "image.png" }],
+				files: [{ attachment: image, name: "logo.png" }],
 			});
 		}
 	}
