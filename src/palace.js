@@ -23,12 +23,14 @@ class Palace {
 			const $ = cheerio.load(htmlData);
 
 			var title = $(".title-font h1").text();
-			// TODO: clean up channel name to look better as a text channel
-			const channelName = title
+			const parsedChannelName = title
 				.substring(title.indexOf(",") + 1)
 				.trim()
-				.replace(" ", "-")
-				.toLowerCase();
+				.toLowerCase()
+				.split(" ");
+
+			var month = parsedChannelName[0].substring(0, 3);
+			const channelName = `${month}-${parsedChannelName[1]}`;
 
 			palaceDiscordTextChannelInfo.channelName = channelName;
 			palaceDiscordTextChannelInfo.openingMessage = title;
