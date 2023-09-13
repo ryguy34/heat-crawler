@@ -59,7 +59,7 @@ class Palace {
 				palaceDropInfo.categoryUrl = `${
 					constants.PALACE_BASE_URL
 				}/collections/${category.toLowerCase()}`;
-				palaceDropInfo.price = price;
+				palaceDropInfo.price = price === "" ? "Free or Unknown" : price;
 
 				productList.push(palaceDropInfo);
 			});
