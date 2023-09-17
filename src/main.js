@@ -84,7 +84,6 @@ async function mainPalaceNotifications() {
 	try {
 		const palaceDiscordTextChannelInfo = await palace.parsePalaceDrop(
 			currentWeekFridayDate
-			//"2023-09-08"
 		);
 
 		console.log(palaceDiscordTextChannelInfo);
@@ -128,16 +127,16 @@ client.on("ready", () => {
 	console.log("Bot is ready");
 
 	//runs every Wednesday at 8PM
-	//cron.schedule("0 20 * * 3", () => {
-	console.log("Running Supreme cron job");
-	mainSupremeNotifications();
-	console.log("Supreme drops are done");
-	//});
+	cron.schedule("0 20 * * 3", () => {
+		console.log("Running Supreme cron job");
+		mainSupremeNotifications();
+		console.log("Supreme drops are done");
+	});
 
 	//runs every Thursday at 8PM
-	// cron.schedule("0 20 * * 4", () => {
-	// 	console.log("Running Palace cron job");
-	// 	mainPalaceNotifications();
-	// 	console.log("Palace drops are done");
-	// });
+	cron.schedule("0 20 * * 4", () => {
+		console.log("Running Palace cron job");
+		mainPalaceNotifications();
+		console.log("Palace drops are done");
+	});
 });
