@@ -153,8 +153,8 @@ client.on("ready", async () => {
 
 	//runs everyday at 8PM
 	//cron.schedule("0 20 * * *", () => {
-	console.log("Running SNKRS cron job");
-	await mainSnkrsNotifications();
-	console.log("SNKRS drops are done");
+	// console.log("Running SNKRS cron job");
+	// await mainSnkrsNotifications();
+	// console.log("SNKRS drops are done");
 	//});
 });
