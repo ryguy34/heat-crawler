@@ -26,7 +26,7 @@ const client = new DiscordJS.Client({
 client.login(process.env.CLIENT_TOKEN);
 
 /**
- * main function for Supreme notifications to Discord channel
+ * main function for supreme notifications to Discord channel
  */
 async function mainSupremeNotifications() {
 	try {
@@ -65,7 +65,7 @@ async function mainSupremeNotifications() {
 						supremeDiscordTextChannelInfo.channelName
 					);
 
-					discord.sendDropInfo(
+					await discord.sendDropInfo(
 						supremeDiscordTextChannelInfo,
 						newChannel,
 						"Supreme"
@@ -78,6 +78,9 @@ async function mainSupremeNotifications() {
 	}
 }
 
+/**
+ * main function for palace notifications to Discord channel
+ */
 async function mainPalaceNotifications() {
 	const currentWeekFridayDate = Utility.getFridayOfCurrentWeek(); // returns format: YYYY-MM-DD
 
@@ -110,7 +113,7 @@ async function mainPalaceNotifications() {
 						palaceDiscordTextChannelInfo.channelName
 					);
 
-					discord.sendDropInfo(
+					await discord.sendDropInfo(
 						palaceDiscordTextChannelInfo,
 						newChannel,
 						"Palace"
@@ -138,23 +141,23 @@ client.on("ready", async () => {
 	console.log("Bot is ready");
 
 	//runs every Wednesday at 8PM
-	cron.schedule("0 20 * * 3", () => {
+	cron.schedule("0 20 * * 3", async () => {
 		console.log("Running Supreme cron job");
-		mainSupremeNotifications();
+		await mainSupremeNotifications();
 		console.log("Supreme drops are done");
 	});
 
 	//runs every Thursday at 8PM
-	cron.schedule("0 20 * * 4", () => {
+	cron.schedule("0 20 * * 4", async () => {
 		console.log("Running Palace cron job");
-		mainPalaceNotifications();
+		await mainPalaceNotifications();
 		console.log("Palace drops are done");
 	});
 
 	//runs everyday at 8PM
-	//cron.schedule("0 20 * * *", () => {
+	// cron.schedule("0 20 * * *", () => {
 	// console.log("Running SNKRS cron job");
 	// await mainSnkrsNotifications();
 	// console.log("SNKRS drops are done");
-	//});
+	// });
 });
