@@ -1,15 +1,10 @@
 import axios from "axios";
 import { load } from "cheerio";
-
-const SnkrsDropInfo = require("./vo/snkrsDropInfo");
+import logger from "./config/logger";
 const constants = require("./constants");
 
 export class SNKRS {
-	snkrsDropInfo: any;
-
-	constructor() {
-		//this.snkrsDropInfo = new SnkrsDropInfo();
-	}
+	constructor() {}
 
 	async getSnkrsDropInfo() {
 		try {
@@ -19,7 +14,7 @@ export class SNKRS {
 			);
 			const $ = load(response.data);
 		} catch (error) {
-			console.log("Some error: " + error);
+			logger.error("Some error: " + error);
 		}
 	}
 }

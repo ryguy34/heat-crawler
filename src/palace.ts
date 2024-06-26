@@ -2,6 +2,7 @@ import axios from "axios";
 import { load } from "cheerio";
 import { PalaceDropInfo } from "./vo/palaceDropInfo";
 import { TextChannelInfo } from "./vo/textChannelInfo";
+import logger from "./config/logger";
 
 const constants = require("./constants");
 
@@ -73,7 +74,7 @@ export class Palace {
 			palaceDiscordTextChannelInfo = new TextChannelInfo(channelName, title);
 			palaceDiscordTextChannelInfo.products = productList;
 		} catch (error) {
-			console.log(error);
+			logger.error(error);
 		}
 
 		return palaceDiscordTextChannelInfo;

@@ -1,11 +1,11 @@
 import "dotenv/config";
 import { Client, GatewayIntentBits } from "discord.js";
-import * as cron from "node-cron";
-
+import cron from "node-cron";
 import { Discord } from "./discord";
 import { Supreme } from "./supreme";
 import { Palace } from "./palace";
 import { Utility } from "./utility";
+import logger from "./config/logger";
 const constants = require("./constants");
 
 const discord = new Discord();
@@ -68,7 +68,7 @@ async function mainSupremeNotifications() {
 			}
 		}
 	} catch (error) {
-		console.error(error);
+		logger.error(error);
 	}
 }
 
@@ -115,7 +115,7 @@ async function mainPalaceNotifications() {
 			}
 		}
 	} catch (error) {
-		console.error(error);
+		logger.error(error);
 	}
 }
 
@@ -134,26 +134,26 @@ async function mainPalaceNotifications() {
  * When the script has connected to Discord successfully
  */
 client.on("ready", async () => {
-	console.log("Bot is ready");
+	logger.info("Bot is ready");
 
 	//runs every Wednesday at 8PM
 	cron.schedule("0 20 * * 3", async () => {
-		console.log("Running Supreme cron job");
+		logger.info("Running Supreme cron job");
 		await mainSupremeNotifications();
-		console.log("Supreme drops are done");
+		logger.info("Supreme drops are done");
 	});
 
 	//runs every Thursday at 8PM
 	cron.schedule("0 20 * * 4", async () => {
-		console.log("Running Palace cron job");
+		logger.info("Running Palace cron job");
 		await mainPalaceNotifications();
-		console.log("Palace drops are done");
+		logger.info("Palace drops are done");
 	});
 
 	//runs everyday at 8PM
 	// cron.schedule("0 20 * * *", () => {
-	// console.log("Running SNKRS cron job");
+	// logger.info("Running SNKRS cron job");
 	// await mainSnkrsNotifications();
-	// console.log("SNKRS drops are done");
+	// logger.info("SNKRS drops are done");
 	// });
 });

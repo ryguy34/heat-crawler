@@ -6,8 +6,9 @@ import {
 	GuildBasedChannel,
 } from "discord.js";
 import "dotenv/config";
-import * as fs from "fs";
+import fs from "fs";
 import { TextChannelInfo } from "./vo/textChannelInfo";
+import logger from "./config/logger";
 
 export class Discord {
 	constructor() {}
@@ -83,7 +84,8 @@ export class Discord {
 		const guild = client.guilds.cache.get(process.env.SERVER_ID!);
 
 		if (!guild) {
-			return console.log(`Guild not found.`);
+			logger.error(`Guild not found.`);
+			return;
 		}
 
 		//Create a new text channel in the specified category
@@ -94,7 +96,7 @@ export class Discord {
 			reason: `Creating a new weekly release ${channelName} under ${category.name}`,
 		});
 
-		console.log(
+		logger.info(
 			`Channel "${newChannel.name}" created in category "${category.name}".`
 		);
 
@@ -113,7 +115,7 @@ export class Discord {
 		channelName: string,
 		categoryId: string
 	) {
-		console.log(`Searching for channel: ${channelName}`);
+		logger.info(`Searching for channel: ${channelName}`);
 
 		return new Promise((resolve) => {
 			const guild = client.guilds.cache.get(process.env.SERVER_ID!);
@@ -125,11 +127,11 @@ export class Discord {
 			});
 
 			if (channelExists) {
-				console.log(
+				logger.warn(
 					`Channel ${channelName} exists under categoryId ${categoryId}`
 				);
 			} else {
-				console.log(
+				logger.info(
 					`Channel ${channelName} doesn't exist under categoryId ${categoryId}`
 				);
 			}
@@ -157,9 +159,9 @@ export class Discord {
 		);
 
 		if (category) {
-			console.log(`Category name ${category.name}`);
+			logger.info(`Category name ${category.name}`);
 		} else {
-			console.log(`Category name not found for ${partialCategoryName}`);
+			logger.error(`Category name not found for ${partialCategoryName}`);
 			return;
 		}
 
