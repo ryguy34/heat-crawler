@@ -1,20 +1,15 @@
-require("dotenv").config();
+import "dotenv/config";
+import { Client, GatewayIntentBits } from "discord.js";
+import * as cron from "node-cron";
 
-const Discord = require("./discord");
-const DiscordJS = require("discord.js");
-const SNKRS = require("./snkrs");
-const Supreme = require("./supreme");
-const Palace = require("./palace");
-const Utility = require("./utility");
-const cron = require("node-cron");
-const { GatewayIntentBits } = require("discord.js");
+import { Discord } from "./discord";
+import { Supreme } from "./supreme";
+import { Palace } from "./palace";
+import { Utility } from "./utility";
 const constants = require("./constants");
 
-const snkrs = new SNKRS();
-const supreme = new Supreme();
 const discord = new Discord();
-const palace = new Palace();
-const client = new DiscordJS.Client({
+const client = new Client({
 	intents: [
 		GatewayIntentBits.Guilds,
 		GatewayIntentBits.GuildMessages,
@@ -29,9 +24,10 @@ client.login(process.env.CLIENT_TOKEN);
  * main function for supreme notifications to Discord channel
  */
 async function mainSupremeNotifications() {
+	const supreme = new Supreme();
 	try {
-		const currentWeekThursdayDate = Utility.getThursdayOfCurrentWeek(); // returns format: YYYY-MM-DD
-		const currentYear = Utility.getFullYear(); // YYYY
+		const currentWeekThursdayDate = Utility.getThursdayOfCurrentWeek();
+		const currentYear = Utility.getFullYear();
 		const currentSeason = Utility.getCurrentSeason();
 
 		const supremeDiscordTextChannelInfo = await supreme.parseSupremeDrop(
@@ -39,8 +35,6 @@ async function mainSupremeNotifications() {
 			currentYear,
 			currentSeason
 		);
-
-		//console.log(supremeDiscordTextChannelInfo);
 
 		if (supremeDiscordTextChannelInfo) {
 			const value = await discord.doesChannelExistUnderCategory(
@@ -67,7 +61,7 @@ async function mainSupremeNotifications() {
 
 					await discord.sendDropInfo(
 						supremeDiscordTextChannelInfo,
-						newChannel,
+						newChannel!,
 						"Supreme"
 					);
 				}
@@ -82,14 +76,13 @@ async function mainSupremeNotifications() {
  * main function for palace notifications to Discord channel
  */
 async function mainPalaceNotifications() {
+	const palace = new Palace();
 	const currentWeekFridayDate = Utility.getFridayOfCurrentWeek(); // returns format: YYYY-MM-DD
 
 	try {
 		const palaceDiscordTextChannelInfo = await palace.parsePalaceDrop(
 			currentWeekFridayDate
 		);
-
-		console.log(palaceDiscordTextChannelInfo);
 
 		if (palaceDiscordTextChannelInfo) {
 			const value = await discord.doesChannelExistUnderCategory(
@@ -115,7 +108,7 @@ async function mainPalaceNotifications() {
 
 					await discord.sendDropInfo(
 						palaceDiscordTextChannelInfo,
-						newChannel,
+						newChannel!,
 						"Palace"
 					);
 				}
@@ -126,17 +119,20 @@ async function mainPalaceNotifications() {
 	}
 }
 
-async function mainSnkrsNotifications() {
-	var tomorrowsDate = Utility.getTomorrowsDate();
-	var snkrsDrops = [];
+// async function mainSnkrsNotifications() {
+// 	var tomorrowsDate = Utility.getTomorrowsDate();
+// 	var snkrsDrops = [];
 
-	try {
-		snkrsDrops = await snkrs.parseSnkrsDropInfo(tomorrowsDate);
-	} catch (error) {
-		console.error(error);
-	}
-}
+// 	try {
+// 		snkrsDrops = await snkrs.parseSnkrsDropInfo(tomorrowsDate);
+// 	} catch (error) {
+// 		console.error(error);
+// 	}
+// }
 
+/**
+ * When the script has connected to Discord successfully
+ */
 client.on("ready", async () => {
 	console.log("Bot is ready");
 

@@ -2,9 +2,11 @@
   "name": "snkrs-scraper",
   "version": "1.0.0",
   "description": "Node SNKRS web scraper",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "start": "nodemon src/main.js"
+    "dev": "tsx watch src/main.ts",
+    "build": "tsc",
+    "start": "node ."
   },
   "repository": {
     "type": "git",
@@ -21,8 +23,12 @@
     "cheerio": "^1.0.0-rc.12",
     "discord.js": "^14.7.1",
     "dotenv": "^16.0.3",
-    "node-cron": "^3.0.2",
-    "nodemon": "^2.0.20",
-    "pretty": "^2.0.0"
+    "node-cron": "^3.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.9",
+    "@types/node-cron": "^3.0.11",
+    "pretty": "^2.0.0",
+    "tsx": "^4.15.7"
   }
 }

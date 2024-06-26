@@ -1,17 +1,20 @@
-require("dotenv").config();
+import axios from "axios";
+import { load } from "cheerio";
+import { SupremeDropInfo } from "./vo/supremeDropInfo";
+import { TextChannelInfo } from "./vo/textChannelInfo";
 
-const axios = require("axios");
-const cheerio = require("cheerio");
 const constants = require("./constants");
-const SupremeDropInfo = require("./vo/SupremeDropInfo");
-const SupremeTextChannelInfo = require("./vo/SupremeTextChannelInfo");
 
-class Supreme {
+export class Supreme {
 	constructor() {}
 
-	async parseSupremeDrop(currentWeekThursdayDate, currentYear, currentSeason) {
-		var supremeTextChannelInfo = new SupremeTextChannelInfo();
-		var productList = [];
+	async parseSupremeDrop(
+		currentWeekThursdayDate: string,
+		currentYear: number,
+		currentSeason: string
+	) {
+		var productList: SupremeDropInfo[] = [];
+		var supremeTextChannelInfo;
 
 		try {
 			const res = await axios.get(
@@ -25,7 +28,7 @@ class Supreme {
 			);
 
 			const htmlData = res.data;
-			const $ = cheerio.load(htmlData);
+			const $ = load(htmlData);
 			var title = $("title").text();
 			var channelName = title
 				.substring(title.indexOf("-") + 1, title.lastIndexOf("-"))
@@ -33,11 +36,9 @@ class Supreme {
 				.toLocaleLowerCase()
 				.replace(" ", "-");
 
-			supremeTextChannelInfo.openingMessage = title;
-			supremeTextChannelInfo.channelName = channelName;
+			supremeTextChannelInfo = new TextChannelInfo(channelName, title);
 
-			$(".catalog-item").each((_, ele) => {
-				var productInfo = new SupremeDropInfo();
+			$(".catalog-item").each((_: number, ele: any) => {
 				var itemId = $(ele).find("a").attr("data-itemid");
 				var itemSlug = $(ele).find("a").attr("data-itemslug");
 				var itemName = $(ele).find("a").attr("data-itemname");
@@ -50,37 +51,35 @@ class Supreme {
 					.text()
 					.replace(/(\r\n|\n|\r)/gm, "");
 
-				productInfo.imageUrl =
+				const imageUrl =
 					constants.SUPREME_COMMUNITY_BASE_URL + "/resize/576" + png;
-				productInfo.productName = itemName === "" ? "?" : itemName;
-				productInfo.price = price === "" ? "Free or Unknown" : price;
-				productInfo.categoryUrl =
+				const productName = itemName === "" ? "?" : itemName;
+				var formatPrice = price === "" ? "Free or Unknown" : price;
+				const categoryUrl =
 					constants.SUPREME_BASE_URL + "collections/" + category;
-				productInfo.productInfoUrl =
+				const productInfoUrl =
 					constants.SUPREME_COMMUNITY_BASE_URL +
 					"/season/itemdetails/" +
 					itemId +
 					"/" +
 					itemSlug;
 
+				const productInfo = new SupremeDropInfo(
+					productName!,
+					productInfoUrl,
+					imageUrl,
+					formatPrice,
+					categoryUrl
+				);
+
 				productList.push(productInfo);
 			});
 
 			supremeTextChannelInfo.products = productList;
 		} catch (error) {
-			if (error.response && error.response.status === 404) {
-				console.log(
-					"The requested resource was not found for " +
-						error.response.config.url
-				);
-
-				return null;
-			}
 			console.error(error);
 		}
 
 		return supremeTextChannelInfo;
 	}
 }
-
-module.exports = Supreme;

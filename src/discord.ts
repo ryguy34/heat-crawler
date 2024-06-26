@@ -1,9 +1,15 @@
-require("dotenv").config();
+import {
+	Client,
+	ChannelType,
+	EmbedBuilder,
+	TextChannel,
+	GuildBasedChannel,
+} from "discord.js";
+import "dotenv/config";
+import * as fs from "fs";
+import { TextChannelInfo } from "./vo/textChannelInfo";
 
-const fs = require("fs");
-const { ChannelType, EmbedBuilder } = require("discord.js");
-
-class Discord {
+export class Discord {
 	constructor() {}
 
 	/**
@@ -14,7 +20,11 @@ class Discord {
 	 * @param {*} siteName
 	 * @returns
 	 */
-	async sendDropInfo(textChannelInfo, channel, siteName) {
+	async sendDropInfo(
+		textChannelInfo: TextChannelInfo,
+		channel: TextChannel,
+		siteName: string
+	) {
 		let channelMessage = "";
 		if (siteName === "Supreme") {
 			channelMessage = textChannelInfo.openingMessage.replace(
@@ -65,8 +75,12 @@ class Discord {
 	 * @param {*} channelName
 	 * @returns
 	 */
-	async createTextChannel(client, category, channelName) {
-		const guild = client.guilds.cache.get(process.env.SERVER_ID);
+	async createTextChannel(
+		client: Client,
+		category: GuildBasedChannel,
+		channelName: string
+	) {
+		const guild = client.guilds.cache.get(process.env.SERVER_ID!);
 
 		if (!guild) {
 			return console.log(`Guild not found.`);
@@ -94,13 +108,17 @@ class Discord {
 	 * @param {*} name
 	 * @returns
 	 */
-	async doesChannelExistUnderCategory(client, channelName, categoryId) {
+	async doesChannelExistUnderCategory(
+		client: Client,
+		channelName: string,
+		categoryId: string
+	) {
 		console.log(`Searching for channel: ${channelName}`);
 
 		return new Promise((resolve) => {
-			const guild = client.guilds.cache.get(process.env.SERVER_ID);
+			const guild = client.guilds.cache.get(process.env.SERVER_ID!);
 
-			const channelExists = guild.channels.cache.some((channel) => {
+			const channelExists = guild?.channels.cache.some((channel) => {
 				return (
 					channel.name === channelName && channel.parentId === categoryId
 				);
@@ -127,10 +145,13 @@ class Discord {
 	 * @param {*} partialCategoryName
 	 * @returns
 	 */
-	async getFullCategoryNameBySubstring(client, partialCategoryName) {
-		const guild = client.guilds.cache.get(process.env.SERVER_ID);
+	async getFullCategoryNameBySubstring(
+		client: Client,
+		partialCategoryName: string
+	) {
+		const guild = client.guilds.cache.get(process.env.SERVER_ID!);
 
-		const category = guild.channels.cache.find(
+		const category = guild?.channels.cache.find(
 			(channel) =>
 				channel.type === 4 && channel.name.includes(partialCategoryName)
 		);
@@ -145,5 +166,3 @@ class Discord {
 		return category;
 	}
 }
-
-module.exports = Discord;
