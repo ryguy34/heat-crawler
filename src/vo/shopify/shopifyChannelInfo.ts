@@ -1,4 +1,4 @@
-export class TextChannelInfo {
+export class ShopifyChannelInfo {
 	channelName: string;
 	openingMessage: string;
 	products: any[];

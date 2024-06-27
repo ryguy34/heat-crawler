@@ -7,7 +7,8 @@ import {
 } from "discord.js";
 import "dotenv/config";
 import fs from "fs";
-import { TextChannelInfo } from "./vo/textChannelInfo";
+import { ShopifyChannelInfo } from "./vo/shopify/shopifyChannelInfo";
+import { SnkrsDropInfo } from "./vo/snkrs/snkrsDropInfo";
 import logger from "./config/logger";
 
 export class Discord {
@@ -22,19 +23,22 @@ export class Discord {
 	 * @returns
 	 */
 	async sendDropInfo(
-		textChannelInfo: TextChannelInfo,
+		textChannelInfo: ShopifyChannelInfo,
 		channel: TextChannel,
 		siteName: string
-	) {
+	): Promise<void> {
 		let channelMessage = "";
 		if (siteName === "Supreme") {
 			channelMessage = textChannelInfo.openingMessage.replace(
 				"Supreme",
-				"<@&834439456421314560>"
+				"<@&834439456421314560> Make sure to post W's in <#679913101269008483>"
 			);
 		} else if (siteName === "Palace") {
 			channelMessage =
-				textChannelInfo.openingMessage + " <@&834439872499417088>";
+				textChannelInfo.openingMessage +
+				" <@&834439872499417088>  Make sure to post W's in <#679913101269008483>";
+		} else {
+			logger.error("Uncaught site name");
 		}
 
 		channel.send(channelMessage);
@@ -69,10 +73,60 @@ export class Discord {
 	}
 
 	/**
+	 * makes a list of embeds for the upcoming products
+	 *
+	 * @param {*} snkrsChannelInfo
+	 * @param {*} channel
+	 * @returns
+	 */
+	async sendSnkrsDropInfo(
+		snkrsChannelInfo: SnkrsDropInfo,
+		channel: TextChannel
+	): Promise<void> {
+		channel.send(
+			"<@&834440275908755566> Make sure to post W's in <#679913101269008483>"
+		);
+		var embed;
+		embed = new EmbedBuilder()
+			.setColor(0xcc0000)
+			.setTitle(snkrsChannelInfo.title)
+			.setURL(snkrsChannelInfo.link)
+			.setDescription(snkrsChannelInfo.description)
+			.setThumbnail("attachment://logo.png")
+			.addFields(
+				{ name: "Price", value: snkrsChannelInfo.price },
+				{ name: "Release Date", value: snkrsChannelInfo.releaseDate },
+				{ name: "Release Time", value: snkrsChannelInfo.releaseTime }
+			)
+			.setTimestamp()
+			.setFooter({
+				text: `Good luck on the upcoming SNKRS drops!!!`,
+				iconURL: "attachment://logo.png",
+			});
+
+		var embeds = [];
+		embeds.push(embed);
+		for (const image of snkrsChannelInfo.imageUrls) {
+			var imageEmbed = new EmbedBuilder()
+				.setURL(snkrsChannelInfo.link)
+				.setImage(image);
+
+			embeds.push(imageEmbed);
+		}
+
+		const image = fs.readFileSync("./resources/logo.png");
+
+		await channel.send({
+			embeds: embeds,
+			files: [{ attachment: image, name: "logo.png" }],
+		});
+	}
+
+	/**
 	 * creates a new channel given the category and channel name
 	 *
 	 * @param {*} client
-	 * @param {*} categoryName
+	 * @param {*} category
 	 * @param {*} channelName
 	 * @returns
 	 */
@@ -100,27 +154,28 @@ export class Discord {
 			`Channel "${newChannel.name}" created in category "${category.name}".`
 		);
 
-		return newChannel;
+		return newChannel!;
 	}
 
 	/**
 	 * returns a boolean of whether or not the channel exists under the given category
 	 *
 	 * @param {*} client
-	 * @param {*} name
+	 * @param {*} channelName
+	 * @param {*} categoryId
 	 * @returns
 	 */
 	async doesChannelExistUnderCategory(
 		client: Client,
 		channelName: string,
 		categoryId: string
-	) {
+	): Promise<GuildBasedChannel> {
 		logger.info(`Searching for channel: ${channelName}`);
 
 		return new Promise((resolve) => {
 			const guild = client.guilds.cache.get(process.env.SERVER_ID!);
 
-			const channelExists = guild?.channels.cache.some((channel) => {
+			const channelExists = guild?.channels.cache.find((channel) => {
 				return (
 					channel.name === channelName && channel.parentId === categoryId
 				);
@@ -136,7 +191,7 @@ export class Discord {
 				);
 			}
 
-			resolve(channelExists);
+			resolve(channelExists!);
 		});
 	}
 
@@ -166,5 +221,49 @@ export class Discord {
 		}
 
 		return category;
+	}
+
+	async cleanUpOldReleasesByMonthAndDay(
+		client: Client,
+		dateToday: Date,
+		categoryId: string
+	): Promise<void> {
+		const guild = client.guilds.cache.get(process.env.SERVER_ID!);
+		const monthDayToday = dateToday.getMonth() * 100 + dateToday.getDate();
+
+		const releaseList = guild!.channels.cache.filter((channel) => {
+			return channel.parentId === categoryId;
+		});
+
+		const oldReleasesList = releaseList.filter((channel) => {
+			const channelDateList = channel.name.split("-");
+			const channelDate = new Date(
+				`${dateToday.getFullYear()}-${channelDateList[0]}-${
+					channelDateList[1]
+				}`
+			);
+			const monthDayChannelDay =
+				(channelDate.getMonth() + 1) * 100 + channelDate.getDate();
+
+			return monthDayToday > monthDayChannelDay;
+		});
+
+		oldReleasesList.map(async (oldChannel) => {
+			try {
+				const channelToRemove = await guild!.channels.fetch(oldChannel.id);
+				if (channelToRemove) {
+					await channelToRemove.delete();
+					console.log(
+						`Channel ${channelToRemove.name} has been successfully removed.`
+					);
+				} else {
+					console.log(`Channel with ID ${oldChannel.id} not found.`);
+				}
+			} catch (error) {
+				console.error("Error deleting channel(s):", error);
+			}
+		});
+
+		console.log("Done deleting old releases");
 	}
 }

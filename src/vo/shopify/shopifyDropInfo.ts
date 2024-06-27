@@ -1,4 +1,4 @@
-export class SupremeDropInfo {
+export class ShopifyDropInfo {
 	productName: string;
 	productInfoUrl: string;
 	imageUrl: string;

@@ -44,7 +44,8 @@ Key Features:
 Clone the repository and navigate to the project directory:
 
 ```bash
-git clone REPO_URL
+git clone https://github.com/ryguy34/snkrs-scraper.git
 cd project-directory
 npm install
-node main.js # or run npm script "start" from package.json
+tsx watch src/main.ts # or run npm script "start" from package.json
+```

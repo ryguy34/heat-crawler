@@ -1,7 +1,7 @@
 import axios from "axios";
 import { load } from "cheerio";
-import { SupremeDropInfo } from "./vo/supremeDropInfo";
-import { TextChannelInfo } from "./vo/textChannelInfo";
+import { ShopifyDropInfo } from "./vo/shopify/shopifyDropInfo";
+import { ShopifyChannelInfo } from "./vo/shopify/shopifyChannelInfo";
 
 const constants = require("./constants");
 
@@ -12,8 +12,8 @@ export class Supreme {
 		currentWeekThursdayDate: string,
 		currentYear: number,
 		currentSeason: string
-	) {
-		var productList: SupremeDropInfo[] = [];
+	): Promise<ShopifyChannelInfo> {
+		var productList: ShopifyDropInfo[] = [];
 		var supremeTextChannelInfo;
 
 		try {
@@ -36,7 +36,7 @@ export class Supreme {
 				.toLocaleLowerCase()
 				.replace(" ", "-");
 
-			supremeTextChannelInfo = new TextChannelInfo(channelName, title);
+			supremeTextChannelInfo = new ShopifyChannelInfo(channelName, title);
 
 			$(".catalog-item").each((_: number, ele: any) => {
 				var itemId = $(ele).find("a").attr("data-itemid");
@@ -64,7 +64,7 @@ export class Supreme {
 					"/" +
 					itemSlug;
 
-				const productInfo = new SupremeDropInfo(
+				const productInfo = new ShopifyDropInfo(
 					productName!,
 					productInfoUrl,
 					imageUrl,
@@ -80,6 +80,6 @@ export class Supreme {
 			console.error(error);
 		}
 
-		return supremeTextChannelInfo;
+		return supremeTextChannelInfo!;
 	}
 }
