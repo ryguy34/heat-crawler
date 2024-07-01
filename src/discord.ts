@@ -4,12 +4,14 @@ import {
 	EmbedBuilder,
 	TextChannel,
 	GuildBasedChannel,
+	Collection,
 } from "discord.js";
 import "dotenv/config";
 import fs from "fs";
 import { ShopifyChannelInfo } from "./vo/shopify/shopifyChannelInfo";
 import { SnkrsDropInfo } from "./vo/snkrs/snkrsDropInfo";
 import logger from "./config/logger";
+const constants = require("./constants");
 
 export class Discord {
 	constructor() {}
@@ -96,7 +98,11 @@ export class Discord {
 			.addFields(
 				{ name: "Price", value: snkrsChannelInfo.price },
 				{ name: "Release Date", value: snkrsChannelInfo.releaseDate },
-				{ name: "Release Time", value: snkrsChannelInfo.releaseTime }
+				{ name: "Release Time", value: snkrsChannelInfo.releaseTime },
+				{
+					name: "Resale",
+					value: `[StockX](https://stockx.com/search?s=${snkrsChannelInfo.sku})`,
+				}
 			)
 			.setTimestamp()
 			.setFooter({
@@ -265,5 +271,42 @@ export class Discord {
 		});
 
 		console.log("Done deleting old releases");
+	}
+
+	async sortSnkrsDrops(client: Client) {
+		const guild = await client.guilds.fetch(process.env.SERVER_ID!);
+
+		try {
+			// Fetch all channels in the guild
+			const channels = guild.channels.cache;
+
+			// Filter channels under the specified category and sort them by position
+			const sortedChannels = channels
+				.filter(
+					(channel): channel is TextChannel =>
+						channel.parentId === constants.SNKRS.CATEGORY_ID &&
+						channel.isTextBased()
+				)
+				.sort((a, b) => a.name.localeCompare(b.name));
+
+			// sortedChannels.forEach((channel, index) => {
+			// 	const newPosition = +index + 1; // Calculate the new position
+			// 	channel
+			// 		.setPosition(newPosition) // Ensure newPosition is a number
+			// 		.then((updatedChannel) => {
+			// 			console.log(
+			// 				`Moved ${updatedChannel.name} to position ${newPosition}`
+			// 			);
+			// 		});
+			// });
+
+			for (let i = 0; i < sortedChannels.size; i++) {
+				const newPosition = i + 1; // Calculate the new position
+				//var channel = sortedChannels[i];
+				sortedChannels!.at(i)!.setPosition(newPosition); // Ensure newPosition is a number
+			}
+		} catch (error) {
+			console.error("Error sorting channels:", error);
+		}
 	}
 }

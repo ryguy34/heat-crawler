@@ -53,18 +53,17 @@ export class SNKRS {
 				await page.goto(link);
 				const dynamicContent = await page.content();
 				const $ = load(dynamicContent);
-				const model = $(".product-info").find("h1").first().text();
-				const name = $(".product-info").find("h2").first().text();
-				const price = $(".product-info").find("div").first().text();
 				const availableAt = $(".product-info .test-available-date")
 					.find("div")
 					.text()
-					.replace("2:00 PM", "9:00 AM")
+					.replace("2:00 PM", "9:00 AM CST")
 					.replace("Available ", "");
 				const dateTime = this.parseDateTime(availableAt);
-				// TODO: only send releases that are one week out
 				const releaseDate = dateTime[0];
 				const releaseTime = dateTime[1];
+				const model = $(".product-info").find("h1").first().text();
+				const name = $(".product-info").find("h2").first().text();
+				const price = $(".product-info").find("div").first().text();
 				const descriptionAndSku = $(".product-info .description-text")
 					.find("p")
 					.first()
@@ -104,7 +103,7 @@ export class SNKRS {
 				// logger.info("releaseTime: " + releaseTime);
 				// logger.info("description: " + description);
 				// logger.info("channelName: " + channelName);
-				// logger.info("sku: " + sku + "\n");
+				logger.info("sku: " + sku + "\n");
 			} catch (error) {
 				logger.error("Error parsing SNKRS release: " + error);
 			}
@@ -131,5 +130,36 @@ export class SNKRS {
 			.toLowerCase();
 
 		return `${cleanedDate}-${cleanModel}-${cleanName}`;
+	}
+
+	isDate7DaysOrLessInFuture(dateString: string): boolean {
+		const currentDate = new Date();
+
+		// Split the date string into parts
+		const parts = dateString.split("/");
+		let month, day;
+
+		if (parts.length === 2) {
+			// Format MM-DD
+			month = parseInt(parts[0], 10);
+			day = parseInt(parts[1], 10);
+		} else if (parts.length === 2 && parts[0].length === 1) {
+			// Format M-DD
+			month = parseInt(parts[0].charAt(0), 10); // Parse the first character as month
+			day = parseInt(parts[0].charAt(1), 10); // Parse the rest as day
+		} else {
+			// Invalid format
+			return false;
+		}
+
+		// Create date object for the input date
+		const parsedDate = new Date(currentDate.getFullYear(), month - 1, day);
+
+		// Calculate future date (7 days from now)
+		const sevenDaysFromNow = new Date(currentDate);
+		sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7);
+
+		// Compare parsed date with current date and 7 days from now
+		return parsedDate >= currentDate && parsedDate <= sevenDaysFromNow;
 	}
 }
