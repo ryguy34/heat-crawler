@@ -61,9 +61,9 @@ export class SNKRS {
 				const dateTime = this.parseDateTime(availableAt);
 				const releaseDate = dateTime[0];
 				const releaseTime = dateTime[1];
+				const model = $(".product-info").find("h1").first().text();
+				const name = $(".product-info").find("h2").first().text();
 				if (this.isDateXDaysOrLessInFuture(releaseDate, 7)) {
-					const model = $(".product-info").find("h1").first().text();
-					const name = $(".product-info").find("h2").first().text();
 					const price = $(".product-info").find("div").first().text();
 					const descriptionAndSku = $(".product-info .description-text")
 						.find("p")
@@ -109,6 +109,8 @@ export class SNKRS {
 					// logger.info("description: " + description);
 					// logger.info("channelName: " + channelName);
 					logger.info("sku: " + sku + "\n");
+				} else {
+					logger.info(`${model} ${name} is too far in the future`);
 				}
 			} catch (error) {
 				logger.error("Error parsing SNKRS release: " + error);
