@@ -61,49 +61,55 @@ export class SNKRS {
 				const dateTime = this.parseDateTime(availableAt);
 				const releaseDate = dateTime[0];
 				const releaseTime = dateTime[1];
-				const model = $(".product-info").find("h1").first().text();
-				const name = $(".product-info").find("h2").first().text();
-				const price = $(".product-info").find("div").first().text();
-				const descriptionAndSku = $(".product-info .description-text")
-					.find("p")
-					.first()
-					.text()
-					.split("\n");
-				const description = descriptionAndSku[0];
-				const sku = descriptionAndSku[1].trim().replace("SKU: ", "");
-				const channelName = this.cleanChannelName(name, model, releaseDate);
+				if (this.isDateXDaysOrLessInFuture(releaseDate, 7)) {
+					const model = $(".product-info").find("h1").first().text();
+					const name = $(".product-info").find("h2").first().text();
+					const price = $(".product-info").find("div").first().text();
+					const descriptionAndSku = $(".product-info .description-text")
+						.find("p")
+						.first()
+						.text()
+						.split("\n");
+					const description = descriptionAndSku[0];
+					const sku = descriptionAndSku[1].trim().replace("SKU: ", "");
+					const channelName = this.cleanChannelName(
+						name,
+						model,
+						releaseDate
+					);
 
-				var imageLinks = await page.evaluate(() => {
-					const imgs = document.querySelectorAll("img");
-					return Array.from(imgs).map((img) => img.src);
-				});
+					var imageLinks = await page.evaluate(() => {
+						const imgs = document.querySelectorAll("img");
+						return Array.from(imgs).map((img) => img.src);
+					});
 
-				imageLinks = imageLinks.filter((i) => {
-					return i.includes("t_prod");
-				});
-				const snkrsDropInfo = new SnkrsDropInfo(
-					channelName,
-					`${model} ${name}`,
-					imageLinks,
-					price,
-					model,
-					name,
-					releaseDate,
-					releaseTime,
-					description,
-					sku,
-					link
-				);
-				snkrsDrops.push(snkrsDropInfo);
-				// logger.info("link: " + link);
-				// logger.info("model: " + model);
-				// logger.info("name: " + name);
-				// logger.info("price: " + price);
-				// logger.info("releaseDate: " + releaseDate);
-				// logger.info("releaseTime: " + releaseTime);
-				// logger.info("description: " + description);
-				// logger.info("channelName: " + channelName);
-				logger.info("sku: " + sku + "\n");
+					imageLinks = imageLinks.filter((i) => {
+						return i.includes("t_prod");
+					});
+					const snkrsDropInfo = new SnkrsDropInfo(
+						channelName,
+						`${model} ${name}`,
+						imageLinks,
+						price,
+						model,
+						name,
+						releaseDate,
+						releaseTime,
+						description,
+						sku,
+						link
+					);
+					snkrsDrops.push(snkrsDropInfo);
+					// logger.info("link: " + link);
+					// logger.info("model: " + model);
+					// logger.info("name: " + name);
+					// logger.info("price: " + price);
+					// logger.info("releaseDate: " + releaseDate);
+					// logger.info("releaseTime: " + releaseTime);
+					// logger.info("description: " + description);
+					// logger.info("channelName: " + channelName);
+					logger.info("sku: " + sku + "\n");
+				}
 			} catch (error) {
 				logger.error("Error parsing SNKRS release: " + error);
 			}
@@ -132,7 +138,10 @@ export class SNKRS {
 		return `${cleanedDate}-${cleanModel}-${cleanName}`;
 	}
 
-	isDate7DaysOrLessInFuture(dateString: string): boolean {
+	isDateXDaysOrLessInFuture(
+		dateString: string,
+		numDaysInAdvance: number
+	): boolean {
 		const currentDate = new Date();
 
 		// Split the date string into parts
@@ -157,7 +166,7 @@ export class SNKRS {
 
 		// Calculate future date (7 days from now)
 		const sevenDaysFromNow = new Date(currentDate);
-		sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + 7);
+		sevenDaysFromNow.setDate(sevenDaysFromNow.getDate() + numDaysInAdvance);
 
 		// Compare parsed date with current date and 7 days from now
 		return parsedDate >= currentDate && parsedDate <= sevenDaysFromNow;
