@@ -56,6 +56,11 @@ export class Palace {
 					season = `${parts[0]}-${parts[1]}`;
 				}
 
+				// hooded category change
+				if (category == "Sweatshirts" && itemSlug?.includes("hood")) {
+					category = "hoods";
+				}
+
 				const imageUrl = constants.PALACE_COMMUNITY_BASE_URL + png;
 				const productInfoUrl = `${constants.PALACE_COMMUNITY_BASE_URL}/collections/${season}/items/${itemId}/${itemSlug}`;
 				const productName = itemName;
