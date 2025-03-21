@@ -266,8 +266,6 @@ export class Discord {
 
 		console.log("Done deleting old releases");
 	}
-<<<<<<< Updated upstream
-=======
 
 	// async sortSnkrsDrops(client: Client) {
 	// 	const guild = await client.guilds.fetch(process.env.SERVER_ID!);
@@ -306,45 +304,44 @@ export class Discord {
 	// 	}
 	// }
 
-	isReleaseInPast(name: string): boolean {
-		const parts = name.split("/");
+	// isReleaseInPast(name: string): boolean {
+	// 	const parts = name.split("/");
 
-		// Extract the month and day parts
-		const monthStr = parts[0];
-		const dayStr = parts[1];
+	// 	// Extract the month and day parts
+	// 	const monthStr = parts[0];
+	// 	const dayStr = parts[1];
 
-		// Get the current date
-		const currentDate = new Date();
+	// 	// Get the current date
+	// 	const currentDate = new Date();
 
-		// Create a new Date object for the provided month and day (default to current year)
-		const providedDate = new Date(
-			currentDate.getFullYear(),
-			parseInt(monthStr) - 1,
-			parseInt(dayStr)
-		);
+	// 	// Create a new Date object for the provided month and day (default to current year)
+	// 	const providedDate = new Date(
+	// 		currentDate.getFullYear(),
+	// 		parseInt(monthStr) - 1,
+	// 		parseInt(dayStr)
+	// 	);
 
-		// Compare the provided date with the current date
-		return providedDate < currentDate;
+	// 	// Compare the provided date with the current date
+	// 	return providedDate < currentDate;
+	// }
+
+	// async deleteOldSnkrsReleases(client: Client) {
+	// 	try {
+	// 		const guild = await client.guilds.fetch(process.env.SERVER_ID!);
+	// 		const channels = guild.channels.cache;
+	// 		const oldChannelsToDelete = channels.filter(
+	// 			(channel): channel is TextChannel =>
+	// 				channel.parentId === constants.TEST.TEST_CATEGORY_ID &&
+	// 				channel.isTextBased() &&
+	// 				this.isReleaseInPast(channel.name)
+	// 		);
+
+	// 		oldChannelsToDelete.forEach(async (channel) => {
+	// 			const fetchedChannel = guild.channels.cache.get(channel.id);
+	// 			await fetchedChannel!.delete();
+	// 		});
+	// 	} catch (error) {
+	// 		console.error("Error deleting channels:", error);
+	// 	}
 	}
-
-	async deleteOldSnkrsReleases(client: Client) {
-		try {
-			const guild = await client.guilds.fetch(process.env.SERVER_ID!);
-			const channels = guild.channels.cache;
-			const oldChannelsToDelete = channels.filter(
-				(channel): channel is TextChannel =>
-					channel.parentId === constants.TEST.TEST_CATEGORY_ID &&
-					channel.isTextBased() &&
-					this.isReleaseInPast(channel.name)
-			);
-
-			oldChannelsToDelete.forEach(async (channel) => {
-				const fetchedChannel = guild.channels.cache.get(channel.id);
-				await fetchedChannel!.delete();
-			});
-		} catch (error) {
-			console.error("Error deleting channels:", error);
-		}
-	}
->>>>>>> Stashed changes
 }
