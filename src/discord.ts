@@ -266,4 +266,82 @@ export class Discord {
 
 		console.log("Done deleting old releases");
 	}
+
+	// async sortSnkrsDrops(client: Client) {
+	// 	const guild = await client.guilds.fetch(process.env.SERVER_ID!);
+
+	// 	try {
+	// 		// Fetch all channels in the guild
+	// 		const channels = guild.channels.cache;
+
+	// 		// Filter channels under the specified category and sort them by position
+	// 		const sortedChannels = channels
+	// 			.filter(
+	// 				(channel): channel is TextChannel =>
+	// 					channel.parentId === constants.SNKRS.CATEGORY_ID &&
+	// 					channel.isTextBased()
+	// 			)
+	// 			.sort((a, b) => a.name.localeCompare(b.name));
+
+	// 		// sortedChannels.forEach((channel, index) => {
+	// 		// 	const newPosition = +index + 1; // Calculate the new position
+	// 		// 	channel
+	// 		// 		.setPosition(newPosition) // Ensure newPosition is a number
+	// 		// 		.then((updatedChannel) => {
+	// 		// 			console.log(
+	// 		// 				`Moved ${updatedChannel.name} to position ${newPosition}`
+	// 		// 			);
+	// 		// 		});
+	// 		// });
+
+	// 		for (let i = 0; i < sortedChannels.size; i++) {
+	// 			const newPosition = i + 1; // Calculate the new position
+	// 			//var channel = sortedChannels[i];
+	// 			sortedChannels!.at(i)!.setPosition(newPosition); // Ensure newPosition is a number
+	// 		}
+	// 	} catch (error) {
+	// 		console.error("Error sorting channels:", error);
+	// 	}
+	// }
+
+	// isReleaseInPast(name: string): boolean {
+	// 	const parts = name.split("/");
+
+	// 	// Extract the month and day parts
+	// 	const monthStr = parts[0];
+	// 	const dayStr = parts[1];
+
+	// 	// Get the current date
+	// 	const currentDate = new Date();
+
+	// 	// Create a new Date object for the provided month and day (default to current year)
+	// 	const providedDate = new Date(
+	// 		currentDate.getFullYear(),
+	// 		parseInt(monthStr) - 1,
+	// 		parseInt(dayStr)
+	// 	);
+
+	// 	// Compare the provided date with the current date
+	// 	return providedDate < currentDate;
+	// }
+
+	// async deleteOldSnkrsReleases(client: Client) {
+	// 	try {
+	// 		const guild = await client.guilds.fetch(process.env.SERVER_ID!);
+	// 		const channels = guild.channels.cache;
+	// 		const oldChannelsToDelete = channels.filter(
+	// 			(channel): channel is TextChannel =>
+	// 				channel.parentId === constants.TEST.TEST_CATEGORY_ID &&
+	// 				channel.isTextBased() &&
+	// 				this.isReleaseInPast(channel.name)
+	// 		);
+
+	// 		oldChannelsToDelete.forEach(async (channel) => {
+	// 			const fetchedChannel = guild.channels.cache.get(channel.id);
+	// 			await fetchedChannel!.delete();
+	// 		});
+	// 	} catch (error) {
+	// 		console.error("Error deleting channels:", error);
+	// 	}
+	}
 }

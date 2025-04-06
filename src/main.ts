@@ -153,6 +153,7 @@ async function mainSnkrsNotifications(): Promise<void> {
 				await discord.sendSnkrsDropInfo(snkrsDrop, snkrsReleaseChannel!);
 			}
 		}
+		await discord.deleteOldSnkrsReleases(client);
 	} catch (error) {
 		logger.error(error);
 	}
@@ -165,23 +166,23 @@ client.on("ready", async () => {
 	logger.info("Bot is ready\n");
 
 	//runs every Wednesday at 8PM
-	// cron.schedule("0 20 * * 3", async () => {
-	// 	logger.info("Running Supreme cron job");
-	// 	await mainSupremeNotifications();
-	// 	logger.info("Supreme drops are done");
-	// });
+	cron.schedule("0 20 * * 3", async () => {
+		logger.info("Running Supreme cron job");
+		await mainSupremeNotifications();
+		logger.info("Supreme drops are done");
+	});
 
 	//runs every Thursday at 8PM
-	// cron.schedule("0 20 * * 4", async () => {
-	// 	logger.info("Running Palace cron job");
-	// 	await mainPalaceNotifications();
-	// 	logger.info("Palace drops are done");
-	// });
+	cron.schedule("0 20 * * 4", async () => {
+		logger.info("Running Palace cron job");
+		await mainPalaceNotifications();
+		logger.info("Palace drops are done");
+	});
 
 	//runs everyday at 8PM
-	//cron.schedule("0 20 * * *", () => {
-	logger.info("Running SNKRS cron job");
-	await mainSnkrsNotifications();
-	logger.info("SNKRS drops are done");
-	//});
+	cron.schedule("0 20 * * *", () => {
+		logger.info("Running SNKRS cron job");
+		await mainSnkrsNotifications();
+		logger.info("SNKRS drops are done");
+	});
 });
