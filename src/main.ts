@@ -7,6 +7,7 @@ import { Palace } from "./palace";
 import { SNKRS } from "./snkrs";
 import { Utility } from "./utility";
 import logger from "./config/logger";
+import { Kith } from "./kith";
 const constants = require("./constants");
 
 const discord = new Discord();
@@ -153,7 +154,20 @@ async function mainSnkrsNotifications(): Promise<void> {
 				await discord.sendSnkrsDropInfo(snkrsDrop, snkrsReleaseChannel!);
 			}
 		}
-		await discord.deleteOldSnkrsReleases(client);
+		//await discord.deleteOldSnkrsReleases(client);
+	} catch (error) {
+		logger.error(error);
+	}
+}
+
+/**
+ * main function for Kith Monday Program notifications to Discord channel
+ */
+async function mainKithMondayProgramNotifications(): Promise<void> {
+	const kith = new Kith();
+
+	try {
+		const kithDrops = kith.parseKithMondayProgramDrop();
 	} catch (error) {
 		logger.error(error);
 	}
@@ -166,23 +180,30 @@ client.on("ready", async () => {
 	logger.info("Bot is ready\n");
 
 	//runs every Wednesday at 8PM
-	cron.schedule("0 20 * * 3", async () => {
-		logger.info("Running Supreme cron job");
-		await mainSupremeNotifications();
-		logger.info("Supreme drops are done");
-	});
+	//cron.schedule("0 20 * * 3", async () => {
+	// logger.info("Running Supreme cron job");
+	// await mainSupremeNotifications();
+	// logger.info("Supreme drops are done");
+	//});
 
 	//runs every Thursday at 8PM
-	cron.schedule("0 20 * * 4", async () => {
-		logger.info("Running Palace cron job");
-		await mainPalaceNotifications();
-		logger.info("Palace drops are done");
-	});
+	// cron.schedule("0 20 * * 4", async () => {
+	// 	logger.info("Running Palace cron job");
+	// 	await mainPalaceNotifications();
+	// 	logger.info("Palace drops are done");
+	// });
 
 	//runs everyday at 8PM
-	cron.schedule("0 20 * * *", () => {
-		logger.info("Running SNKRS cron job");
-		await mainSnkrsNotifications();
-		logger.info("SNKRS drops are done");
-	});
+	// cron.schedule("0 20 * * *", () => {
+	// 	logger.info("Running SNKRS cron job");
+	// 	await mainSnkrsNotifications();
+	// 	logger.info("SNKRS drops are done");
+	// });
+
+	//runs every Sunday at 8PM
+	// cron.schedule("0 20 * * 0", () => {
+	logger.info("Running Kith Monday Program cron job");
+	await mainKithMondayProgramNotifications();
+	logger.info("Kith Monday Program drops are done");
+	// });
 });

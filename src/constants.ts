@@ -24,6 +24,7 @@ module.exports = Object.freeze({
 		STORE_BASE_URL: "https://shop-usa.palaceskateboards.com",
 		CATEGORY_ID: "873011958591418448",
 	},
+	KITH_MONDAY_PROGRAM: "https://kith.com/collections/kith-monday-program",
 	SUPREME_COMMUNITY_BASE_URL: "https://www.supremecommunity.com",
 	PALACE_COMMUNITY_BASE_URL: "https://www.palacecmty.com",
 	SUPREME_BASE_URL: "https://us.supreme.com/",
