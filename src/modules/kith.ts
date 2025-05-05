@@ -1,8 +1,8 @@
 import axios from "axios";
 import { load } from "cheerio";
 
-import logger from "./config/logger";
-import constants from "./constants";
+import logger from "../config/logger";
+import constants from "../utility/constants";
 
 export class Kith {
 	constructor() {}

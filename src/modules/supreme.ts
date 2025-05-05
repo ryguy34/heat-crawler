@@ -1,9 +1,9 @@
 import axios from "axios";
 import { load } from "cheerio";
-import { ShopifyDropInfo } from "./vo/shopify/shopifyDropInfo";
-import { ShopifyChannelInfo } from "./vo/shopify/shopifyChannelInfo";
+import { ShopifyDropInfo } from "../vo/shopify/shopifyDropInfo";
+import { ShopifyChannelInfo } from "../vo/shopify/shopifyChannelInfo";
 
-import constants from "./constants";
+import constants from "../utility/constants";
 
 export class Supreme {
 	constructor() {}

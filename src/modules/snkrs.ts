@@ -1,10 +1,10 @@
-const axios = require("axios");
+import axios from "axios";
 import { load } from "cheerio";
 import puppeteer from "puppeteer";
 import zlib from "zlib";
-import logger from "./config/logger";
-import { SnkrsDropInfo } from "./vo/snkrs/snkrsDropInfo";
-import constants from "./constants";
+import logger from "../config/logger";
+import { SnkrsDropInfo } from "../vo/snkrs/snkrsDropInfo";
+import constants from "../utility/constants";
 
 export class SNKRS {
 	constructor() {}
@@ -14,8 +14,8 @@ export class SNKRS {
 		const options = {
 			method: "get",
 			url: constants.SNKRS.URL,
-			headers: constants.SNKRS.HEADERS,
-			responseType: "arraybuffer",
+			headers: constants.SNKRS.HEADERS.headers,
+			responseType: "arraybuffer" as const,
 			transformResponse: [
 				(data: any) => {
 					if (data.slice(0, 2).toString("hex") === "1f8b") {

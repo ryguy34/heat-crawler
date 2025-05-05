@@ -1,10 +1,10 @@
 import axios from "axios";
 import { load } from "cheerio";
-import { ShopifyDropInfo } from "./vo/shopify/shopifyDropInfo";
-import { ShopifyChannelInfo } from "./vo/shopify/shopifyChannelInfo";
-import logger from "./config/logger";
+import { ShopifyDropInfo } from "../vo/shopify/shopifyDropInfo";
+import { ShopifyChannelInfo } from "../vo/shopify/shopifyChannelInfo";
+import logger from "../config/logger";
 
-import constants from "./constants";
+import constants from "../utility/constants";
 
 export class Palace {
 	constructor() {}

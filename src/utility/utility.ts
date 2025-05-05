@@ -1,6 +1,6 @@
 import { format, addDays } from "date-fns";
 
-export class Utility {
+class Utility {
 	constructor() {}
 
 	/**
@@ -139,3 +139,5 @@ export class Utility {
 		return format(nextMonday, "MMM-dd").toLowerCase(); // Format as "mmm-dd" and convert to lowercase
 	}
 }
+
+export default Utility;

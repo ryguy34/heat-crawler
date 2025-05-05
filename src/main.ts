@@ -2,14 +2,14 @@ import { config } from "dotenv";
 import { Client, GatewayIntentBits } from "discord.js";
 import path from "path";
 import cron from "node-cron";
-import { Discord } from "./discord";
-import { Supreme } from "./supreme";
-import { Palace } from "./palace";
-import { SNKRS } from "./snkrs";
-import { Utility } from "./utility";
+import { Discord } from "./modules/discord";
+import { Supreme } from "./modules/supreme";
+import { Palace } from "./modules/palace";
+import { SNKRS } from "./modules/snkrs";
+import Utility from "./utility/utility";
 import logger from "./config/logger";
-import { Kith } from "./kith";
-import constants from "./constants";
+import { Kith } from "./modules/kith";
+import constants from "./utility/constants";
 
 const discord = new Discord();
 const client = new Client({
