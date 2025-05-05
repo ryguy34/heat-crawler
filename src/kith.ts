@@ -9,22 +9,22 @@ export class Kith {
 
 	async parseProductVariants(
 		productUrl: string
-	): Promise<{ title: string; id: string }[]> {
-		const variantUrlList: { title: string; id: string }[] = [];
+	): Promise<{ size: string; id: string }[]> {
+		const variantUrlList: { size: string; id: string }[] = [];
 		try {
 			const res = await axios.get(productUrl + ".json", constants.params);
 			const rawVariantList = res.data.product.variants;
-			rawVariantList.forEach((variant: { title: string; id: number }) => {
-				if (variant.title === "Default Title") {
+			rawVariantList.forEach((variant: { size: string; id: number }) => {
+				if (variant.size === "Default Title") {
 					// Default Title means only one size
 					variantUrlList.push({
 						id: String(variant.id), // ensure string type
-						title: "OS",
+						size: "OS",
 					});
 				} else {
 					variantUrlList.push({
 						id: String(variant.id), // ensure string type
-						title: variant.title,
+						size: variant.size,
 					});
 				}
 			});
@@ -72,7 +72,6 @@ export class Kith {
 						productUrl!
 					);
 					logger.debug(variantCartUrlList);
-					// send to discord
 				}
 			}
 		} catch (error) {
