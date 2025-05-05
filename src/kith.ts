@@ -20,7 +20,7 @@ export class Kith {
 					logger.debug("Default Title found, setting size to OS");
 					variantUrlList.push({
 						id: String(variant.id), // ensure string type
-						size: "OS",
+						size: "One Size",
 					});
 				} else {
 					variantUrlList.push({

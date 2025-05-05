@@ -151,7 +151,7 @@ export class Discord {
 				.setThumbnail("attachment://logo.png")
 				.addFields(
 					{ name: "Price", value: product.productPrice },
-					{ name: "Autocart Sizes", value: "" },
+					{ name: "Auto Cart Sizes", value: "" },
 					...(product.variantCartUrlList?.map((variant) => ({
 						name: " ",
 						value: `[${variant.size}](https://kith.com/cart/${variant.id}:1)`,
