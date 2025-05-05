@@ -5,6 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "dev": "cross-env NODE_ENV=dev tsx watch src/main.ts",
+    "prod": "cross-env NODE_ENV=prod tsx watch src/main.ts",
     "build": "tsc",
     "start": "node ."
   },
