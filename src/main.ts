@@ -42,8 +42,8 @@ async function mainSupremeNotifications(): Promise<void> {
 			const value = await discord.doesChannelExistUnderCategory(
 				client,
 				supremeDiscordTextChannelInfo.channelName,
-				constants.SUPREME_DROPS_CATEGORY_ID
-				//constants.TEST_CATEGORY_ID
+				constants.SUPREME.CATEGORY_ID
+				//constants.TEST.CATEGORY_ID
 			);
 
 			if (!value) {
@@ -90,8 +90,8 @@ async function mainPalaceNotifications(): Promise<void> {
 			const value = await discord.doesChannelExistUnderCategory(
 				client,
 				palaceDiscordTextChannelInfo.channelName,
-				constants.PALACE_DROPS_CATEGORY_ID
-				//constants.TEST_CATEGORY_ID
+				constants.PALACE.CATEGORY_ID
+				//constants.TEST.CATEGORY_ID
 			);
 
 			if (!value) {
@@ -167,7 +167,13 @@ async function mainKithMondayProgramNotifications(): Promise<void> {
 	const kith = new Kith();
 
 	try {
-		const kithDrops = await kith.parseKithMondayProgramDrop();
+		const kithMondayProgramProductList =
+			await kith.parseKithMondayProgramDrop();
+
+		if (kithMondayProgramProductList.length > 0) {
+			// upcoming releases found
+			// TODO: check if channel exists and create if not and get dates
+		}
 	} catch (error) {
 		logger.error(error);
 	}
