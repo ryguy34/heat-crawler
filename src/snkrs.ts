@@ -4,7 +4,7 @@ import puppeteer from "puppeteer";
 import zlib from "zlib";
 import logger from "./config/logger";
 import { SnkrsDropInfo } from "./vo/snkrs/snkrsDropInfo";
-const constants = require("./constants");
+import constants from "./constants";
 
 export class SNKRS {
 	constructor() {}

@@ -4,7 +4,7 @@ import { ShopifyDropInfo } from "./vo/shopify/shopifyDropInfo";
 import { ShopifyChannelInfo } from "./vo/shopify/shopifyChannelInfo";
 import logger from "./config/logger";
 
-const constants = require("./constants");
+import constants from "./constants";
 
 export class Palace {
 	constructor() {}
