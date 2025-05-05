@@ -4,7 +4,7 @@
   "description": "Node SNKRS web scraper",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "tsx watch src/main.ts",
+    "dev": "cross-env NODE_ENV=dev tsx watch src/main.ts",
     "build": "tsc",
     "start": "node ."
   },
@@ -30,6 +30,7 @@
     "@types/node": "^20.14.9",
     "@types/node-cron": "^3.0.11",
     "@types/winston": "^2.4.4",
+    "cross-env": "^7.0.3",
     "dotenv": "^16.0.3",
     "pretty": "^2.0.0",
     "tsx": "^4.15.7"
