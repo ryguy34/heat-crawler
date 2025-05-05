@@ -9,21 +9,24 @@ export class Kith {
 	async parseProductVariants(
 		productUrl: string
 	): Promise<{ title: string; id: string }[]> {
-		var variantUrlList: { title: string; id: string }[] = [];
+		const variantUrlList: { title: string; id: string }[] = [];
 		try {
-			const res = axios
-				.get(productUrl + ".json", constants.params)
-				.then((res) => {
-					const rawVariantList = res.data.product.variants;
-					rawVariantList.forEach(
-						(variant: { title: string; id: string }) => {
-							variantUrlList.push({
-								id: variant.id,
-								title: variant.title,
-							});
-						}
-					);
-				});
+			const res = await axios.get(productUrl + ".json", constants.params);
+			const rawVariantList = res.data.product.variants;
+			rawVariantList.forEach((variant: { title: string; id: number }) => {
+				if (variant.title === "Default Title") {
+					// Default Title means only one size
+					variantUrlList.push({
+						id: String(variant.id), // ensure string type
+						title: "OS",
+					});
+				} else {
+					variantUrlList.push({
+						id: String(variant.id), // ensure string type
+						title: variant.title,
+					});
+				}
+			});
 		} catch (error) {
 			console.error(error);
 		}
@@ -39,11 +42,13 @@ export class Kith {
 
 			const htmlData = res.data;
 			const $ = load(htmlData);
-			$(".product-card").each((_: number, ele: any) => {
+			const productCards = $(".product-card").toArray();
+
+			for (const ele of productCards) {
 				// find text where "MONDAY 11AM EST" and only parse cards that contain this text
 				var mondayRelease = $(ele).find(".text-10").first().text().trim();
 				if (mondayRelease && mondayRelease !== "Monday 11am EST") {
-					return false;
+					// do nothing
 				} else {
 					// this item is releasing as part of the monday program
 					var productName = $(ele)
@@ -60,10 +65,13 @@ export class Kith {
 					console.log(productPrice);
 					// /collections/kith-monday-program/products/nbu9975hk-ph
 					console.log(productUrl);
-					var variantCartUrlList = this.parseProductVariants(productUrl!);
+					var variantCartUrlList = await this.parseProductVariants(
+						productUrl!
+					);
 					console.log(variantCartUrlList);
+					// send to discord
 				}
-			});
+			}
 		} catch (error) {
 			console.error(error);
 		}
