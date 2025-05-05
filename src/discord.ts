@@ -122,7 +122,6 @@ export class Discord {
 		});
 	}
 
-<<<<<<< HEAD
 	async sendKithInfo(
 		kithMondayProgramProductList: {
 			productName: string;
@@ -135,9 +134,6 @@ export class Discord {
 	): Promise<void> {
 		// TODO: add the Kith logo to the embed
 	}
-=======
-	async sendKithInfo(): Promise<void> {}
->>>>>>> 45206785fee86f8d418cf70dbf6388d0af5f0ae0
 
 	/**
 	 * creates a new channel given the category and channel name

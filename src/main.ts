@@ -1,11 +1,6 @@
-<<<<<<< HEAD
 import { config } from "dotenv";
 import { Client, GatewayIntentBits } from "discord.js";
 import path from "path";
-=======
-import "dotenv/config";
-import { Client, GatewayIntentBits } from "discord.js";
->>>>>>> 45206785fee86f8d418cf70dbf6388d0af5f0ae0
 import cron from "node-cron";
 import { Discord } from "./discord";
 import { Supreme } from "./supreme";
@@ -26,15 +21,12 @@ const client = new Client({
 	],
 });
 
-<<<<<<< HEAD
 // Determine the environment (default to 'dev' if NODE_ENV is not set)
 const envFile = `.env${process.env.NODE_ENV ? `.${process.env.NODE_ENV}` : ""}`;
 
 // Load the environment variables from the appropriate file
 config({ path: path.resolve(process.cwd(), envFile) });
 
-=======
->>>>>>> 45206785fee86f8d418cf70dbf6388d0af5f0ae0
 client.login(process.env.CLIENT_TOKEN);
 
 /**
@@ -194,7 +186,6 @@ async function mainKithMondayProgramNotifications(): Promise<void> {
 				constants.KITH.CATEGORY_ID
 				//constants.TEST.CATEGORY_ID
 			);
-<<<<<<< HEAD
 
 			if (!value) {
 				const kithCategory = await discord.getFullCategoryNameBySubstring(
@@ -216,8 +207,6 @@ async function mainKithMondayProgramNotifications(): Promise<void> {
 					);
 				}
 			}
-=======
->>>>>>> 45206785fee86f8d418cf70dbf6388d0af5f0ae0
 		}
 	} catch (error) {
 		logger.error(error);
