@@ -122,6 +122,8 @@ export class Discord {
 		});
 	}
 
+	async sendKithInfo(): Promise<void> {}
+
 	/**
 	 * creates a new channel given the category and channel name
 	 *
