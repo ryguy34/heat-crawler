@@ -167,7 +167,7 @@ async function mainKithMondayProgramNotifications(): Promise<void> {
 	const kith = new Kith();
 
 	try {
-		const kithDrops = kith.parseKithMondayProgramDrop();
+		const kithDrops = await kith.parseKithMondayProgramDrop();
 	} catch (error) {
 		logger.error(error);
 	}
@@ -181,9 +181,9 @@ client.on("ready", async () => {
 
 	//runs every Wednesday at 8PM
 	//cron.schedule("0 20 * * 3", async () => {
-	// logger.info("Running Supreme cron job");
-	// await mainSupremeNotifications();
-	// logger.info("Supreme drops are done");
+	//logger.info("Running Supreme cron job");
+	//await mainSupremeNotifications();
+	//logger.info("Supreme drops are done");
 	//});
 
 	//runs every Thursday at 8PM

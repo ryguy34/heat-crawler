@@ -1,19 +1,33 @@
 import axios from "axios";
 import { load } from "cheerio";
-import { Variant } from "./vo/kith/variant";
 
 const constants = require("./constants");
 
 export class Kith {
 	constructor() {}
 
-	parseProductVariants(productUrl: string): Variant[] {
-		var variant = [];
+	async parseProductVariants(
+		productUrl: string
+	): Promise<{ title: string; id: string }[]> {
+		var variantUrlList: { title: string; id: string }[] = [];
 		try {
+			const res = axios
+				.get(productUrl + ".json", constants.params)
+				.then((res) => {
+					const rawVariantList = res.data.product.variants;
+					rawVariantList.forEach(
+						(variant: { title: string; id: string }) => {
+							variantUrlList.push({
+								id: variant.id,
+								title: variant.title,
+							});
+						}
+					);
+				});
 		} catch (error) {
 			console.error(error);
 		}
-		return [];
+		return variantUrlList;
 	}
 
 	async parseKithMondayProgramDrop(): Promise<void> {
@@ -32,16 +46,22 @@ export class Kith {
 					return false;
 				} else {
 					// this item is releasing as part of the monday program
-					var productName = $(ele).find("img").attr("alt");
-					var imageUrl = $(ele).find("img").attr("src");
+					var productName = $(ele)
+						.find("div.text-black")
+						.last()
+						.text()
+						.trim();
+					var imageUrl = $(ele).find("img").attr("src")?.replace("//", "");
 					var productPrice = $(ele).find(".text-10").last().text().trim();
-					var productUrl = $(ele).find("a").attr("href");
+					var productUrl =
+						"https://kith.com" + $(ele).find("a").attr("href");
 					console.log(productName);
 					console.log(imageUrl);
 					console.log(productPrice);
 					// /collections/kith-monday-program/products/nbu9975hk-ph
 					console.log(productUrl);
 					var variantCartUrlList = this.parseProductVariants(productUrl!);
+					console.log(variantCartUrlList);
 				}
 			});
 		} catch (error) {
