@@ -60,7 +60,7 @@ export class Kith {
 				var mondayRelease = $(ele).find(".text-10").first().text().trim();
 				if (mondayRelease && mondayRelease !== "Monday 11am EST") {
 					// do nothing
-					logger.info("No upcoming releases found.");
+					logger.info("No upcoming Kith Monday Program found");
 					break;
 				} else {
 					// this item is releasing as part of the monday program
@@ -75,7 +75,7 @@ export class Kith {
 					var productPrice = $(ele).find(".text-10").last().text().trim();
 					var productUrl =
 						"https://kith.com" + $(ele).find("a").attr("href");
-					logger.debug(productName);
+					logger.info("Product found: {}", productName);
 					logger.debug(imageUrl);
 					logger.debug(productPrice);
 					// /collections/kith-monday-program/products/nbu9975hk-ph

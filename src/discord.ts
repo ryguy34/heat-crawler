@@ -149,6 +149,7 @@ export class Discord {
 				.setTitle(product.productName)
 				.setURL(product.productUrl)
 				.setThumbnail("attachment://logo.png")
+				// TODO: see what looks better image above or below the fields
 				.addFields(
 					{ name: "Price", value: product.productPrice },
 					{ name: "Auto Cart Sizes", value: "" },

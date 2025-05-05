@@ -178,20 +178,20 @@ async function mainKithMondayProgramNotifications(): Promise<void> {
 			await kith.parseKithMondayProgramDrop();
 
 		if (kithMondayProgramProductList.length > 0) {
-			// upcoming releases found
+			// upcoming release found
 			const mondayProgramReleaseDate = Utility.getUpcomingMonday();
 			const value = await discord.doesChannelExistUnderCategory(
 				client,
 				mondayProgramReleaseDate,
-				constants.KITH.CATEGORY_ID
-				//constants.TEST.CATEGORY_ID
+				//constants.KITH.CATEGORY_ID
+				constants.TEST.CATEGORY_ID
 			);
 
 			if (!value) {
 				const kithCategory = await discord.getFullCategoryNameBySubstring(
 					client,
-					"KITH MONDAY PROGRAM"
-					//"TEST"
+					//"KITH MONDAY PROGRAM"
+					"TEST"
 				);
 
 				if (kithCategory) {
@@ -217,7 +217,7 @@ async function mainKithMondayProgramNotifications(): Promise<void> {
  * When the script has connected to Discord successfully
  */
 client.on("ready", async () => {
-	logger.info("Bot is ready\n");
+	logger.info("Bot is ready");
 
 	//runs every Wednesday at 8PM
 	//cron.schedule("0 20 * * 3", async () => {
