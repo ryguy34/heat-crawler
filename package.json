@@ -23,7 +23,7 @@
     "cheerio": "^1.0.0-rc.12",
     "discord.js": "^14.7.1",
     "node-cron": "^3.0.2",
-    "puppeteer": "^22.12.1",
+    "puppeteer": "^22.15.0",
     "winston": "^3.13.0"
   },
   "devDependencies": {
