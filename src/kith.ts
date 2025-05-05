@@ -1,7 +1,8 @@
 import axios from "axios";
 import { load } from "cheerio";
 
-const constants = require("./constants");
+import logger from "./config/logger";
+import constants from "./constants";
 
 export class Kith {
 	constructor() {}
@@ -28,7 +29,7 @@ export class Kith {
 				}
 			});
 		} catch (error) {
-			console.error(error);
+			logger.error(error);
 		}
 		return variantUrlList;
 	}
@@ -49,6 +50,8 @@ export class Kith {
 				var mondayRelease = $(ele).find(".text-10").first().text().trim();
 				if (mondayRelease && mondayRelease !== "Monday 11am EST") {
 					// do nothing
+					logger.info("No upcoming releases found.");
+					break;
 				} else {
 					// this item is releasing as part of the monday program
 					var productName = $(ele)
@@ -60,15 +63,15 @@ export class Kith {
 					var productPrice = $(ele).find(".text-10").last().text().trim();
 					var productUrl =
 						"https://kith.com" + $(ele).find("a").attr("href");
-					console.log(productName);
-					console.log(imageUrl);
-					console.log(productPrice);
+					logger.debug(productName);
+					logger.debug(imageUrl);
+					logger.debug(productPrice);
 					// /collections/kith-monday-program/products/nbu9975hk-ph
-					console.log(productUrl);
+					logger.debug(productUrl);
 					var variantCartUrlList = await this.parseProductVariants(
 						productUrl!
 					);
-					console.log(variantCartUrlList);
+					logger.debug(variantCartUrlList);
 					// send to discord
 				}
 			}

@@ -8,7 +8,7 @@ import { SNKRS } from "./snkrs";
 import { Utility } from "./utility";
 import logger from "./config/logger";
 import { Kith } from "./kith";
-const constants = require("./constants");
+import constants from "./constants";
 
 const discord = new Discord();
 const client = new Client({

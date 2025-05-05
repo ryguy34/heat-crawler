@@ -1,4 +1,4 @@
-module.exports = Object.freeze({
+const constants = Object.freeze({
 	SNKRS: {
 		BASE_URL: "https://www.nike.com",
 		URL: "https://www.nike.com/launch?s=upcoming",
@@ -43,3 +43,5 @@ module.exports = Object.freeze({
 		CATEGORY_ID: "1145474605205688412",
 	},
 });
+
+export default constants;
