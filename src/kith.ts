@@ -17,6 +17,7 @@ export class Kith {
 			rawVariantList.forEach((variant: { size: string; id: number }) => {
 				if (variant.size === "Default Title") {
 					// Default Title means only one size
+					logger.debug("Default Title found, setting size to OS");
 					variantUrlList.push({
 						id: String(variant.id), // ensure string type
 						size: "OS",

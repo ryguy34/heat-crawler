@@ -39,6 +39,8 @@ Key Features:
 - Unique Graphic Designs
 - Limited Product Releases
 
+//TODO: add kith section and refine
+
 ## Setup
 
 Clone the repository and navigate to the project directory:
