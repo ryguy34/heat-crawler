@@ -75,7 +75,7 @@ export class Kith {
 					var productPrice = $(ele).find(".text-10").last().text().trim();
 					var productUrl =
 						"https://kith.com" + $(ele).find("a").attr("href");
-					logger.info("Product found: {}", productName);
+					logger.info(`Product found: ${productName}`);
 					logger.debug(imageUrl);
 					logger.debug(productPrice);
 					// /collections/kith-monday-program/products/nbu9975hk-ph
