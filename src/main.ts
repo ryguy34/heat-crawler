@@ -172,7 +172,13 @@ async function mainKithMondayProgramNotifications(): Promise<void> {
 
 		if (kithMondayProgramProductList.length > 0) {
 			// upcoming releases found
-			// TODO: check if channel exists and create if not and get dates
+			const mondayProgramReleaseDate = Utility.getUpcomingMonday();
+			const value = await discord.doesChannelExistUnderCategory(
+				client,
+				mondayProgramReleaseDate,
+				constants.KITH.CATEGORY_ID
+				//constants.TEST.CATEGORY_ID
+			);
 		}
 	} catch (error) {
 		logger.error(error);

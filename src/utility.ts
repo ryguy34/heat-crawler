@@ -1,3 +1,5 @@
+import { format, addDays } from "date-fns";
+
 export class Utility {
 	constructor() {}
 
@@ -123,5 +125,17 @@ export class Utility {
 		const month = (tomorrowDate.getMonth() + 1).toString().padStart(2, "0");
 
 		return `${month}-${day}`;
+	}
+
+	/**
+	 * Returns upcoming Monday date in MMM-dd format
+	 *
+	 * @returns
+	 */
+	static getUpcomingMonday(): string {
+		const today = new Date();
+		const daysUntilMonday = (8 - today.getDay()) % 7 || 7; // Calculate days until next Monday
+		const nextMonday = addDays(today, daysUntilMonday);
+		return format(nextMonday, "MMM-dd").toLowerCase(); // Format as "mmm-dd" and convert to lowercase
 	}
 }
