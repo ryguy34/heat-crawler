@@ -18,6 +18,7 @@ Key Features:
 - Exclusive Sneaker Releases
 - Limited-Edition Products
 - Sneaker Release Calendar
+- Weekly Product Drops at 10 AM EST
 
 ## Supreme
 
@@ -25,7 +26,7 @@ Supreme is a streetwear brand known for its highly sought-after apparel, accesso
 
 Key Features:
 
-- Weekly Product Drops
+- Weekly Product Drops at 11 AM EST
 - Collaborations with Artists and Brands
 - Hypebeast Culture Icon
 
@@ -38,8 +39,20 @@ Key Features:
 - Skateboarding Apparel and Accessories
 - Unique Graphic Designs
 - Limited Product Releases
+- Weekly Product Drops at 11 AM EST
 
-//TODO: add kith section and refine
+## Kith
+
+Kith is a lifestyle brand and retail store known for its curated selection of apparel, footwear, and collaborations.
+
+Key Features:
+
+- Exclusive Collaborations
+- Premium Apparel and Footwear
+- Multibrand Retail Experience
+- Seasonal Collections
+- Global Presence
+- Weekly Product Drops at 11 AM EST
 
 ## Setup
 
