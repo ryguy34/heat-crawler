@@ -34,16 +34,25 @@ export class Kith {
 		return variantUrlList;
 	}
 
-	async parseKithMondayProgramDrop(): Promise<void> {
+	async parseKithMondayProgramDrop(): Promise<
+		{
+			productName: string;
+			imageUrl: string;
+			productPrice: string;
+			productUrl: string;
+			variantCartUrlList: { size: string; id: string }[];
+		}[]
+	> {
 		try {
 			const res = await axios.get(
-				constants.KITH_MONDAY_PROGRAM,
+				constants.KITH.MONDAY_PROGRAM_URL,
 				constants.params
 			);
 
 			const htmlData = res.data;
 			const $ = load(htmlData);
 			const productCards = $(".product-card").toArray();
+			var productList = [];
 
 			for (const ele of productCards) {
 				// find text where "MONDAY 11AM EST" and only parse cards that contain this text
@@ -59,7 +68,9 @@ export class Kith {
 						.last()
 						.text()
 						.trim();
-					var imageUrl = $(ele).find("img").attr("src")?.replace("//", "");
+					var imageUrl =
+						$(ele).find("img").attr("src")?.replace("//", "") ||
+						"default-image-url";
 					var productPrice = $(ele).find(".text-10").last().text().trim();
 					var productUrl =
 						"https://kith.com" + $(ele).find("a").attr("href");
@@ -72,10 +83,19 @@ export class Kith {
 						productUrl!
 					);
 					logger.debug(variantCartUrlList);
+					productList.push({
+						productName: productName,
+						imageUrl: imageUrl,
+						productPrice: productPrice,
+						productUrl: productUrl,
+						variantCartUrlList: variantCartUrlList,
+					});
 				}
 			}
+			return productList;
 		} catch (error) {
 			console.error(error);
+			return [];
 		}
 	}
 }
