@@ -1,5 +1,6 @@
-import "dotenv/config";
+import { config } from "dotenv";
 import { Client, GatewayIntentBits } from "discord.js";
+import path from "path";
 import cron from "node-cron";
 import { Discord } from "./discord";
 import { Supreme } from "./supreme";
@@ -19,6 +20,12 @@ const client = new Client({
 		GatewayIntentBits.GuildMembers,
 	],
 });
+
+// Determine the environment (default to 'dev' if NODE_ENV is not set)
+const envFile = `.env${process.env.NODE_ENV ? `.${process.env.NODE_ENV}` : ""}`;
+
+// Load the environment variables from the appropriate file
+config({ path: path.resolve(process.cwd(), envFile) });
 
 client.login(process.env.CLIENT_TOKEN);
 
@@ -179,6 +186,27 @@ async function mainKithMondayProgramNotifications(): Promise<void> {
 				constants.KITH.CATEGORY_ID
 				//constants.TEST.CATEGORY_ID
 			);
+
+			if (!value) {
+				const kithCategory = await discord.getFullCategoryNameBySubstring(
+					client,
+					"KITH MONDAY PROGRAM"
+					//"TEST"
+				);
+
+				if (kithCategory) {
+					const newChannel = await discord.createTextChannel(
+						client,
+						kithCategory,
+						mondayProgramReleaseDate
+					);
+
+					await discord.sendKithInfo(
+						kithMondayProgramProductList,
+						newChannel!
+					);
+				}
+			}
 		}
 	} catch (error) {
 		logger.error(error);

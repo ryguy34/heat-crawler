@@ -122,7 +122,18 @@ export class Discord {
 		});
 	}
 
-	async sendKithInfo(): Promise<void> {}
+	async sendKithInfo(
+		kithMondayProgramProductList: {
+			productName: string;
+			imageUrl: string;
+			productPrice: string;
+			productUrl: string;
+			variantCartUrlList: { size: string; id: string }[];
+		}[],
+		channel: TextChannel
+	): Promise<void> {
+		// TODO: add the Kith logo to the embed
+	}
 
 	/**
 	 * creates a new channel given the category and channel name
