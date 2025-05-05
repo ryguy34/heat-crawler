@@ -3,7 +3,7 @@ import { load } from "cheerio";
 import { ShopifyDropInfo } from "./vo/shopify/shopifyDropInfo";
 import { ShopifyChannelInfo } from "./vo/shopify/shopifyChannelInfo";
 
-const constants = require("./constants");
+import constants from "./constants";
 
 export class Supreme {
 	constructor() {}
