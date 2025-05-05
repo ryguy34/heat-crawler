@@ -18,7 +18,7 @@ export class Supreme {
 
 		try {
 			const res = await axios.get(
-				constants.SUPREME_COMMUNITY_BASE_URL +
+				constants.SUPREME.COMMUNITY_BASE_URL +
 					"/season/" +
 					currentSeason +
 					currentYear +
@@ -52,13 +52,13 @@ export class Supreme {
 					.replace(/(\r\n|\n|\r)/gm, "");
 
 				const imageUrl =
-					constants.SUPREME_COMMUNITY_BASE_URL + "/resize/576" + png;
+					constants.SUPREME.COMMUNITY_BASE_URL + "/resize/576" + png;
 				const productName = itemName === "" ? "?" : itemName;
 				var formatPrice = price === "" ? "Free or Unknown" : price;
 				const categoryUrl =
-					constants.SUPREME_BASE_URL + "collections/" + category;
+					constants.SUPREME.STORE_BASE_URL + "collections/" + category;
 				const productInfoUrl =
-					constants.SUPREME_COMMUNITY_BASE_URL +
+					constants.SUPREME.COMMUNITY_BASE_URL +
 					"/season/itemdetails/" +
 					itemId +
 					"/" +

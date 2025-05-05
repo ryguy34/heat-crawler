@@ -17,7 +17,7 @@ export class Palace {
 
 		try {
 			const res = await axios.get(
-				constants.PALACE_COMMUNITY_BASE_URL +
+				constants.PALACE.COMMUNITY_BASE_URL +
 					"/droplists/" +
 					currentWeekFridayDate,
 				constants.params
@@ -61,11 +61,11 @@ export class Palace {
 					category = "hoods";
 				}
 
-				const imageUrl = constants.PALACE_COMMUNITY_BASE_URL + png;
-				const productInfoUrl = `${constants.PALACE_COMMUNITY_BASE_URL}/collections/${season}/items/${itemId}/${itemSlug}`;
+				const imageUrl = constants.PALACE.COMMUNITY_BASE_URL + png;
+				const productInfoUrl = `${constants.PALACE.COMMUNITY_BASE_URL}/collections/${season}/items/${itemId}/${itemSlug}`;
 				const productName = itemName;
 				const categoryUrl = `${
-					constants.PALACE_BASE_URL
+					constants.PALACE.STORE_BASE_URL
 				}/collections/${category?.toLowerCase()}`;
 				var price = price === "" ? "???" : price;
 				var palaceDropInfo = new ShopifyDropInfo(
