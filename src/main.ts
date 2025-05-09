@@ -1,5 +1,6 @@
-import "dotenv/config";
+import { config } from "dotenv";
 import { Client, GatewayIntentBits } from "discord.js";
+import path from "path";
 import cron from "node-cron";
 import { Discord } from "./discord";
 import { Supreme } from "./supreme";
@@ -18,6 +19,12 @@ const client = new Client({
 		GatewayIntentBits.GuildMembers,
 	],
 });
+
+// Determine the environment (default to 'dev' if NODE_ENV is not set)
+const envFile = `.env${process.env.NODE_ENV ? `.${process.env.NODE_ENV}` : ""}`;
+
+// Load the environment variables from the appropriate file
+config({ path: path.resolve(process.cwd(), envFile) });
 
 client.login(process.env.CLIENT_TOKEN);
 
@@ -123,41 +130,41 @@ async function mainPalaceNotifications(): Promise<void> {
 /**
  * main function for SNKRS notifications to Discord channel
  */
-async function mainSnkrsNotifications(): Promise<void> {
-	const snkrs = new SNKRS();
-	var tomorrowsDate = Utility.getTomorrowsDate();
+// async function mainSnkrsNotifications(): Promise<void> {
+// 	const snkrs = new SNKRS();
+// 	var tomorrowsDate = Utility.getTomorrowsDate();
 
-	try {
-		const snkrsDrops = await snkrs.parseSnkrsDropInfo(tomorrowsDate);
+// 	try {
+// 		const snkrsDrops = await snkrs.parseSnkrsDropInfo(tomorrowsDate);
 
-		for (const snkrsDrop of snkrsDrops) {
-			const existingChannel = await discord.doesChannelExistUnderCategory(
-				client,
-				snkrsDrop.channelName,
-				constants.SNKRS.CATEGORY_ID
-				//constants.TEST.CATEGORY_ID
-			);
+// 		for (const snkrsDrop of snkrsDrops) {
+// 			const existingChannel = await discord.doesChannelExistUnderCategory(
+// 				client,
+// 				snkrsDrop.channelName,
+// 				constants.SNKRS.CATEGORY_ID
+// 				//constants.TEST.CATEGORY_ID
+// 			);
 
-			if (!existingChannel) {
-				const snkrsCategory = await discord.getFullCategoryNameBySubstring(
-					client,
-					"releases"
-					//"TEST"
-				);
-				const snkrsReleaseChannel = await discord.createTextChannel(
-					client,
-					snkrsCategory!,
-					snkrsDrop.channelName
-				);
+// 			if (!existingChannel) {
+// 				const snkrsCategory = await discord.getFullCategoryNameBySubstring(
+// 					client,
+// 					"releases"
+// 					//"TEST"
+// 				);
+// 				const snkrsReleaseChannel = await discord.createTextChannel(
+// 					client,
+// 					snkrsCategory!,
+// 					snkrsDrop.channelName
+// 				);
 
-				await discord.sendSnkrsDropInfo(snkrsDrop, snkrsReleaseChannel!);
-			}
-		}
-		await discord.deleteOldSnkrsReleases(client);
-	} catch (error) {
-		logger.error(error);
-	}
-}
+// 				await discord.sendSnkrsDropInfo(snkrsDrop, snkrsReleaseChannel!);
+// 			}
+// 		}
+// 		await discord.deleteOldSnkrsReleases(client);
+// 	} catch (error) {
+// 		logger.error(error);
+// 	}
+// }
 
 /**
  * When the script has connected to Discord successfully
@@ -166,23 +173,23 @@ client.on("ready", async () => {
 	logger.info("Bot is ready\n");
 
 	//runs every Wednesday at 8PM
-	cron.schedule("0 20 * * 3", async () => {
-		logger.info("Running Supreme cron job");
-		await mainSupremeNotifications();
-		logger.info("Supreme drops are done");
-	});
+	// cron.schedule("0 20 * * 3", async () => {
+	// 	logger.info("Running Supreme cron job");
+	// 	await mainSupremeNotifications();
+	// 	logger.info("Supreme drops are done");
+	// });
 
 	//runs every Thursday at 8PM
-	cron.schedule("0 20 * * 4", async () => {
-		logger.info("Running Palace cron job");
-		await mainPalaceNotifications();
-		logger.info("Palace drops are done");
-	});
+	//cron.schedule("0 20 * * 4", async () => {
+	logger.info("Running Palace cron job");
+	await mainPalaceNotifications();
+	logger.info("Palace drops are done");
+	//});
 
 	//runs everyday at 8PM
-	cron.schedule("0 20 * * *", () => {
-		logger.info("Running SNKRS cron job");
-		await mainSnkrsNotifications();
-		logger.info("SNKRS drops are done");
-	});
+	// cron.schedule("0 20 * * *", () => {
+	// 	logger.info("Running SNKRS cron job");
+	// 	await mainSnkrsNotifications();
+	// 	logger.info("SNKRS drops are done");
+	// });
 });

@@ -343,5 +343,5 @@ export class Discord {
 	// 	} catch (error) {
 	// 		console.error("Error deleting channels:", error);
 	// 	}
-	}
+	//}
 }

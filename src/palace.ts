@@ -56,7 +56,7 @@ export class Palace {
 					season = `${parts[0]}-${parts[1]}`;
 				}
 
-				// hooded category change
+				// TODO: skateboardhardware should be hardware, customtops should be tops, need to make logic for tracksuits
 				if (category == "Sweatshirts" && itemSlug?.includes("hood")) {
 					category = "hoods";
 				}
