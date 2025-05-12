@@ -14,8 +14,8 @@ export class Kith {
 		try {
 			const res = await axios.get(productUrl + ".json", constants.params);
 			const rawVariantList = res.data.product.variants;
-			rawVariantList.forEach((variant: { size: string; id: number }) => {
-				if (variant.size === "Default Title") {
+			rawVariantList.forEach((variant: { title: string; id: number }) => {
+				if (variant.title === "Default Title") {
 					// Default Title means only one size
 					logger.debug("Default Title found, setting size to OS");
 					variantUrlList.push({
@@ -25,7 +25,7 @@ export class Kith {
 				} else {
 					variantUrlList.push({
 						id: String(variant.id), // ensure string type
-						size: variant.size,
+						size: variant.title,
 					});
 				}
 			});
@@ -65,12 +65,13 @@ export class Kith {
 				} else {
 					// this item is releasing as part of the monday program
 					var productName = $(ele)
-						.find("div.text-black")
+						.find("a.text-black.bg-white")
 						.last()
 						.text()
 						.trim();
 					var imageUrl =
-						$(ele).find("img").attr("src")?.replace("//", "") ||
+						"https://" +
+							$(ele).find("img").attr("src")?.replace("//", "") ||
 						"default-image-url";
 					var productPrice = $(ele).find(".text-10").last().text().trim();
 					var productUrl =

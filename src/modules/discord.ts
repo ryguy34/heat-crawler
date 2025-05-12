@@ -143,18 +143,19 @@ export class Discord {
 			"<@&834439628295241758> Kith Monday Program drops are live at 10AM CST! Make sure to post W's in <#679913101269008483>"
 		);
 		var embeds = [];
+		logger.debug(kithMondayProgramProductList);
 		for (const product of kithMondayProgramProductList) {
 			const embed = new EmbedBuilder()
 				.setColor(0x0099ff)
 				.setTitle(product.productName)
 				.setURL(product.productUrl)
 				.setThumbnail("attachment://logo.png")
-				// TODO: see what looks better image above or below the fields
 				.addFields(
 					{ name: "Price", value: product.productPrice },
-					{ name: "Auto Cart Sizes", value: "" },
+					{ name: "Drop Time", value: "10AM CST" },
+					{ name: "Auto Cart Links", value: "" },
 					...(product.variantCartUrlList?.map((variant) => ({
-						name: " ",
+						name: "",
 						value: `[${variant.size}](https://kith.com/cart/${variant.id}:1)`,
 					})) || [])
 				)
