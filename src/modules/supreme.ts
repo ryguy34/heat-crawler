@@ -1,4 +1,5 @@
 import axios from "axios";
+import logger from "../config/logger";
 import { load } from "cheerio";
 import { ShopifyDropInfo } from "../vo/shopify/shopifyDropInfo";
 import { ShopifyChannelInfo } from "../vo/shopify/shopifyChannelInfo";
@@ -76,8 +77,18 @@ export class Supreme {
 			});
 
 			supremeTextChannelInfo.products = productList;
-		} catch (error) {
-			console.error(error);
+		} catch (error: unknown) {
+			if (axios.isAxiosError(error)) {
+				logger.error(
+					`Axios error: ${error.message}, Response: ${JSON.stringify(
+						error.response?.data
+					)}`
+				);
+			} else if (error instanceof Error) {
+				logger.error(error.message);
+			} else {
+				logger.error(String(error));
+			}
 		}
 
 		return supremeTextChannelInfo!;

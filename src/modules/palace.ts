@@ -83,8 +83,18 @@ export class Palace {
 				title
 			);
 			palaceDiscordTextChannelInfo.products = productList;
-		} catch (error) {
-			logger.error(error);
+		} catch (error: unknown) {
+			if (axios.isAxiosError(error)) {
+				logger.error(
+					`Axios error: ${error.message}, Response: ${JSON.stringify(
+						error.response?.data
+					)}`
+				);
+			} else if (error instanceof Error) {
+				logger.error(error.message);
+			} else {
+				logger.error(String(error));
+			}
 		}
 
 		return palaceDiscordTextChannelInfo!;
