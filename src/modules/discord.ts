@@ -152,12 +152,16 @@ export class Discord {
 				.setThumbnail("attachment://logo.png")
 				.addFields(
 					{ name: "Price", value: product.productPrice },
-					{ name: "Drop Time", value: "10AM CST" },
 					{ name: "Auto Cart Links", value: "" },
-					...(product.variantCartUrlList?.map((variant) => ({
-						name: "",
-						value: `[${variant.size}](https://kith.com/cart/${variant.id}:1)`,
-					})) || [])
+					...(product.variantCartUrlList
+						?.filter((variant) => {
+							const sizeNum = Number(variant.size);
+							return isNaN(sizeNum) || (sizeNum >= 5 && sizeNum <= 13);
+						})
+						.map((variant) => ({
+							name: "",
+							value: `[${variant.size}](https://kith.com/cart/${variant.id}:1)`,
+						})) || [])
 				)
 				.setImage(product.imageUrl)
 				.setTimestamp()
