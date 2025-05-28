@@ -7,9 +7,9 @@ import {
 } from "discord.js";
 import "dotenv/config";
 import fs from "fs";
-import { ShopifyChannelInfo } from "./vo/shopify/shopifyChannelInfo";
-import { SnkrsDropInfo } from "./vo/snkrs/snkrsDropInfo";
-import logger from "./config/logger";
+import { ShopifyChannelInfo } from "../vo/shopify/shopifyChannelInfo";
+import { SnkrsDropInfo } from "../vo/snkrs/snkrsDropInfo";
+import logger from "../config/logger";
 
 export class Discord {
 	constructor() {}
@@ -112,6 +112,64 @@ export class Discord {
 				.setImage(image);
 
 			embeds.push(imageEmbed);
+		}
+
+		const image = fs.readFileSync("./resources/logo.png");
+
+		await channel.send({
+			embeds: embeds,
+			files: [{ attachment: image, name: "logo.png" }],
+		});
+	}
+
+	/**
+	 * makes a list of embeds for the upcoming products and sends them to the channel
+	 *
+	 * @param {*} kithMondayProgramProductList
+	 * @param {*} channel
+	 * @returns
+	 */
+	async sendKithInfo(
+		kithMondayProgramProductList: {
+			productName: string;
+			imageUrl: string;
+			productPrice: string;
+			productUrl: string;
+			variantCartUrlList: { size: string; id: string }[];
+		}[],
+		channel: TextChannel
+	): Promise<void> {
+		channel.send(
+			"<@&834439628295241758> Kith Monday Program drops are live at 10AM CST! Make sure to post W's in <#679913101269008483>"
+		);
+		var embeds = [];
+		logger.debug(kithMondayProgramProductList);
+		for (const product of kithMondayProgramProductList) {
+			const embed = new EmbedBuilder()
+				.setColor(0x0099ff)
+				.setTitle(product.productName)
+				.setURL(product.productUrl)
+				.setThumbnail("attachment://logo.png")
+				.addFields(
+					{ name: "Price", value: product.productPrice },
+					{ name: "Auto Cart Links", value: "" },
+					...(product.variantCartUrlList
+						?.filter((variant) => {
+							const sizeNum = Number(variant.size);
+							return isNaN(sizeNum) || (sizeNum >= 5 && sizeNum <= 13);
+						})
+						.map((variant) => ({
+							name: "",
+							value: `[${variant.size}](https://kith.com/cart/${variant.id}:1)`,
+						})) || [])
+				)
+				.setImage(product.imageUrl)
+				.setTimestamp()
+				.setFooter({
+					text: `Good luck on the Kith drops!!!`,
+					iconURL: "attachment://logo.png",
+				});
+			embeds.push(embed);
 		}
 
 		const image = fs.readFileSync("./resources/logo.png");

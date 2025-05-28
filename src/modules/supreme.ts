@@ -1,9 +1,10 @@
 import axios from "axios";
+import logger from "../config/logger";
 import { load } from "cheerio";
-import { ShopifyDropInfo } from "./vo/shopify/shopifyDropInfo";
-import { ShopifyChannelInfo } from "./vo/shopify/shopifyChannelInfo";
+import { ShopifyDropInfo } from "../vo/shopify/shopifyDropInfo";
+import { ShopifyChannelInfo } from "../vo/shopify/shopifyChannelInfo";
 
-const constants = require("./constants");
+import constants from "../utility/constants";
 
 export class Supreme {
 	constructor() {}
@@ -18,7 +19,7 @@ export class Supreme {
 
 		try {
 			const res = await axios.get(
-				constants.SUPREME_COMMUNITY_BASE_URL +
+				constants.SUPREME.COMMUNITY_BASE_URL +
 					"/season/" +
 					currentSeason +
 					currentYear +
@@ -52,13 +53,13 @@ export class Supreme {
 					.replace(/(\r\n|\n|\r)/gm, "");
 
 				const imageUrl =
-					constants.SUPREME_COMMUNITY_BASE_URL + "/resize/576" + png;
+					constants.SUPREME.COMMUNITY_BASE_URL + "/resize/576" + png;
 				const productName = itemName === "" ? "?" : itemName;
 				var formatPrice = price === "" ? "Free or Unknown" : price;
 				const categoryUrl =
-					constants.SUPREME_BASE_URL + "collections/" + category;
+					constants.SUPREME.STORE_BASE_URL + "collections/" + category;
 				const productInfoUrl =
-					constants.SUPREME_COMMUNITY_BASE_URL +
+					constants.SUPREME.COMMUNITY_BASE_URL +
 					"/season/itemdetails/" +
 					itemId +
 					"/" +
@@ -76,8 +77,18 @@ export class Supreme {
 			});
 
 			supremeTextChannelInfo.products = productList;
-		} catch (error) {
-			console.error(error);
+		} catch (error: unknown) {
+			if (axios.isAxiosError(error)) {
+				logger.error(
+					`Axios error: ${error.message}, Response: ${JSON.stringify(
+						error.response?.data
+					)}`
+				);
+			} else if (error instanceof Error) {
+				logger.error(error.message);
+			} else {
+				logger.error(String(error));
+			}
 		}
 
 		return supremeTextChannelInfo!;

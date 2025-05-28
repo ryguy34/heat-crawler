@@ -1,10 +1,10 @@
 import axios from "axios";
 import { load } from "cheerio";
-import { ShopifyDropInfo } from "./vo/shopify/shopifyDropInfo";
-import { ShopifyChannelInfo } from "./vo/shopify/shopifyChannelInfo";
-import logger from "./config/logger";
+import { ShopifyDropInfo } from "../vo/shopify/shopifyDropInfo";
+import { ShopifyChannelInfo } from "../vo/shopify/shopifyChannelInfo";
+import logger from "../config/logger";
 
-const constants = require("./constants");
+import constants from "../utility/constants";
 
 export class Palace {
 	constructor() {}
@@ -17,7 +17,7 @@ export class Palace {
 
 		try {
 			const res = await axios.get(
-				constants.PALACE_COMMUNITY_BASE_URL +
+				constants.PALACE.COMMUNITY_BASE_URL +
 					"/droplists/" +
 					currentWeekFridayDate,
 				constants.params
@@ -61,11 +61,11 @@ export class Palace {
 					category = "hoods";
 				}
 
-				const imageUrl = constants.PALACE_COMMUNITY_BASE_URL + png;
-				const productInfoUrl = `${constants.PALACE_COMMUNITY_BASE_URL}/collections/${season}/items/${itemId}/${itemSlug}`;
+				const imageUrl = constants.PALACE.COMMUNITY_BASE_URL + png;
+				const productInfoUrl = `${constants.PALACE.COMMUNITY_BASE_URL}/collections/${season}/items/${itemId}/${itemSlug}`;
 				const productName = itemName;
 				const categoryUrl = `${
-					constants.PALACE_BASE_URL
+					constants.PALACE.STORE_BASE_URL
 				}/collections/${category?.toLowerCase()}`;
 				var price = price === "" ? "???" : price;
 				var palaceDropInfo = new ShopifyDropInfo(
@@ -83,8 +83,18 @@ export class Palace {
 				title
 			);
 			palaceDiscordTextChannelInfo.products = productList;
-		} catch (error) {
-			logger.error(error);
+		} catch (error: unknown) {
+			if (axios.isAxiosError(error)) {
+				logger.error(
+					`Axios error: ${error.message}, Response: ${JSON.stringify(
+						error.response?.data
+					)}`
+				);
+			} else if (error instanceof Error) {
+				logger.error(error.message);
+			} else {
+				logger.error(String(error));
+			}
 		}
 
 		return palaceDiscordTextChannelInfo!;
