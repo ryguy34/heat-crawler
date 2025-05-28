@@ -119,6 +119,7 @@ export class Palace {
 			shorts: "shorts",
 			"t-shirts": "t-shirts",
 			luggage: "bags",
+			knitwear: "tops",
 		};
 
 		if (
