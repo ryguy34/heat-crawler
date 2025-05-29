@@ -131,41 +131,40 @@ async function mainPalaceNotifications(): Promise<void> {
 /**
  * main function for SNKRS notifications to Discord channel
  */
-async function mainSnkrsNotifications(): Promise<void> {
-	const snkrs = new SNKRS();
-	var tomorrowsDate = Utility.getTomorrowsDate();
+// async function mainSnkrsNotifications(): Promise<void> {
+// 	const snkrs = new SNKRS();
+// 	var tomorrowsDate = Utility.getTomorrowsDate();
 
-	try {
-		const snkrsDrops = await snkrs.parseSnkrsDropInfo(tomorrowsDate);
+// 	try {
+// 		const snkrsDrops = await snkrs.parseSnkrsDropInfo(tomorrowsDate);
 
-		for (const snkrsDrop of snkrsDrops) {
-			const existingChannel = await discord.doesChannelExistUnderCategory(
-				client,
-				snkrsDrop.channelName,
-				constants.SNKRS.CATEGORY_ID
-				//constants.TEST.CATEGORY_ID
-			);
+// 		for (const snkrsDrop of snkrsDrops) {
+// 			const existingChannel = await discord.doesChannelExistUnderCategory(
+// 				client,
+// 				snkrsDrop.channelName,
+// 				constants.SNKRS.CATEGORY_ID
+// 				//constants.TEST.CATEGORY_ID
+// 			);
 
-			if (!existingChannel) {
-				const snkrsCategory = await discord.getFullCategoryNameBySubstring(
-					client,
-					"releases"
-					//"TEST"
-				);
-				const snkrsReleaseChannel = await discord.createTextChannel(
-					client,
-					snkrsCategory!,
-					snkrsDrop.channelName
-				);
-
-				await discord.sendSnkrsDropInfo(snkrsDrop, snkrsReleaseChannel!);
-			}
-		}
-		//await discord.deleteOldSnkrsReleases(client);
-	} catch (error) {
-		logger.error(error);
-	}
-}
+// 			if (!existingChannel) {
+// 				const snkrsCategory = await discord.getFullCategoryNameBySubstring(
+// 					client,
+// 					"releases"
+// 					//"TEST"
+// 				);
+// 				const snkrsReleaseChannel = await discord.createTextChannel(
+// 					client,
+// 					snkrsCategory!,
+// 					snkrsDrop.channelName
+// 				);
+// 				await discord.sendSnkrsDropInfo(snkrsDrop, snkrsReleaseChannel!);
+// 			}
+// 		}
+// 		//await discord.deleteOldSnkrsReleases(client);
+// 	} catch (error) {
+// 		logger.error(error);
+// 	}
+// }
 
 /**
  * main function for Kith Monday Program notifications to Discord channel
@@ -220,18 +219,18 @@ client.on("ready", async () => {
 	logger.info("Bot is ready");
 
 	//runs every Wednesday at 8PM
-	cron.schedule("0 20 * * 3", async () => {
-		logger.info("Running Supreme cron job");
-		await mainSupremeNotifications();
-		logger.info("Supreme drops are done");
-	});
+	// cron.schedule("0 20 * * 3", async () => {
+	// 	logger.info("Running Supreme cron job");
+	// 	await mainSupremeNotifications();
+	// 	logger.info("Supreme drops are done");
+	// });
 
 	//runs every Thursday at 8PM
-	cron.schedule("0 20 * * 4", async () => {
-		logger.info("Running Palace cron job");
-		await mainPalaceNotifications();
-		logger.info("Palace drops are done");
-	});
+	//cron.schedule("0 20 * * 4", async () => {
+	logger.info("Running Palace cron job");
+	await mainPalaceNotifications();
+	logger.info("Palace drops are done");
+	//});
 
 	//runs everyday at 8PM
 	// cron.schedule("0 20 * * *", () => {
