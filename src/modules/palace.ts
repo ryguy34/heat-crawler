@@ -106,7 +106,7 @@ export class Palace {
 		const categoryMap: { [key: string]: string } = {
 			hoods: "hoods",
 			sweatshirts: "sweatshirts",
-			bottoms: "bottoms",
+			bottoms: "trousers",
 			jackets: "jackets",
 			hats: "hats",
 			accessories: "accessories",
@@ -114,7 +114,7 @@ export class Palace {
 			customtops: "tops",
 			tracksuits: "tracksuits",
 			footwear: "footwear",
-			trousers: "bottoms",
+			trousers: "trousers",
 			shirting: "shirting",
 			shorts: "shorts",
 			"t-shirts": "t-shirts",
