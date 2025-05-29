@@ -50,7 +50,9 @@ export class Discord {
 				.setURL(product.productInfoUrl)
 				.setThumbnail("attachment://logo.png")
 				.addFields(
-					{ name: "Price", value: product.price },
+					...(product.price && product.price !== "???"
+						? [{ name: "Price", value: product.price }]
+						: []),
 					{
 						name: " ",
 						value: `[${siteName} Category](${product.categoryUrl})`,
