@@ -240,9 +240,9 @@ client.on("ready", async () => {
 	// });
 
 	//runs every Sunday at 8PM
-	//cron.schedule("0 20 * * 0", async () => {
-	logger.info("Running Kith Monday Program cron job");
-	await mainKithMondayProgramNotifications();
-	logger.info("Kith Monday Program drops are done");
-	//});
+	cron.schedule("0 20 * * 0", async () => {
+		logger.info("Running Kith Monday Program cron job");
+		await mainKithMondayProgramNotifications();
+		logger.info("Kith Monday Program drops are done");
+	});
 });
