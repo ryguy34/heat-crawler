@@ -219,18 +219,18 @@ client.on("ready", async () => {
 	logger.info("Bot is ready");
 
 	//runs every Wednesday at 8PM
-	// cron.schedule("0 20 * * 3", async () => {
-	// 	logger.info("Running Supreme cron job");
-	// 	await mainSupremeNotifications();
-	// 	logger.info("Supreme drops are done");
-	// });
+	cron.schedule("0 20 * * 3", async () => {
+		logger.info("Running Supreme cron job");
+		await mainSupremeNotifications();
+		logger.info("Supreme drops are done");
+	});
 
 	//runs every Thursday at 8PM
-	//cron.schedule("0 20 * * 4", async () => {
-	logger.info("Running Palace cron job");
-	await mainPalaceNotifications();
-	logger.info("Palace drops are done");
-	//});
+	cron.schedule("0 20 * * 4", async () => {
+		logger.info("Running Palace cron job");
+		await mainPalaceNotifications();
+		logger.info("Palace drops are done");
+	});
 
 	//runs everyday at 8PM
 	// cron.schedule("0 20 * * *", () => {

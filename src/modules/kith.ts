@@ -69,7 +69,11 @@ export class Kith {
 			for (const ele of productCards) {
 				// find text where "MONDAY 11AM EST" and only parse cards that contain this text
 				var mondayRelease = $(ele).find(".text-10").first().text().trim();
-				if (mondayRelease && mondayRelease !== "Monday 11am EST") {
+				if (
+					mondayRelease &&
+					mondayRelease !== "Monday 11am EST" &&
+					mondayRelease !== "ENTER DRAWING IN APP"
+				) {
 					// do nothing
 					logger.info("No upcoming Kith Monday Program found");
 					break;
