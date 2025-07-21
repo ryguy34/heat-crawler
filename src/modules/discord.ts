@@ -176,10 +176,14 @@ export class Discord {
 
 		const image = fs.readFileSync("./resources/logo.png");
 
-		await channel.send({
-			embeds: embeds,
-			files: [{ attachment: image, name: "logo.png" }],
-		});
+		// Discord only allows up to 10 embeds per message
+		for (let i = 0; i < embeds.length; i += 10) {
+			const embedsChunk = embeds.slice(i, i + 10);
+			await channel.send({
+				embeds: embedsChunk,
+				files: [{ attachment: image, name: "logo.png" }],
+			});
+		}
 	}
 
 	/**
