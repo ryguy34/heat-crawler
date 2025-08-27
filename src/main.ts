@@ -215,7 +215,7 @@ async function mainKithMondayProgramNotifications(): Promise<void> {
 /**
  * When the script has connected to Discord successfully
  */
-client.on("ready", async () => {
+client.on("clientReady", async () => {
 	logger.info("Bot is ready");
 
 	//runs every Wednesday at 8PM
