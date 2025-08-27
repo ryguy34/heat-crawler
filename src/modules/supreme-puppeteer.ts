@@ -1,9 +1,8 @@
-import axios from "axios";
+import puppeteer from "puppeteer";
 import logger from "../config/logger";
 import { load } from "cheerio";
 import { ShopifyDropInfo } from "../vo/shopify/shopifyDropInfo";
 import { ShopifyChannelInfo } from "../vo/shopify/shopifyChannelInfo";
-
 import constants from "../utility/constants";
 
 export class Supreme {
@@ -14,37 +13,17 @@ export class Supreme {
 		currentYear: number,
 		currentSeason: string
 	): Promise<ShopifyChannelInfo> {
-		var productList: ShopifyDropInfo[] = [];
-		var supremeTextChannelInfo;
-
+		let productList: ShopifyDropInfo[] = [];
+		let supremeTextChannelInfo;
+		const url = `${constants.SUPREME.COMMUNITY_BASE_URL}/season/${currentSeason}${currentYear}/droplist/${currentWeekThursdayDate}`;
 		try {
-			// Use more complete browser headers to bypass Cloudflare
-			const supremeHeaders = {
-				...constants.SNKRS.HEADERS,
-				headers: {
-					...constants.SNKRS.HEADERS.headers,
-					Referer:
-						constants.SUPREME.COMMUNITY_BASE_URL +
-						"/season/" +
-						currentSeason +
-						currentYear +
-						"/droplist/" +
-						currentWeekThursdayDate,
-					"Accept-Language": "en-US,en;q=0.9",
-					// Add more headers if needed
-				},
-			};
-			const res = await axios.get(
-				constants.SUPREME.COMMUNITY_BASE_URL +
-					"/season/" +
-					currentSeason +
-					currentYear +
-					"/droplist/" +
-					currentWeekThursdayDate,
-				supremeHeaders
-			);
+			const browser = await puppeteer.launch({ headless: true });
+			const page = await browser.newPage();
+			await page.setUserAgent(constants.SNKRS.HEADERS.headers["User-Agent"]);
+			await page.goto(url, { waitUntil: "networkidle2" });
+			const htmlData = await page.content();
+			await browser.close();
 
-			const htmlData = res.data;
 			const $ = load(htmlData);
 			var title = $("title").text();
 			var channelName = title
@@ -94,19 +73,8 @@ export class Supreme {
 
 			supremeTextChannelInfo.products = productList;
 		} catch (error: unknown) {
-			if (axios.isAxiosError(error)) {
-				logger.error(
-					`Axios error: ${error.message}, Response: ${JSON.stringify(
-						error.response?.data
-					)}`
-				);
-			} else if (error instanceof Error) {
-				logger.error(error.message);
-			} else {
-				logger.error(String(error));
-			}
+			logger.error(error instanceof Error ? error.message : String(error));
 		}
-
 		return supremeTextChannelInfo!;
 	}
 }

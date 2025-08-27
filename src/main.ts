@@ -3,7 +3,7 @@ import { Client, GatewayIntentBits } from "discord.js";
 import path from "path";
 import cron from "node-cron";
 import { Discord } from "./modules/discord";
-import { Supreme } from "./modules/supreme";
+import { Supreme } from "./modules/supreme-puppeteer";
 import { Palace } from "./modules/palace";
 import { SNKRS } from "./modules/snkrs";
 import Utility from "./utility/utility";
@@ -219,11 +219,11 @@ client.on("clientReady", async () => {
 	logger.info("Bot is ready");
 
 	//runs every Wednesday at 8PM
-	cron.schedule("0 20 * * 3", async () => {
-		logger.info("Running Supreme cron job");
-		await mainSupremeNotifications();
-		logger.info("Supreme drops are done");
-	});
+	//cron.schedule("0 20 * * 3", async () => {
+	logger.info("Running Supreme cron job");
+	await mainSupremeNotifications();
+	logger.info("Supreme drops are done");
+	//});
 
 	//runs every Thursday at 8PM
 	cron.schedule("0 20 * * 4", async () => {
