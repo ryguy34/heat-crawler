@@ -94,7 +94,7 @@ export class Supreme {
 						// Set a longer timeout and modify navigation settings
 						await newPage.setDefaultNavigationTimeout(60000);
 						await newPage.setUserAgent(
-							constants.SNKRS.HEADERS.headers["User-Agent"]
+							constants.SUPREME.HEADERS.headers["User-Agent"]
 						);
 
 						// Set additional headers

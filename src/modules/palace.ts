@@ -1,10 +1,15 @@
-import axios from "axios";
+import puppeteer from "puppeteer-extra";
+import StealthPlugin from "puppeteer-extra-plugin-stealth";
+import { Browser } from "puppeteer";
 import { load } from "cheerio";
 import { ShopifyDropInfo } from "../vo/shopify/shopifyDropInfo";
 import { ShopifyChannelInfo } from "../vo/shopify/shopifyChannelInfo";
 import logger from "../config/logger";
 
 import constants from "../utility/constants";
+
+// Add stealth plugin and initialize
+puppeteer.use(StealthPlugin());
 
 export class Palace {
 	constructor() {}
@@ -14,16 +19,30 @@ export class Palace {
 	): Promise<ShopifyChannelInfo> {
 		var productList: ShopifyDropInfo[] = [];
 		var palaceDiscordTextChannelInfo;
-
+		let browser: Browser | undefined;
+		const url = `${constants.PALACE.COMMUNITY_BASE_URL}/droplists/${currentWeekFridayDate}`;
 		try {
-			const res = await axios.get(
-				constants.PALACE.COMMUNITY_BASE_URL +
-					"/droplists/" +
-					currentWeekFridayDate,
-				constants.params
-			);
+			browser = await puppeteer.launch({
+				headless: false,
+				args: [
+					"--no-sandbox",
+					"--disable-setuid-sandbox",
+					"--disable-infobars",
+					"--window-position=0,0",
+					"--ignore-certifcate-errors",
+					"--ignore-certifcate-errors-spki-list",
+					"--window-size=1920,1080",
+				],
+				defaultViewport: {
+					width: 1920,
+					height: 1080,
+				},
+			});
+			const page = await browser.newPage();
+			await page.setUserAgent(constants.SNKRS.HEADERS.headers["User-Agent"]);
+			await page.goto(url, { waitUntil: "networkidle2" });
+			const htmlData = await page.content();
 
-			const htmlData = res.data;
 			const $ = load(htmlData);
 
 			var title = $(".title-font h1").text();
@@ -36,46 +55,125 @@ export class Palace {
 			var month = parsedChannelName[0].substring(0, 3);
 			const channelName = `${month}-${parsedChannelName[1]}`;
 
-			await Promise.all(
-				$(".catalog-item")
-					.map(async (_: number, ele: any) => {
-						var itemId = $(ele).find("a").attr("data-itemid");
-						var itemSlug = $(ele).find("a").attr("data-itemslug");
-						var itemName = $(ele).find("a").attr("data-itemname");
-						var category = $(ele).attr("data-category");
-						var price = $(ele)
-							.find(".catalog-label-price")
-							.first()
-							.text()
-							.replace(/(\r\n|\n|\r)/gm, "")
-							.replace("€", "$")
-							.trim();
-						var png = $(ele).find("img").attr("data-src");
+			const catalogItems = $(".catalog-item").toArray();
 
-						var parts = itemSlug?.split("-");
-						var season = "";
-						if (parts) {
-							season = `${parts[0]}-${parts[1]}`;
+			for (const ele of catalogItems) {
+				var itemId = $(ele).find("a").attr("data-itemid");
+				var itemSlug = $(ele).find("a").attr("data-itemslug");
+				var itemName = $(ele).find("a").attr("data-itemname");
+				var category = $(ele).attr("data-category");
+				var price = $(ele)
+					.find(".catalog-label-price")
+					.first()
+					.text()
+					.replace(/(\r\n|\n|\r)/gm, "")
+					.replace("€", "$")
+					.trim();
+				var png = $(ele).find("img").attr("data-src");
+
+				var parts = itemSlug?.split("-");
+				var season = "";
+				if (parts) {
+					season = `${parts[0]}-${parts[1]}`;
+				}
+
+				category = await this.mapPalaceCategory(category!, itemSlug!);
+
+				const imageUrl = `${constants.PALACE.COMMUNITY_BASE_URL}/collections/${season}/items/${itemId}/${itemSlug}/#gallery-1`;
+				const productInfoUrl = `${constants.PALACE.COMMUNITY_BASE_URL}/collections/${season}/items/${itemId}/${itemSlug}`;
+				const productName = itemName;
+				const categoryUrl = `${constants.PALACE.STORE_BASE_URL}/collections/${category}`;
+				var price = price === "" ? "???" : price;
+
+				// Take screenshot using Puppeteer
+				if (imageUrl) {
+					try {
+						// Ensure screenshots directory exists
+						const fs = require("fs");
+						const path = require("path");
+						const screenshotsDir = path.resolve(
+							__dirname,
+							"../../screenshots/palace"
+						);
+						if (!fs.existsSync(screenshotsDir)) {
+							fs.mkdirSync(screenshotsDir, { recursive: true });
 						}
 
-						category = await this.mapPalaceCategory(category!, itemSlug!);
-
-						const imageUrl = constants.PALACE.COMMUNITY_BASE_URL + png;
-						const productInfoUrl = `${constants.PALACE.COMMUNITY_BASE_URL}/collections/${season}/items/${itemId}/${itemSlug}`;
-						const productName = itemName;
-						const categoryUrl = `${constants.PALACE.STORE_BASE_URL}/collections/${category}`;
-						var price = price === "" ? "???" : price;
-						var palaceDropInfo = new ShopifyDropInfo(
-							productName!,
-							productInfoUrl,
-							imageUrl,
-							price,
-							categoryUrl
+						const newPage = await browser!.newPage();
+						await newPage.setDefaultNavigationTimeout(60000);
+						await newPage.setUserAgent(
+							constants.PALACE.HEADERS.headers["User-Agent"]
 						);
-						productList.push(palaceDropInfo);
-					})
-					.get()
-			);
+						await newPage.setExtraHTTPHeaders({
+							Accept:
+								"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+							"Accept-Language": "en-US,en;q=0.5",
+							Connection: "keep-alive",
+							"Upgrade-Insecure-Requests": "1",
+						});
+						await newPage.goto(imageUrl, {
+							waitUntil: "networkidle2",
+							timeout: 60000,
+						});
+						const screenshotPath = path.join(
+							screenshotsDir,
+							`screenshot_${itemId || "unknown"}.png`
+						);
+						try {
+							const fancyEl = await newPage.$(".fancybox-content");
+							if (fancyEl) {
+								try {
+									await fancyEl.screenshot({
+										path: screenshotPath,
+										type: "png",
+									});
+								} catch (elErr) {
+									logger.error(
+										`Element screenshot failed, falling back: ${elErr}`
+									);
+									await newPage.screenshot({
+										path: screenshotPath,
+										type: "png",
+										fullPage: true,
+									});
+								}
+							} else {
+								await newPage.screenshot({
+									path: screenshotPath,
+									type: "png",
+									fullPage: true,
+								});
+							}
+						} catch (sErr) {
+							logger.error(`Screenshot/crop failed: ${sErr}`);
+							try {
+								await newPage.screenshot({
+									path: screenshotPath,
+									type: "png",
+									fullPage: true,
+								});
+							} catch (ee) {
+								logger.error(`Fallback screenshot failed: ${ee}`);
+							}
+						}
+						await newPage.close();
+					} catch (err) {
+						logger.error(
+							`Failed to take screenshot for ${imageUrl}: ${err}`
+						);
+					}
+				}
+
+				var palaceDropInfo = new ShopifyDropInfo(
+					productName!,
+					productInfoUrl,
+					imageUrl,
+					price,
+					categoryUrl
+				);
+
+				productList.push(palaceDropInfo);
+			}
 
 			palaceDiscordTextChannelInfo = new ShopifyChannelInfo(
 				channelName,
@@ -83,16 +181,10 @@ export class Palace {
 			);
 			palaceDiscordTextChannelInfo.products = productList;
 		} catch (error: unknown) {
-			if (axios.isAxiosError(error)) {
-				logger.error(
-					`Axios error: ${error.message}, Response: ${JSON.stringify(
-						error.response?.data
-					)}`
-				);
-			} else if (error instanceof Error) {
-				logger.error(error.message);
-			} else {
-				logger.error(String(error));
+			logger.error(error instanceof Error ? error.message : String(error));
+		} finally {
+			if (browser) {
+				await browser.close();
 			}
 		}
 
