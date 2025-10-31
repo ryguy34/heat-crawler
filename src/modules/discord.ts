@@ -45,7 +45,7 @@ export class Discord {
 
 		for (const product of textChannelInfo.products) {
 			const productId = product.productInfoUrl.split("/").slice(-2)[0];
-			const screenshotPath = `./screenshots/screenshot_${productId}.png`;
+			const screenshotPath = `./screenshots/${siteName}/screenshot_${productId}.png`;
 
 			const embed = new EmbedBuilder()
 				.setColor(0x0099ff)
@@ -85,7 +85,7 @@ export class Discord {
 
 		// After sending all product messages, clear screenshots directory
 		try {
-			const screenshotsDir = "./screenshots";
+			const screenshotsDir = `./screenshots/${siteName}`;
 			if (fs.existsSync(screenshotsDir)) {
 				const filesInDir = fs.readdirSync(screenshotsDir);
 				for (const file of filesInDir) {
