@@ -1,9 +1,14 @@
-import * as puppeteer from "puppeteer";
+import puppeteer from "puppeteer-extra";
+import StealthPlugin from "puppeteer-extra-plugin-stealth";
+import { Browser, Page } from "puppeteer";
 import logger from "../config/logger";
 import { load } from "cheerio";
 import { ShopifyDropInfo } from "../vo/shopify/shopifyDropInfo";
 import { ShopifyChannelInfo } from "../vo/shopify/shopifyChannelInfo";
 import constants from "../utility/constants";
+
+// Add stealth plugin and initialize
+puppeteer.use(StealthPlugin());
 
 export class Supreme {
 	constructor() {}
@@ -15,10 +20,25 @@ export class Supreme {
 	): Promise<ShopifyChannelInfo> {
 		let productList: ShopifyDropInfo[] = [];
 		let supremeTextChannelInfo;
-		let browser: puppeteer.Browser | undefined;
+		let browser: Browser | undefined;
 		const url = `${constants.SUPREME.COMMUNITY_BASE_URL}/season/${currentSeason}${currentYear}/droplist/${currentWeekThursdayDate}`;
 		try {
-			browser = await puppeteer.launch({ headless: false });
+			browser = await puppeteer.launch({
+				headless: true,
+				args: [
+					"--no-sandbox",
+					"--disable-setuid-sandbox",
+					"--disable-infobars",
+					"--window-position=0,0",
+					"--ignore-certifcate-errors",
+					"--ignore-certifcate-errors-spki-list",
+					"--window-size=1920,1080",
+				],
+				defaultViewport: {
+					width: 1920,
+					height: 1080,
+				},
+			});
 			const page = await browser.newPage();
 			await page.setUserAgent(constants.SNKRS.HEADERS.headers["User-Agent"]);
 			await page.goto(url, { waitUntil: "networkidle2" });
