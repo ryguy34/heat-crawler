@@ -1,4 +1,4 @@
-import puppeteer from "puppeteer";
+import * as puppeteer from "puppeteer";
 import logger from "../config/logger";
 import { load } from "cheerio";
 import { ShopifyDropInfo } from "../vo/shopify/shopifyDropInfo";
@@ -15,14 +15,14 @@ export class Supreme {
 	): Promise<ShopifyChannelInfo> {
 		let productList: ShopifyDropInfo[] = [];
 		let supremeTextChannelInfo;
+		let browser: puppeteer.Browser | undefined;
 		const url = `${constants.SUPREME.COMMUNITY_BASE_URL}/season/${currentSeason}${currentYear}/droplist/${currentWeekThursdayDate}`;
 		try {
-			const browser = await puppeteer.launch({ headless: true });
+			browser = await puppeteer.launch({ headless: false });
 			const page = await browser.newPage();
 			await page.setUserAgent(constants.SNKRS.HEADERS.headers["User-Agent"]);
 			await page.goto(url, { waitUntil: "networkidle2" });
 			const htmlData = await page.content();
-			await browser.close();
 
 			const $ = load(htmlData);
 			var title = $("title").text();
@@ -34,12 +34,14 @@ export class Supreme {
 
 			supremeTextChannelInfo = new ShopifyChannelInfo(channelName, title);
 
-			$(".catalog-item").each((_: number, ele: any) => {
-				var itemId = $(ele).find("a").attr("data-itemid");
-				var itemSlug = $(ele).find("a").attr("data-itemslug");
-				var itemName = $(ele).find("a").attr("data-itemname");
-				var category = $(ele).attr("data-category");
-				var png = $(ele).find("img").attr("src");
+			const catalogItems = $(".catalog-item").toArray();
+
+			// Process items one at a time
+			for (const ele of catalogItems) {
+				const itemId = $(ele).find("a").attr("data-itemid");
+				const itemSlug = $(ele).find("a").attr("data-itemslug");
+				const itemName = $(ele).find("a").attr("data-itemname");
+				const category = $(ele).attr("data-category");
 
 				const price = $(ele)
 					.find(".catalog-label-price")
@@ -48,9 +50,14 @@ export class Supreme {
 					.replace(/(\r\n|\n|\r)/gm, "");
 
 				const imageUrl =
-					constants.SUPREME.COMMUNITY_BASE_URL + "/resize/576" + png;
+					constants.SUPREME.COMMUNITY_BASE_URL +
+					"/season/itemdetails/" +
+					itemId +
+					"/" +
+					itemSlug +
+					"/#gallery-1";
 				const productName = itemName === "" ? "?" : itemName;
-				var formatPrice = price === "" ? "Free or Unknown" : price;
+				const formatPrice = price === "" ? "Free or Unknown" : price;
 				const categoryUrl =
 					constants.SUPREME.STORE_BASE_URL + "collections/" + category;
 				const productInfoUrl =
@@ -60,20 +67,62 @@ export class Supreme {
 					"/" +
 					itemSlug;
 
+				// Take screenshot using Puppeteer
+				if (imageUrl) {
+					try {
+						const newPage = await browser!.newPage();
+						// Set a longer timeout and modify navigation settings
+						await newPage.setDefaultNavigationTimeout(60000);
+						await newPage.setUserAgent(
+							constants.SNKRS.HEADERS.headers["User-Agent"]
+						);
+
+						// Set additional headers
+						await newPage.setExtraHTTPHeaders({
+							Accept:
+								"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+							"Accept-Language": "en-US,en;q=0.5",
+							Connection: "keep-alive",
+							"Upgrade-Insecure-Requests": "1",
+						});
+
+						// Just wait for the page to load and take a screenshot
+						await newPage.goto(imageUrl, {
+							waitUntil: "networkidle2",
+							timeout: 60000,
+						});
+
+						await newPage.screenshot({
+							path: `screenshots/screenshot_${itemId || "unknown"}.png`,
+							type: "png",
+							fullPage: true,
+						});
+						await newPage.close();
+					} catch (err) {
+						logger.error(
+							`Failed to take screenshot for ${imageUrl}: ${err}`
+						);
+					}
+				}
+
 				const productInfo = new ShopifyDropInfo(
 					productName!,
 					productInfoUrl,
-					imageUrl,
+					imageUrl!,
 					formatPrice,
 					categoryUrl
 				);
 
 				productList.push(productInfo);
-			});
+			}
 
 			supremeTextChannelInfo.products = productList;
 		} catch (error: unknown) {
 			logger.error(error instanceof Error ? error.message : String(error));
+		} finally {
+			if (browser) {
+				await browser.close();
+			}
 		}
 		return supremeTextChannelInfo!;
 	}

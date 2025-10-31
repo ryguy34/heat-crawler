@@ -44,6 +44,9 @@ export class Discord {
 		channel.send(channelMessage);
 
 		for (const product of textChannelInfo.products) {
+			const productId = product.productInfoUrl.split("/").slice(-2)[0];
+			const screenshotPath = `./screenshots/screenshot_${productId}.png`;
+
 			const embed = new EmbedBuilder()
 				.setColor(0x0099ff)
 				.setTitle(product.productName)
@@ -58,19 +61,44 @@ export class Discord {
 						value: `[${siteName} Category](${product.categoryUrl})`,
 					}
 				)
-				.setImage(product.imageUrl)
+				.setImage("attachment://screenshot.png")
 				.setTimestamp()
 				.setFooter({
 					text: `Good luck on ${textChannelInfo.channelName}'s drops!!!`,
 					iconURL: "attachment://logo.png",
 				});
 
-			const image = fs.readFileSync("./resources/logo.png");
+			const logoImage = fs.readFileSync("./resources/logo.png");
+			const files = [{ attachment: logoImage, name: "logo.png" }];
+
+			// Add screenshot if it exists
+			if (fs.existsSync(screenshotPath)) {
+				const screenshotImage = fs.readFileSync(screenshotPath);
+				files.push({ attachment: screenshotImage, name: "screenshot.png" });
+			}
 
 			await channel.send({
 				embeds: [embed],
-				files: [{ attachment: image, name: "logo.png" }],
+				files: files,
 			});
+		}
+
+		// After sending all product messages, clear screenshots directory
+		try {
+			const screenshotsDir = "./screenshots";
+			if (fs.existsSync(screenshotsDir)) {
+				const filesInDir = fs.readdirSync(screenshotsDir);
+				for (const file of filesInDir) {
+					const filePath = `${screenshotsDir}/${file}`;
+					try {
+						fs.unlinkSync(filePath);
+					} catch (e) {
+						logger.error(`Failed to delete screenshot ${filePath}: ${e}`);
+					}
+				}
+			}
+		} catch (err) {
+			logger.error(`Failed to clear screenshots directory: ${err}`);
 		}
 	}
 
