@@ -3,7 +3,7 @@ import { Client, GatewayIntentBits } from "discord.js";
 import path from "path";
 import cron from "node-cron";
 import { Discord } from "./modules/discord";
-import { Supreme } from "./modules/supreme-puppeteer";
+import { Supreme } from "./modules/supreme";
 import { Palace } from "./modules/palace";
 import { SNKRS } from "./modules/snkrs";
 import Utility from "./utility/utility";
