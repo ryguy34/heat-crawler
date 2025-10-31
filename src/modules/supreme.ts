@@ -132,7 +132,7 @@ export class Supreme {
 								// Simpler and more robust: let Puppeteer capture the element directly.
 								try {
 									await fancyEl.screenshot({
-										path: `screenshots/screenshot_${
+										path: `screenshots/supreme/screenshot_${
 											itemId || "unknown"
 										}.png`,
 										type: "png",
@@ -142,7 +142,7 @@ export class Supreme {
 										`Element screenshot failed, falling back: ${elErr}`
 									);
 									await newPage.screenshot({
-										path: `screenshots/screenshot_${
+										path: `screenshots/supreme/screenshot_${
 											itemId || "unknown"
 										}.png`,
 										type: "png",
@@ -152,7 +152,7 @@ export class Supreme {
 							} else {
 								// no fancybox, fallback to full page
 								await newPage.screenshot({
-									path: `screenshots/screenshot_${
+									path: `screenshots/supreme/screenshot_${
 										itemId || "unknown"
 									}.png`,
 									type: "png",
@@ -164,7 +164,7 @@ export class Supreme {
 							// fallback
 							try {
 								await newPage.screenshot({
-									path: `screenshots/screenshot_${
+									path: `screenshots/supreme/screenshot_${
 										itemId || "unknown"
 									}.png`,
 									type: "png",
