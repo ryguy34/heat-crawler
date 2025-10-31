@@ -97,15 +97,15 @@ async function mainPalaceNotifications(): Promise<void> {
 			const value = await discord.doesChannelExistUnderCategory(
 				client,
 				palaceDiscordTextChannelInfo.channelName,
-				constants.PALACE.CATEGORY_ID
-				//constants.TEST.CATEGORY_ID
+				//constants.PALACE.CATEGORY_ID
+				constants.TEST.CATEGORY_ID
 			);
 
 			if (!value) {
 				const palaceCategory = await discord.getFullCategoryNameBySubstring(
 					client,
-					"PALACE"
-					//"TEST"
+					//"PALACE"
+					"TEST"
 				);
 
 				if (palaceCategory) {
@@ -215,7 +215,7 @@ async function mainKithMondayProgramNotifications(): Promise<void> {
 /**
  * When the script has connected to Discord successfully
  */
-client.on("ready", async () => {
+client.on("clientReady", async () => {
 	logger.info("Bot is ready");
 
 	//runs every Wednesday at 8PM
@@ -226,11 +226,11 @@ client.on("ready", async () => {
 	});
 
 	//runs every Thursday at 8PM
-	cron.schedule("0 20 * * 4", async () => {
-		logger.info("Running Palace cron job");
-		await mainPalaceNotifications();
-		logger.info("Palace drops are done");
-	});
+	//cron.schedule("0 20 * * 4", async () => {
+	logger.info("Running Palace cron job");
+	await mainPalaceNotifications();
+	logger.info("Palace drops are done");
+	//});
 
 	//runs everyday at 8PM
 	// cron.schedule("0 20 * * *", () => {
