@@ -106,17 +106,74 @@ export class Supreme {
 							"Upgrade-Insecure-Requests": "1",
 						});
 
-						// Just wait for the page to load and take a screenshot
+						// Just wait for the page to load
 						await newPage.goto(imageUrl, {
 							waitUntil: "networkidle2",
 							timeout: 60000,
 						});
 
-						await newPage.screenshot({
-							path: `screenshots/screenshot_${itemId || "unknown"}.png`,
-							type: "png",
-							fullPage: true,
-						});
+						// Close cookie banner if present (#cookiescript_close)
+						try {
+							await newPage.waitForSelector("#cookiescript_close", {
+								timeout: 3000,
+								visible: true,
+							});
+							await newPage.click("#cookiescript_close");
+							// small delay to allow any animation to finish
+							await new Promise((res) => setTimeout(res, 500));
+						} catch (e) {
+							// selector not found or click failed - continue
+						}
+
+						// Try to locate a fancybox content box and use its style/rect to crop the screenshot.
+						try {
+							const fancyEl = await newPage.$(".fancybox-content");
+							if (fancyEl) {
+								// Simpler and more robust: let Puppeteer capture the element directly.
+								try {
+									await fancyEl.screenshot({
+										path: `screenshots/screenshot_${
+											itemId || "unknown"
+										}.png`,
+										type: "png",
+									});
+								} catch (elErr) {
+									logger.error(
+										`Element screenshot failed, falling back: ${elErr}`
+									);
+									await newPage.screenshot({
+										path: `screenshots/screenshot_${
+											itemId || "unknown"
+										}.png`,
+										type: "png",
+										fullPage: true,
+									});
+								}
+							} else {
+								// no fancybox, fallback to full page
+								await newPage.screenshot({
+									path: `screenshots/screenshot_${
+										itemId || "unknown"
+									}.png`,
+									type: "png",
+									fullPage: true,
+								});
+							}
+						} catch (sErr) {
+							logger.error(`Screenshot/crop failed: ${sErr}`);
+							// fallback
+							try {
+								await newPage.screenshot({
+									path: `screenshots/screenshot_${
+										itemId || "unknown"
+									}.png`,
+									type: "png",
+									fullPage: true,
+								});
+							} catch (ee) {
+								logger.error(`Fallback screenshot failed: ${ee}`);
+							}
+						}
 						await newPage.close();
 					} catch (err) {
 						logger.error(

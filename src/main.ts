@@ -49,16 +49,16 @@ async function mainSupremeNotifications(): Promise<void> {
 			const value = await discord.doesChannelExistUnderCategory(
 				client,
 				supremeDiscordTextChannelInfo.channelName,
-				//constants.SUPREME.CATEGORY_ID
-				constants.TEST.CATEGORY_ID
+				constants.SUPREME.CATEGORY_ID
+				//constants.TEST.CATEGORY_ID
 			);
 
 			if (!value) {
 				const supremeCategory =
 					await discord.getFullCategoryNameBySubstring(
 						client,
-						//"SUPREME"
-						"TEST"
+						"SUPREME"
+						//"TEST"
 					);
 
 				if (supremeCategory) {
