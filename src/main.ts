@@ -182,15 +182,15 @@ async function mainKithMondayProgramNotifications(): Promise<void> {
 			const value = await discord.doesChannelExistUnderCategory(
 				client,
 				mondayProgramReleaseDate,
-				constants.KITH.CATEGORY_ID
-				//constants.TEST.CATEGORY_ID
+				//constants.KITH.CATEGORY_ID
+				constants.TEST.CATEGORY_ID
 			);
 
 			if (!value) {
 				const kithCategory = await discord.getFullCategoryNameBySubstring(
 					client,
-					"KITH MONDAY PROGRAM"
-					//"TEST"
+					//"KITH MONDAY PROGRAM"
+					"TEST"
 				);
 
 				if (kithCategory) {
@@ -226,11 +226,11 @@ client.on("clientReady", async () => {
 	});
 
 	//runs every Thursday at 8PM
-	//cron.schedule("0 20 * * 4", async () => {
-	logger.info("Running Palace cron job");
-	await mainPalaceNotifications();
-	logger.info("Palace drops are done");
-	//});
+	cron.schedule("0 20 * * 4", async () => {
+		logger.info("Running Palace cron job");
+		await mainPalaceNotifications();
+		logger.info("Palace drops are done");
+	});
 
 	//runs everyday at 8PM
 	// cron.schedule("0 20 * * *", () => {
@@ -240,9 +240,9 @@ client.on("clientReady", async () => {
 	// });
 
 	//runs every Sunday at 8PM
-	cron.schedule("0 20 * * 0", async () => {
-		logger.info("Running Kith Monday Program cron job");
-		await mainKithMondayProgramNotifications();
-		logger.info("Kith Monday Program drops are done");
-	});
+	//cron.schedule("0 20 * * 0", async () => {
+	logger.info("Running Kith Monday Program cron job");
+	await mainKithMondayProgramNotifications();
+	logger.info("Kith Monday Program drops are done");
+	//});
 });
