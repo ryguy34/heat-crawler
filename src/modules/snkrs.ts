@@ -3,8 +3,22 @@ import { load } from "cheerio";
 import puppeteer from "puppeteer";
 import zlib from "zlib";
 import logger from "../config/logger";
-import { SnkrsDropInfo } from "../vo/snkrs/snkrsDropInfo";
+//import { SnkrsDropInfo } from "../vo/snkrs/snkrsDropInfo";
 import constants from "../utility/constants";
+
+interface SnkrsDropInfo {
+	channelName: string;
+	title: string;
+	imageUrls: string[];
+	price: string;
+	model: string;
+	name: string;
+	releaseDate: string;
+	releaseTime: string;
+	description: string;
+	sku: string;
+	link: string;
+}
 
 export class SNKRS {
 	constructor() {}
@@ -82,19 +96,34 @@ export class SNKRS {
 				imageLinks = imageLinks.filter((i) => {
 					return i.includes("t_prod");
 				});
-				const snkrsDropInfo = new SnkrsDropInfo(
-					channelName,
-					`${model} ${name}`,
-					imageLinks,
-					price,
-					model,
-					name,
-					releaseDate,
-					releaseTime,
-					description,
-					sku,
-					link
-				);
+				// const snkrsDropInfo = new SnkrsDropInfo(
+				// 	channelName,
+				// 	`${model} ${name}`,
+				// 	imageLinks,
+				// 	price,
+				// 	model,
+				// 	name,
+				// 	releaseDate,
+				// 	releaseTime,
+				// 	description,
+				// 	sku,
+				// 	link
+				// );
+
+				const snkrsDropInfo = {
+					channelName: channelName,
+					title: `${model} ${name}`,
+					imageUrls: imageLinks,
+					price: price,
+					model: model,
+					name: name,
+					releaseDate: releaseDate,
+					releaseTime: releaseTime,
+					description: description,
+					sku: sku,
+					link: link,
+				};
+
 				snkrsDrops.push(snkrsDropInfo);
 				// logger.info("link: " + link);
 				// logger.info("model: " + model);
