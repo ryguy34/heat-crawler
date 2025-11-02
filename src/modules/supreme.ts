@@ -1,7 +1,7 @@
 import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { Browser } from "puppeteer";
-import logger from "../config/logger";
+import logger from "../utility/logger";
 import { load } from "cheerio";
 import { ShopifyDropInfo } from "../vo/shopify/shopifyDropInfo";
 import { ShopifyChannelInfo } from "../vo/shopify/shopifyChannelInfo";

@@ -1,7 +1,7 @@
 import axios from "axios";
 import { load } from "cheerio";
 
-import logger from "../config/logger";
+import logger from "../utility/logger";
 import constants from "../utility/constants";
 
 interface KithProductInfo {

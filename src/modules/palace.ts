@@ -2,7 +2,7 @@ import axios from "axios";
 import { load } from "cheerio";
 import { ShopifyDropInfo } from "../vo/shopify/shopifyDropInfo";
 import { ShopifyChannelInfo } from "../vo/shopify/shopifyChannelInfo";
-import logger from "../config/logger";
+import logger from "../utility/logger";
 
 import constants from "../utility/constants";
 

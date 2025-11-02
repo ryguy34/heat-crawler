@@ -9,7 +9,7 @@ import "dotenv/config";
 import fs from "fs";
 import { ShopifyChannelInfo } from "../vo/shopify/shopifyChannelInfo";
 import { SnkrsDropInfo } from "../interface/SnkrsDropInfo";
-import logger from "../config/logger";
+import logger from "../utility/logger";
 
 export class Discord {
 	constructor() {}

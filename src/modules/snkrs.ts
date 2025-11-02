@@ -2,23 +2,9 @@ import axios from "axios";
 import { load } from "cheerio";
 import puppeteer from "puppeteer";
 import zlib from "zlib";
-import logger from "../config/logger";
+import logger from "../utility/logger";
 import constants from "../utility/constants";
 import { SnkrsDropInfo } from "../interface/SnkrsDropInfo";
-
-// interface SnkrsDropInfo {
-// 	channelName: string;
-// 	title: string;
-// 	imageUrls: string[];
-// 	price: string;
-// 	model: string;
-// 	name: string;
-// 	releaseDate: string;
-// 	releaseTime: string;
-// 	description: string;
-// 	sku: string;
-// 	link: string;
-// }
 
 export class SNKRS {
 	constructor() {}

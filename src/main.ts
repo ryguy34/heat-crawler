@@ -7,7 +7,7 @@ import { Supreme } from "./modules/supreme";
 import { Palace } from "./modules/palace";
 import { SNKRS } from "./modules/snkrs";
 import Utility from "./utility/utility";
-import logger from "./config/logger";
+import logger from "./utility/logger";
 import { Kith } from "./modules/kith";
 import constants from "./utility/constants";
 
