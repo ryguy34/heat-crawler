@@ -182,15 +182,15 @@ async function mainKithMondayProgramNotifications(): Promise<void> {
 			const value = await discord.doesChannelExistUnderCategory(
 				client,
 				mondayProgramReleaseDate,
-				//constants.KITH.CATEGORY_ID
-				constants.TEST.CATEGORY_ID
+				constants.KITH.CATEGORY_ID
+				//constants.TEST.CATEGORY_ID
 			);
 
 			if (!value) {
 				const kithCategory = await discord.getFullCategoryNameBySubstring(
 					client,
-					//"KITH MONDAY PROGRAM"
-					"TEST"
+					"KITH MONDAY PROGRAM"
+					//"TEST"
 				);
 
 				if (kithCategory) {
