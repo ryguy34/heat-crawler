@@ -42,7 +42,9 @@ export class Supreme {
 				},
 			});
 			const page = await browser.newPage();
-			await page.setUserAgent(constants.SNKRS.HEADERS.headers["User-Agent"]);
+			await page.setUserAgent({
+				userAgent: constants.SUPREME.HEADERS.headers["User-Agent"],
+			});
 			await page.goto(url, { waitUntil: "networkidle2" });
 			const htmlData = await page.content();
 
