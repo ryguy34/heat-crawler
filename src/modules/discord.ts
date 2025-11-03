@@ -7,8 +7,8 @@ import {
 } from "discord.js";
 import "dotenv/config";
 import fs from "fs";
-import { ShopifyChannelInfo } from "../vo/shopify/shopifyChannelInfo";
-import { SnkrsDropInfo } from "../interface/SnkrsDropInfo";
+import { ShopifyChannelInfo } from "../interface/ShopifyInterface";
+import { SnkrsDropInfo } from "../interface/SnkrsInterface";
 import logger from "../utility/logger";
 
 export class Discord {

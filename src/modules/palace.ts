@@ -2,8 +2,10 @@ import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { Browser } from "puppeteer";
 import { load } from "cheerio";
-import { ShopifyDropInfo } from "../vo/shopify/shopifyDropInfo";
-import { ShopifyChannelInfo } from "../vo/shopify/shopifyChannelInfo";
+import {
+	ShopifyChannelInfo,
+	ShopifyProductInfo,
+} from "../interface/ShopifyInterface";
 import logger from "../utility/logger";
 
 import constants from "../utility/constants";
@@ -17,7 +19,7 @@ export class Palace {
 	async parsePalaceDrop(
 		currentWeekFridayDate: string
 	): Promise<ShopifyChannelInfo> {
-		var productList: ShopifyDropInfo[] = [];
+		var productList: ShopifyProductInfo[] = [];
 		var palaceDiscordTextChannelInfo;
 		let browser: Browser | undefined;
 		const url = `${constants.PALACE.COMMUNITY_BASE_URL}/droplists/${currentWeekFridayDate}`;
@@ -164,22 +166,22 @@ export class Palace {
 					}
 				}
 
-				var palaceDropInfo = new ShopifyDropInfo(
-					productName!,
-					productInfoUrl,
-					imageUrl,
-					price,
-					categoryUrl
-				);
+				var palaceDropInfo = {
+					productName: productName!,
+					productInfoUrl: productInfoUrl,
+					imageUrl: imageUrl,
+					price: price,
+					categoryUrl: categoryUrl,
+				} as ShopifyProductInfo;
 
 				productList.push(palaceDropInfo);
 			}
 
-			palaceDiscordTextChannelInfo = new ShopifyChannelInfo(
-				channelName,
-				title
-			);
-			palaceDiscordTextChannelInfo.products = productList;
+			palaceDiscordTextChannelInfo = {
+				channelName: channelName,
+				openingMessage: title,
+				products: productList,
+			} as ShopifyChannelInfo;
 		} catch (error: unknown) {
 			logger.error(error instanceof Error ? error.message : String(error));
 		} finally {
