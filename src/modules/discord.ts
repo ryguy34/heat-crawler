@@ -8,8 +8,8 @@ import {
 import "dotenv/config";
 import fs from "fs";
 import { ShopifyChannelInfo } from "../vo/shopify/shopifyChannelInfo";
-import { SnkrsDropInfo } from "../vo/snkrs/snkrsDropInfo";
-import logger from "../config/logger";
+import { SnkrsDropInfo } from "../interface/SnkrsDropInfo";
+import logger from "../utility/logger";
 
 export class Discord {
 	constructor() {}
