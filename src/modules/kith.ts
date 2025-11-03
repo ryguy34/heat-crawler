@@ -1,16 +1,27 @@
 import axios from "axios";
 import { load } from "cheerio";
 
-import logger from "../config/logger";
+import logger from "../utility/logger";
 import constants from "../utility/constants";
+
+interface KithProductInfo {
+	productName: string;
+	imageUrl: string;
+	productPrice: string;
+	productUrl: string;
+	variantCartUrlList: { size: string; id: string }[];
+}
+
+interface KithVariantInfo {
+	size: string;
+	id: string;
+}
 
 export class Kith {
 	constructor() {}
 
-	async parseProductVariants(
-		productUrl: string
-	): Promise<{ size: string; id: string }[]> {
-		const variantUrlList: { size: string; id: string }[] = [];
+	async parseProductVariants(productUrl: string): Promise<KithVariantInfo[]> {
+		const variantInfoList: KithVariantInfo[] = [];
 		try {
 			const res = await axios.get(productUrl + ".json", constants.params);
 			const rawVariantList = res.data.product.variants;
@@ -18,12 +29,12 @@ export class Kith {
 				if (variant.title === "Default Title") {
 					// Default Title means only one size
 					logger.debug("Default Title found, setting size to OS");
-					variantUrlList.push({
+					variantInfoList.push({
 						id: String(variant.id), // ensure string type
 						size: "One Size",
 					});
 				} else {
-					variantUrlList.push({
+					variantInfoList.push({
 						id: String(variant.id), // ensure string type
 						size: variant.title,
 					});
@@ -43,18 +54,10 @@ export class Kith {
 			}
 		}
 
-		return variantUrlList;
+		return variantInfoList;
 	}
 
-	async parseKithMondayProgramDrop(): Promise<
-		{
-			productName: string;
-			imageUrl: string;
-			productPrice: string;
-			productUrl: string;
-			variantCartUrlList: { size: string; id: string }[];
-		}[]
-	> {
+	async parseKithMondayProgramDrop(): Promise<KithProductInfo[]> {
 		try {
 			const res = await axios.get(
 				constants.KITH.MONDAY_PROGRAM_URL,
