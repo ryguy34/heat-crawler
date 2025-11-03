@@ -4,7 +4,7 @@ import puppeteer from "puppeteer";
 import zlib from "zlib";
 import logger from "../utility/logger";
 import constants from "../utility/constants";
-import { SnkrsDropInfo } from "../interface/SnkrsDropInfo";
+import { SnkrsDropInfo } from "../interface/SnkrsInterface";
 
 export class SNKRS {
 	constructor() {}

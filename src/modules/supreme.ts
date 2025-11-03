@@ -3,8 +3,10 @@ import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { Browser } from "puppeteer";
 import logger from "../utility/logger";
 import { load } from "cheerio";
-import { ShopifyDropInfo } from "../vo/shopify/shopifyDropInfo";
-import { ShopifyChannelInfo } from "../vo/shopify/shopifyChannelInfo";
+import {
+	ShopifyChannelInfo,
+	ShopifyProductInfo,
+} from "../interface/ShopifyInterface";
 import constants from "../utility/constants";
 
 // Add stealth plugin and initialize
@@ -18,7 +20,7 @@ export class Supreme {
 		currentYear: number,
 		currentSeason: string
 	): Promise<ShopifyChannelInfo> {
-		let productList: ShopifyDropInfo[] = [];
+		let productList: ShopifyProductInfo[] = [];
 		let supremeTextChannelInfo;
 		let browser: Browser | undefined;
 		const url = `${constants.SUPREME.COMMUNITY_BASE_URL}/season/${currentSeason}${currentYear}/droplist/${currentWeekThursdayDate}`;
@@ -51,8 +53,6 @@ export class Supreme {
 				.trim()
 				.toLocaleLowerCase()
 				.replace(" ", "-");
-
-			supremeTextChannelInfo = new ShopifyChannelInfo(channelName, title);
 
 			const catalogItems = $(".catalog-item").toArray();
 
@@ -182,18 +182,22 @@ export class Supreme {
 					}
 				}
 
-				const productInfo = new ShopifyDropInfo(
-					productName!,
-					productInfoUrl,
-					imageUrl!,
-					formatPrice,
-					categoryUrl
-				);
+				const productInfo = {
+					productName: productName!,
+					productInfoUrl: productInfoUrl,
+					imageUrl: imageUrl,
+					price: formatPrice,
+					categoryUrl: categoryUrl,
+				};
 
 				productList.push(productInfo);
 			}
 
-			supremeTextChannelInfo.products = productList;
+			supremeTextChannelInfo = {
+				channelName: channelName,
+				openingMessage: title,
+				products: productList,
+			} as ShopifyChannelInfo;
 		} catch (error: unknown) {
 			logger.error(error instanceof Error ? error.message : String(error));
 		} finally {
