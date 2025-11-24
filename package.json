@@ -20,32 +20,19 @@
   },
   "homepage": "https://github.com/ryguy34/snkrs-scraper#readme",
   "dependencies": {
-<<<<<<< HEAD
-    "axios": "^1.13.1",
-    "cheerio": "^1.1.2",
-    "date-fns": "^4.1.0",
-    "discord.js": "^14.24.2",
-    "node-cron": "^4.2.1",
-    "puppeteer": "^24.27.0",
-=======
     "axios": "^1.13.2",
     "cheerio": "^1.1.2",
     "date-fns": "^4.1.0",
     "discord.js": "^14.25.1",
     "node-cron": "^4.2.1",
     "puppeteer": "^24.31.0",
->>>>>>> 0e537076855c2fcad430cceaa163e105bfd9e427
     "puppeteer-extra": "^3.3.6",
     "puppeteer-extra-plugin-stealth": "^2.11.2",
     "winston": "^3.18.3"
   },
   "devDependencies": {
     "@types/date-fns": "^2.6.3",
-<<<<<<< HEAD
-    "@types/node": "^24.10.0",
-=======
     "@types/node": "^24.10.1",
->>>>>>> 0e537076855c2fcad430cceaa163e105bfd9e427
     "@types/node-cron": "^3.0.11",
     "cross-env": "^10.1.0",
     "dotenv": "^17.2.3",
