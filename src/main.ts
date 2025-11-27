@@ -36,16 +36,14 @@ client.login(process.env.CLIENT_TOKEN);
 /**
  * main function for Supreme notifications to Discord channel
  */
-async function mainSupremeNotifications(): Promise<void> {
+async function mainSupremeNotifications(date: string): Promise<void> {
 	const supreme = new Supreme();
 	try {
-		const currentWeekThursdayDate = Utility.getThursdayOfCurrentWeek();
-		const currentYear = Utility.getFullYear();
 		const currentSeason = Utility.getCurrentSeason();
 
 		const supremeDiscordTextChannelInfo = await supreme.parseSupremeDrop(
-			currentWeekThursdayDate,
-			currentYear,
+			date,
+			parseInt(date.split("-")[0]),
 			currentSeason
 		);
 
@@ -222,7 +220,40 @@ async function mainKithMondayProgramNotifications(): Promise<void> {
 client.on("clientReady", async () => {
 	logger.info("Bot is ready");
 	app.listen(port, () => {
-		console.log(`Example app listening at http://localhost:${port}`);
+		logger.info(`SNKRS Scraper is listening at http://localhost:${port}`);
+	});
+
+	app.get("/drops/:store/:date", async (req, res) => {
+		const store = req.params.store.toLowerCase();
+		const date = req.params.date;
+
+		try {
+			switch (store) {
+				case "supreme":
+					const currentWeekThursdayDate =
+						Utility.getThursdayOfCurrentWeek();
+					await mainSupremeNotifications(currentWeekThursdayDate);
+					res.json({ message: "Supreme notifications finished", date });
+					break;
+				case "palace":
+					await mainPalaceNotifications();
+					res.json({ message: "Palace notifications finished", date });
+					break;
+				case "kith":
+					await mainKithMondayProgramNotifications();
+					res.json({ message: "Kith notifications finished", date });
+					break;
+				case "snkrs":
+					// await mainSnkrsNotifications();
+					res.json({ message: "SNKRS notifications finished", date });
+					break;
+				default:
+					res.status(400).json({ error: `Unknown store: ${store}` });
+			}
+		} catch (error) {
+			logger.error(error);
+			res.status(500).json({ error: "Internal server error" });
+		}
 	});
 
 	//runs every Wednesday at 8PM
