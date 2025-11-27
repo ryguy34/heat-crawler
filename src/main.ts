@@ -10,6 +10,10 @@ import Utility from "./utility/utility";
 import logger from "./utility/logger";
 import { Kith } from "./modules/kith";
 import constants from "./utility/constants";
+import express from "express";
+
+const app = express();
+const port = 8080;
 
 const discord = new Discord();
 const client = new Client({
@@ -217,6 +221,9 @@ async function mainKithMondayProgramNotifications(): Promise<void> {
  */
 client.on("clientReady", async () => {
 	logger.info("Bot is ready");
+	app.listen(port, () => {
+		console.log(`Example app listening at http://localhost:${port}`);
+	});
 
 	//runs every Wednesday at 8PM
 	cron.schedule("0 20 * * 3", async () => {
