@@ -258,8 +258,9 @@ client.on("clientReady", async () => {
 
 	//runs every Wednesday at 8PM
 	cron.schedule("0 20 * * 3", async () => {
+		const currentWeekThursdayDate = Utility.getThursdayOfCurrentWeek();
 		logger.info("Running Supreme cron job");
-		await mainSupremeNotifications();
+		await mainSupremeNotifications(currentWeekThursdayDate);
 		logger.info("Supreme drops are done");
 	});
 
