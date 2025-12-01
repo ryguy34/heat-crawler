@@ -12,7 +12,7 @@ import { Kith } from "./modules/kith";
 import express from "express";
 
 const app = express();
-const port = 8080;
+const port = parseInt(process.env.PORT || "8080", 10);
 
 const discord = new Discord();
 const client = new Client({
