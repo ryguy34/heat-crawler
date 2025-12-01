@@ -24,7 +24,8 @@ const client = new Client({
 // Determine the environment (default to 'dev' if NODE_ENV is not set)
 const envFile = `.env${process.env.NODE_ENV ? `.${process.env.NODE_ENV}` : ""}`;
 
-// Load the environment variables from the appropriate file
+// Load the environment variables from the appropriate files.... .env first, then specific env file
+config({ path: path.resolve(process.cwd(), ".env") });
 config({ path: path.resolve(process.cwd(), envFile) });
 
 client.login(process.env.CLIENT_TOKEN);

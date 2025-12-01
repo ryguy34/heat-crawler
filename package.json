@@ -4,8 +4,7 @@
   "description": "Node SNKRS web scraper",
   "main": "dist/main.js",
   "scripts": {
-    "local": "cross-env NODE_ENV=local tsx watch src/main.ts",
-    "test": "cross-env NODE_ENV=test tsx watch src/main.ts",
+    "dev": "cross-env NODE_ENV=dev tsx watch src/main.ts",
     "prod": "cross-env NODE_ENV=prod tsx watch src/main.ts",
     "build": "tsc",
     "start": "node ."
