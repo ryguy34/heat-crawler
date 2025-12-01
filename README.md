@@ -1,15 +1,18 @@
-# Web Scraping Guide: SNKRS, Supreme, and Palace
+# Web Scraping Guide: SNKRS, Supreme, Palace, and Kith
 
-In this guide, we will walk you through the process of creating a web scraper using Node.js to extract data from SNKRS, Supreme, and Palace websites. We'll also provide an overview of each website and highlight their key features.
+In this guide, we will walk you through the process of creating a web scraper using Node.js to extract data from SNKRS (under development), Supreme, Palace, and Kith websites. We'll also provide an overview of each website and highlight their key features.
 
 ## Table of Contents
 
 - [SNKRS](#snkrs)
 - [Supreme](#supreme)
 - [Palace](#palace)
+- [Kith](#kith)
 - [Setup](#setup)
 
 ## SNKRS
+
+_Status: Under development — functionality and endpoints are still being built._
 
 The SNKRS website is a popular platform for sneaker enthusiasts. It features limited-edition and exclusive sneaker releases from various brands.
 
