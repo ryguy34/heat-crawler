@@ -212,9 +212,9 @@ async function mainKithMondayProgramNotifications(): Promise<void> {
  * When the script has connected to Discord successfully
  */
 client.on("clientReady", async () => {
-	logger.info("Bot is ready");
+	logger.info("Heat Crawler Discord Bot is online");
 	app.listen(port, () => {
-		logger.info(`SNKRS Scraper is listening at http://localhost:${port}`);
+		logger.info(`Heat Crawler API is listening at http://localhost:${port}`);
 	});
 
 	app.get("/drops/:store/:date", async (req, res) => {
@@ -233,10 +233,6 @@ client.on("clientReady", async () => {
 					await mainPalaceNotifications();
 					res.json({ message: "Palace notifications finished", date });
 					break;
-				case "kith":
-					await mainKithMondayProgramNotifications();
-					res.json({ message: "Kith notifications finished", date });
-					break;
 				case "snkrs":
 					// await mainSnkrsNotifications();
 					res.json({ message: "SNKRS notifications finished", date });
@@ -248,6 +244,10 @@ client.on("clientReady", async () => {
 			logger.error(error);
 			res.status(500).json({ error: "Internal server error" });
 		}
+	});
+
+	app.get("/kith/:title", async (req, res) => {
+		const title = req.params.title.toLowerCase();
 	});
 
 	//runs every Wednesday at 8PM
