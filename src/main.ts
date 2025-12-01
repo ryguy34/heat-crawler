@@ -84,14 +84,11 @@ async function mainSupremeNotifications(date: string): Promise<void> {
 /**
  * main function for Palace notifications to Discord channel
  */
-async function mainPalaceNotifications(): Promise<void> {
+async function mainPalaceNotifications(date: string): Promise<void> {
 	const palace = new Palace();
-	const currentWeekFridayDate = Utility.getFridayOfCurrentWeek(); // returns format: YYYY-MM-DD
 
 	try {
-		const palaceDiscordTextChannelInfo = await palace.parsePalaceDrop(
-			currentWeekFridayDate
-		);
+		const palaceDiscordTextChannelInfo = await palace.parsePalaceDrop(date);
 
 		if (palaceDiscordTextChannelInfo) {
 			const value = await discord.doesChannelExistUnderCategory(
@@ -224,12 +221,16 @@ client.on("clientReady", async () => {
 		try {
 			switch (store) {
 				case "supreme":
+					logger.info("Running Supreme api job with date " + date);
 					await mainSupremeNotifications(date);
 					res.json({ message: "Supreme notifications finished", date });
+					logger.info("Finished Supreme api job");
 					break;
 				case "palace":
-					await mainPalaceNotifications();
+					logger.info("Running Palace api job with date " + date);
+					await mainPalaceNotifications(date);
 					res.json({ message: "Palace notifications finished", date });
+					logger.info("Finished Palace api job");
 					break;
 				default:
 					res.status(400).json({ error: `Unknown store: ${store}` });
@@ -246,16 +247,17 @@ client.on("clientReady", async () => {
 
 	//runs every Wednesday at 8PM
 	cron.schedule("0 20 * * 3", async () => {
-		const currentWeekThursdayDate = Utility.getThursdayOfCurrentWeek();
 		logger.info("Running Supreme cron job");
-		await mainSupremeNotifications(currentWeekThursdayDate);
+		const targetedDate = Utility.getThursdayOfCurrentWeek(); // returns format: YYYY-MM-DD
+		await mainSupremeNotifications(targetedDate);
 		logger.info("Supreme drops are done");
 	});
 
 	//runs every Thursday at 8PM
 	cron.schedule("0 20 * * 4", async () => {
 		logger.info("Running Palace cron job");
-		await mainPalaceNotifications();
+		const targetedDate = Utility.getFridayOfCurrentWeek(); // returns format: YYYY-MM-DD
+		await mainPalaceNotifications(targetedDate);
 		logger.info("Palace drops are done");
 	});
 
