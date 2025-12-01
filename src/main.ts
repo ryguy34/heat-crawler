@@ -9,11 +9,14 @@ import { SNKRS } from "./modules/snkrs";
 import Utility from "./utility/utility";
 import logger from "./utility/logger";
 import { Kith } from "./modules/kith";
+<<<<<<< HEAD
 import constants from "./utility/constants";
 import express from "express";
 
 const app = express();
 const port = 8080;
+=======
+>>>>>>> 9269a61434ac55f5bde18cfae2e0eb01c2f25b33
 
 const discord = new Discord();
 const client = new Client({
@@ -28,7 +31,8 @@ const client = new Client({
 // Determine the environment (default to 'dev' if NODE_ENV is not set)
 const envFile = `.env${process.env.NODE_ENV ? `.${process.env.NODE_ENV}` : ""}`;
 
-// Load the environment variables from the appropriate file
+// Load the environment variables from the appropriate files.... .env first, then specific env file
+config({ path: path.resolve(process.cwd(), ".env") });
 config({ path: path.resolve(process.cwd(), envFile) });
 
 client.login(process.env.CLIENT_TOKEN);
@@ -51,16 +55,14 @@ async function mainSupremeNotifications(date: string): Promise<void> {
 			const value = await discord.doesChannelExistUnderCategory(
 				client,
 				supremeDiscordTextChannelInfo.channelName,
-				constants.SUPREME.CATEGORY_ID
-				//constants.TEST.CATEGORY_ID
+				process.env.SUPREME_CATEGORY_ID!
 			);
 
 			if (!value) {
 				const supremeCategory =
 					await discord.getFullCategoryNameBySubstring(
 						client,
-						"SUPREME"
-						//"TEST"
+						process.env.SUPREME_CATEGORY_NAME!
 					);
 
 				if (supremeCategory) {
@@ -99,15 +101,13 @@ async function mainPalaceNotifications(): Promise<void> {
 			const value = await discord.doesChannelExistUnderCategory(
 				client,
 				palaceDiscordTextChannelInfo.channelName,
-				constants.PALACE.CATEGORY_ID
-				//constants.TEST.CATEGORY_ID
+				process.env.PALACE_CATEGORY_ID!
 			);
 
 			if (!value) {
 				const palaceCategory = await discord.getFullCategoryNameBySubstring(
 					client,
-					"PALACE"
-					//"TEST"
+					process.env.PALACE_CATEGORY_NAME!
 				);
 
 				if (palaceCategory) {
@@ -184,15 +184,13 @@ async function mainKithMondayProgramNotifications(): Promise<void> {
 			const value = await discord.doesChannelExistUnderCategory(
 				client,
 				mondayProgramReleaseDate,
-				constants.KITH.CATEGORY_ID
-				//constants.TEST.CATEGORY_ID
+				process.env.KITH_CATEGORY_ID!
 			);
 
 			if (!value) {
 				const kithCategory = await discord.getFullCategoryNameBySubstring(
 					client,
-					"KITH MONDAY PROGRAM"
-					//"TEST"
+					process.env.KITH_CATEGORY_NAME!
 				);
 
 				if (kithCategory) {

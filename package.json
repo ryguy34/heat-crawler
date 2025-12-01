@@ -2,7 +2,7 @@
   "name": "snkrs-scraper",
   "version": "1.0.0",
   "description": "Node SNKRS web scraper",
-  "main": "dist/index.js",
+  "main": "dist/main.js",
   "scripts": {
     "dev": "cross-env NODE_ENV=dev tsx watch src/main.ts",
     "prod": "cross-env NODE_ENV=prod tsx watch src/main.ts",
@@ -39,6 +39,6 @@
     "cross-env": "^10.1.0",
     "dotenv": "^17.2.3",
     "pretty": "^2.0.0",
-    "tsx": "^4.20.6"
+    "tsx": "^4.21.0"
   }
 }
