@@ -13,6 +13,12 @@ import constants from "../utility/constants";
 // Add stealth plugin and initialize
 puppeteer.use(StealthPlugin());
 
+// Allow overriding Puppeteer navigation timeouts via env; default to 60s
+const NAV_TIMEOUT_MS = parseInt(
+	process.env.PUPPETEER_NAV_TIMEOUT_MS || "60000",
+	10
+);
+
 export class Palace {
 	constructor() {}
 
@@ -44,7 +50,12 @@ export class Palace {
 			await page.setUserAgent({
 				userAgent: constants.PALACE.HEADERS.headers["User-Agent"],
 			});
-			await page.goto(url, { waitUntil: "networkidle2" });
+			await page.setDefaultNavigationTimeout(NAV_TIMEOUT_MS);
+			await page.setDefaultTimeout(NAV_TIMEOUT_MS);
+			await page.goto(url, {
+				waitUntil: "networkidle2",
+				timeout: NAV_TIMEOUT_MS,
+			});
 			const htmlData = await page.content();
 
 			const $ = load(htmlData);
@@ -104,7 +115,7 @@ export class Palace {
 						}
 
 						const newPage = await browser!.newPage();
-						await newPage.setDefaultNavigationTimeout(60000);
+						await newPage.setDefaultNavigationTimeout(NAV_TIMEOUT_MS);
 						await newPage.setUserAgent(
 							constants.PALACE.HEADERS.headers["User-Agent"]
 						);
@@ -117,7 +128,7 @@ export class Palace {
 						});
 						await newPage.goto(imageUrl, {
 							waitUntil: "networkidle2",
-							timeout: 60000,
+							timeout: NAV_TIMEOUT_MS,
 						});
 						const screenshotPath = path.join(
 							screenshotsDir,

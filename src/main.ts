@@ -224,9 +224,7 @@ client.on("clientReady", async () => {
 		try {
 			switch (store) {
 				case "supreme":
-					const currentWeekThursdayDate =
-						Utility.getThursdayOfCurrentWeek();
-					await mainSupremeNotifications(currentWeekThursdayDate);
+					await mainSupremeNotifications(date);
 					res.json({ message: "Supreme notifications finished", date });
 					break;
 				case "palace":
