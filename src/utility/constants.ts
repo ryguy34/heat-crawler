@@ -2,7 +2,6 @@ const constants = Object.freeze({
 	SNKRS: {
 		BASE_URL: "https://www.nike.com",
 		URL: "https://www.nike.com/launch?s=upcoming",
-		CATEGORY_ID: "915088080699023401",
 		HEADERS: {
 			headers: {
 				Accept:
@@ -17,7 +16,6 @@ const constants = Object.freeze({
 	SUPREME: {
 		COMMUNITY_BASE_URL: "https://www.supremecommunity.com",
 		STORE_BASE_URL: "https://us.supreme.com/",
-		CATEGORY_ID: "867052008094826546",
 		HEADERS: {
 			headers: {
 				Accept:
@@ -32,7 +30,6 @@ const constants = Object.freeze({
 	PALACE: {
 		COMMUNITY_BASE_URL: "https://www.palacecmty.com",
 		STORE_BASE_URL: "https://shop-usa.palaceskateboards.com",
-		CATEGORY_ID: "873011958591418448",
 		HEADERS: {
 			headers: {
 				Accept:
@@ -46,7 +43,6 @@ const constants = Object.freeze({
 	},
 	KITH: {
 		MONDAY_PROGRAM_URL: "https://kith.com/collections/kith-monday-program",
-		CATEGORY_ID: "1358597868096717024",
 	},
 	params: {
 		headers: {
@@ -55,9 +51,6 @@ const constants = Object.freeze({
 			"accept-encoding": "gzip, deflate, br",
 			accept: "*/*",
 		},
-	},
-	TEST: {
-		CATEGORY_ID: "1145474605205688412",
 	},
 });
 

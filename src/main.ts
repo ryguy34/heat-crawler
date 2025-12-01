@@ -9,7 +9,6 @@ import { SNKRS } from "./modules/snkrs";
 import Utility from "./utility/utility";
 import logger from "./utility/logger";
 import { Kith } from "./modules/kith";
-import constants from "./utility/constants";
 
 const discord = new Discord();
 const client = new Client({
