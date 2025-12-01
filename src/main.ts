@@ -9,14 +9,10 @@ import { SNKRS } from "./modules/snkrs";
 import Utility from "./utility/utility";
 import logger from "./utility/logger";
 import { Kith } from "./modules/kith";
-<<<<<<< HEAD
-import constants from "./utility/constants";
 import express from "express";
 
 const app = express();
 const port = 8080;
-=======
->>>>>>> 9269a61434ac55f5bde18cfae2e0eb01c2f25b33
 
 const discord = new Discord();
 const client = new Client({
