@@ -233,10 +233,6 @@ client.on("clientReady", async () => {
 					await mainPalaceNotifications();
 					res.json({ message: "Palace notifications finished", date });
 					break;
-				case "snkrs":
-					// await mainSnkrsNotifications();
-					res.json({ message: "SNKRS notifications finished", date });
-					break;
 				default:
 					res.status(400).json({ error: `Unknown store: ${store}` });
 			}
