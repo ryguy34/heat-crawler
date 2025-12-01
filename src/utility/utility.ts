@@ -34,13 +34,13 @@ class Utility {
 	}
 
 	/**
-	 * Gets the upcoming Thursday date for the current week in YYYY-MM-DD
+	 * Gets the closest Thursday date in YYYY-MM-DD (including current day if today is Thursday)
 	 * @returns string
 	 */
 	static getThursdayOfCurrentWeek(): string {
 		const today = new Date();
 		const currentDayOfWeek = today.getDay(); // 0 for Sunday, 1 for Monday, ..., 6 for Saturday
-		const daysUntilThursday = (4 - currentDayOfWeek + 7) % 7; // Calculate how many days to Thursday
+		const daysUntilThursday = (4 - currentDayOfWeek + 7) % 7; // Calculate how many days to Thursday, 0 if today is Thursday
 
 		// Set the date to Thursday of the current week
 		today.setDate(today.getDate() + daysUntilThursday);
@@ -54,13 +54,13 @@ class Utility {
 	}
 
 	/**
-	 * Gets the upcoming Friday date for the current week in YYYY-MM-DD
+	 * Gets the closest Friday date in YYYY-MM-DD (including current day if today is Friday)
 	 * @returns string
 	 */
 	static getFridayOfCurrentWeek(): string {
 		const today = new Date();
 		const currentDayOfWeek = today.getDay(); // 0 for Sunday, 1 for Monday, ..., 6 for Saturday
-		const daysUntilFriday = (5 - currentDayOfWeek + 7) % 7; // Calculate how many days to Friday
+		const daysUntilFriday = (5 - currentDayOfWeek + 7) % 7; // Calculate how many days to Friday, 0 if today is Friday
 
 		// Set the date to Friday of the current week
 		today.setDate(today.getDate() + daysUntilFriday);
@@ -128,13 +128,13 @@ class Utility {
 	}
 
 	/**
-	 * Returns upcoming Monday date in MMM-dd format
+	 * Returns closest Monday date in MMM-dd format (including current day if today is Monday)
 	 *
 	 * @returns
 	 */
 	static getUpcomingMonday(): string {
 		const today = new Date();
-		const daysUntilMonday = (8 - today.getDay()) % 7 || 7; // Calculate days until next Monday
+		const daysUntilMonday = (8 - today.getDay()) % 7; // Calculate days until next Monday, 0 if today is Monday
 		const nextMonday = addDays(today, daysUntilMonday);
 		return format(nextMonday, "MMM-dd").toLowerCase(); // Format as "mmm-dd" and convert to lowercase
 	}
