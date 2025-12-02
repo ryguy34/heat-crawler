@@ -43,7 +43,15 @@ async function mainSupremeNotifications(date: string): Promise<void> {
 
 		const supremeDiscordTextChannelInfo = await supreme.parseSupremeDrop(
 			date,
-			parseInt(date.split("-")[0]),
+			(() => {
+				const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date);
+				if (!match) {
+					throw new Error(
+						`Invalid date format: ${date}. Expected YYYY-MM-DD.`
+					);
+				}
+				return parseInt(match[1], 10);
+			})(),
 			currentSeason
 		);
 
@@ -205,11 +213,17 @@ async function mainKithMondayProgramNotifications(): Promise<void> {
 	}
 }
 
-/**
- * When the script has connected to Discord successfully
- */
-client.on("clientReady", async () => {
-	logger.info("Heat Crawler Discord Bot is online");
+// Flag to track Discord client readiness
+let isDiscordReady = false;
+
+if (!isDiscordReady) {
+	/**
+	 * When the script has connected to Discord successfully
+	 */
+
+	// Request tracking to prevent concurrent operations
+	const activeRequests = new Map<string, Promise<void>>();
+
 	app.listen(port, () => {
 		logger.info(`Heat Crawler API is listening at http://localhost:${port}`);
 	});
@@ -217,18 +231,34 @@ client.on("clientReady", async () => {
 	app.get("/drops/:store/:date", async (req, res) => {
 		const store = req.params.store.toLowerCase();
 		const date = req.params.date;
+		const requestKey = `${store}-${date}`;
+
+		// Check if request is already in progress
+		if (activeRequests.has(requestKey)) {
+			return res.status(429).json({
+				error: "Request already in progress for this store/date combination",
+				store,
+				date,
+			});
+		}
 
 		try {
+			let operationPromise: Promise<void>;
+
 			switch (store) {
 				case "supreme":
 					logger.info("Running Supreme api job with date " + date);
-					await mainSupremeNotifications(date);
+					operationPromise = mainSupremeNotifications(date);
+					activeRequests.set(requestKey, operationPromise);
+					await operationPromise;
 					res.json({ message: "Supreme notifications finished", date });
 					logger.info("Finished Supreme api job");
 					break;
 				case "palace":
 					logger.info("Running Palace api job with date " + date);
-					await mainPalaceNotifications(date);
+					operationPromise = mainPalaceNotifications(date);
+					activeRequests.set(requestKey, operationPromise);
+					await operationPromise;
 					res.json({ message: "Palace notifications finished", date });
 					logger.info("Finished Palace api job");
 					break;
@@ -243,7 +273,13 @@ client.on("clientReady", async () => {
 
 	app.get("/kith/:title", async (req, res) => {
 		const title = req.params.title.toLowerCase();
+		res.json({ message: "Kith notifications finished", title });
 	});
+}
+
+client.on("clientReady", async () => {
+	isDiscordReady = true;
+	logger.info("Heat Crawler Discord Bot is online");
 
 	//runs every Wednesday at 8PM
 	cron.schedule("0 20 * * 3", async () => {
