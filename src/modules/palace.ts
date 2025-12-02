@@ -31,7 +31,9 @@ export class Palace {
 		const url = `${constants.PALACE.COMMUNITY_BASE_URL}/droplists/${currentWeekFridayDate}`;
 		try {
 			browser = await puppeteer.launch({
-				headless: Boolean(process.env.HEADLESS),
+				headless:
+					process.env.HEADLESS === undefined ||
+					process.env.HEADLESS === "true",
 				args: [
 					"--no-sandbox",
 					"--disable-setuid-sandbox",
