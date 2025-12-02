@@ -9,6 +9,10 @@ import { SNKRS } from "./modules/snkrs";
 import Utility from "./utility/utility";
 import logger from "./utility/logger";
 import { Kith } from "./modules/kith";
+import express from "express";
+
+const app = express();
+const port = parseInt(process.env.PORT || "8080", 10);
 
 const discord = new Discord();
 const client = new Client({
@@ -32,16 +36,22 @@ client.login(process.env.CLIENT_TOKEN);
 /**
  * main function for Supreme notifications to Discord channel
  */
-async function mainSupremeNotifications(): Promise<void> {
+async function mainSupremeNotifications(date: string): Promise<void> {
 	const supreme = new Supreme();
 	try {
-		const currentWeekThursdayDate = Utility.getThursdayOfCurrentWeek();
-		const currentYear = Utility.getFullYear();
 		const currentSeason = Utility.getCurrentSeason();
 
 		const supremeDiscordTextChannelInfo = await supreme.parseSupremeDrop(
-			currentWeekThursdayDate,
-			currentYear,
+			date,
+			(() => {
+				const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date);
+				if (!match) {
+					throw new Error(
+						`Invalid date format: ${date}. Expected YYYY-MM-DD.`
+					);
+				}
+				return parseInt(match[1], 10);
+			})(),
 			currentSeason
 		);
 
@@ -82,14 +92,11 @@ async function mainSupremeNotifications(): Promise<void> {
 /**
  * main function for Palace notifications to Discord channel
  */
-async function mainPalaceNotifications(): Promise<void> {
+async function mainPalaceNotifications(date: string): Promise<void> {
 	const palace = new Palace();
-	const currentWeekFridayDate = Utility.getFridayOfCurrentWeek(); // returns format: YYYY-MM-DD
 
 	try {
-		const palaceDiscordTextChannelInfo = await palace.parsePalaceDrop(
-			currentWeekFridayDate
-		);
+		const palaceDiscordTextChannelInfo = await palace.parsePalaceDrop(date);
 
 		if (palaceDiscordTextChannelInfo) {
 			const value = await discord.doesChannelExistUnderCategory(
@@ -206,23 +213,62 @@ async function mainKithMondayProgramNotifications(): Promise<void> {
 	}
 }
 
-/**
- * When the script has connected to Discord successfully
- */
 client.on("clientReady", async () => {
-	logger.info("Bot is ready");
+	logger.info("Heat Crawler Discord Bot is online");
+	app.listen(port, () => {
+		logger.info(`Heat Crawler API is listening at http://localhost:${port}`);
+	});
+
+	app.get("/drops/:store/:date", async (req, res) => {
+		const store = req.params.store.toLowerCase();
+		const date = req.params.date;
+		const requestKey = `${store}-${date}`;
+
+		try {
+			let operationPromise: Promise<void>;
+
+			switch (store) {
+				case "supreme":
+					logger.info("Running Supreme api job with date " + date);
+					operationPromise = mainSupremeNotifications(date);
+					await operationPromise;
+					res.json({ message: "Supreme notifications finished", date });
+					logger.info("Finished Supreme api job");
+					break;
+				case "palace":
+					logger.info("Running Palace api job with date " + date);
+					operationPromise = mainPalaceNotifications(date);
+					await operationPromise;
+					res.json({ message: "Palace notifications finished", date });
+					logger.info("Finished Palace api job");
+					break;
+				default:
+					res.status(400).json({ error: `Unknown store: ${store}` });
+			}
+		} catch (error) {
+			logger.error(error);
+			res.status(500).json({ error: "Internal server error" });
+		}
+	});
+
+	app.get("/kith/:title", async (req, res) => {
+		const title = req.params.title.toLowerCase();
+		res.json({ message: "Kith notifications finished", title });
+	});
 
 	//runs every Wednesday at 8PM
 	cron.schedule("0 20 * * 3", async () => {
 		logger.info("Running Supreme cron job");
-		await mainSupremeNotifications();
+		const targetedDate = Utility.getThursdayOfCurrentWeek(); // returns format: YYYY-MM-DD
+		await mainSupremeNotifications(targetedDate);
 		logger.info("Supreme drops are done");
 	});
 
 	//runs every Thursday at 8PM
 	cron.schedule("0 20 * * 4", async () => {
 		logger.info("Running Palace cron job");
-		await mainPalaceNotifications();
+		const targetedDate = Utility.getFridayOfCurrentWeek(); // returns format: YYYY-MM-DD
+		await mainPalaceNotifications(targetedDate);
 		logger.info("Palace drops are done");
 	});
 
