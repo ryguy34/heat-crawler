@@ -213,17 +213,8 @@ async function mainKithMondayProgramNotifications(): Promise<void> {
 	}
 }
 
-// Flag to track Discord client readiness
-let isDiscordReady = false;
-
-if (!isDiscordReady) {
-	/**
-	 * When the script has connected to Discord successfully
-	 */
-
-	// Request tracking to prevent concurrent operations
-	const activeRequests = new Map<string, Promise<void>>();
-
+client.on("clientReady", async () => {
+	logger.info("Heat Crawler Discord Bot is online");
 	app.listen(port, () => {
 		logger.info(`Heat Crawler API is listening at http://localhost:${port}`);
 	});
@@ -233,15 +224,6 @@ if (!isDiscordReady) {
 		const date = req.params.date;
 		const requestKey = `${store}-${date}`;
 
-		// Check if request is already in progress
-		if (activeRequests.has(requestKey)) {
-			return res.status(429).json({
-				error: "Request already in progress for this store/date combination",
-				store,
-				date,
-			});
-		}
-
 		try {
 			let operationPromise: Promise<void>;
 
@@ -249,7 +231,6 @@ if (!isDiscordReady) {
 				case "supreme":
 					logger.info("Running Supreme api job with date " + date);
 					operationPromise = mainSupremeNotifications(date);
-					activeRequests.set(requestKey, operationPromise);
 					await operationPromise;
 					res.json({ message: "Supreme notifications finished", date });
 					logger.info("Finished Supreme api job");
@@ -257,7 +238,6 @@ if (!isDiscordReady) {
 				case "palace":
 					logger.info("Running Palace api job with date " + date);
 					operationPromise = mainPalaceNotifications(date);
-					activeRequests.set(requestKey, operationPromise);
 					await operationPromise;
 					res.json({ message: "Palace notifications finished", date });
 					logger.info("Finished Palace api job");
@@ -275,11 +255,6 @@ if (!isDiscordReady) {
 		const title = req.params.title.toLowerCase();
 		res.json({ message: "Kith notifications finished", title });
 	});
-}
-
-client.on("clientReady", async () => {
-	isDiscordReady = true;
-	logger.info("Heat Crawler Discord Bot is online");
 
 	//runs every Wednesday at 8PM
 	cron.schedule("0 20 * * 3", async () => {
