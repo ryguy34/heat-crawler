@@ -32,7 +32,9 @@ export class Supreme {
 		const url = `${constants.SUPREME.COMMUNITY_BASE_URL}/season/${currentSeason}${currentYear}/droplist/${currentWeekThursdayDate}`;
 		try {
 			browser = await puppeteer.launch({
-				headless: Boolean(process.env.HEADLESS),
+				headless:
+					process.env.HEADLESS === undefined ||
+					process.env.HEADLESS === "true",
 				args: [
 					"--no-sandbox",
 					"--disable-setuid-sandbox",
