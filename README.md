@@ -62,8 +62,25 @@ Key Features:
 Clone the repository and navigate to the project directory:
 
 ```bash
-git clone https://github.com/ryguy34/snkrs-scraper.git
-cd project-directory
+git clone https://github.com/ryguy34/heat-crawler.git
+cd heat-crawler
+
+# Prerequisites
+- Node.js 18+ recommended
+- pnpm installed (preferred). Install on Windows PowerShell:
+
+npm install -g pnpm
+pnpm -v
+
+# Using pnpm (recommended)
+pnpm install
+pnpm dev        # runs `tsx watch src/main.ts` in dev mode
+pnpm build      # compiles TypeScript to dist/
+pnpm start      # runs the compiled app
+
+# Using npm (alternative)
 npm install
-tsx watch src/main.ts # or run npm script "start" from package.json
+npm run dev
+npm run build
+npm start
 ```
