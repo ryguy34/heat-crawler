@@ -24,7 +24,7 @@ export class Palace {
 
 	async parsePalaceDrop(
 		currentWeekFridayDate: string
-	): Promise<ShopifyChannelInfo> {
+	): Promise<ShopifyChannelInfo | undefined> {
 		var productList: ShopifyProductInfo[] = [];
 		var palaceDiscordTextChannelInfo;
 		let browser: Browser | undefined;
@@ -52,12 +52,19 @@ export class Palace {
 			await page.setUserAgent({
 				userAgent: constants.PALACE.HEADERS.headers["User-Agent"],
 			});
-			await page.setDefaultNavigationTimeout(NAV_TIMEOUT_MS);
-			await page.setDefaultTimeout(NAV_TIMEOUT_MS);
-			await page.goto(url, {
+			page.setDefaultNavigationTimeout(NAV_TIMEOUT_MS);
+			page.setDefaultTimeout(NAV_TIMEOUT_MS);
+			const response = await page.goto(url, {
 				waitUntil: "networkidle2",
 				timeout: NAV_TIMEOUT_MS,
 			});
+			const status = response?.status();
+			if (status !== undefined && status >= 400 && status < 500) {
+				logger.error(
+					`Palace droplist returned HTTP ${status}; skipping. url=${url}`
+				);
+				return undefined;
+			}
 			const htmlData = await page.content();
 
 			const $ = load(htmlData);
@@ -86,7 +93,6 @@ export class Palace {
 					.replace(/(\r\n|\n|\r)/gm, "")
 					.replace("€", "$")
 					.trim();
-				var png = $(ele).find("img").attr("data-src");
 
 				var parts = itemSlug?.split("-");
 				var season = "";
@@ -101,6 +107,8 @@ export class Palace {
 				const productName = itemName;
 				const categoryUrl = `${constants.PALACE.STORE_BASE_URL}/collections/${category}`;
 				var price = price === "" ? "???" : price;
+
+				logger.info(`Parsed Palace product: ${productName} | ${price}`);
 
 				// Take screenshot using Puppeteer
 				if (imageUrl) {
@@ -117,10 +125,10 @@ export class Palace {
 						}
 
 						const newPage = await browser!.newPage();
-						await newPage.setDefaultNavigationTimeout(NAV_TIMEOUT_MS);
-						await newPage.setUserAgent(
-							constants.PALACE.HEADERS.headers["User-Agent"]
-						);
+						newPage.setDefaultNavigationTimeout(NAV_TIMEOUT_MS);
+						await newPage.setUserAgent({
+							userAgent: constants.PALACE.HEADERS.headers["User-Agent"],
+						});
 						await newPage.setExtraHTTPHeaders({
 							Accept:
 								"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",

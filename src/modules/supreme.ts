@@ -25,9 +25,9 @@ export class Supreme {
 		currentWeekThursdayDate: string,
 		currentYear: number,
 		currentSeason: string
-	): Promise<ShopifyChannelInfo> {
+	): Promise<ShopifyChannelInfo | undefined> {
 		let productList: ShopifyProductInfo[] = [];
-		let supremeTextChannelInfo;
+		let supremeTextChannelInfo: ShopifyChannelInfo | undefined;
 		let browser: Browser | undefined;
 		const url = `${constants.SUPREME.COMMUNITY_BASE_URL}/season/${currentSeason}${currentYear}/droplist/${currentWeekThursdayDate}`;
 		try {
@@ -53,12 +53,19 @@ export class Supreme {
 			await page.setUserAgent({
 				userAgent: constants.SUPREME.HEADERS.headers["User-Agent"],
 			});
-			await page.setDefaultNavigationTimeout(NAV_TIMEOUT_MS);
-			await page.setDefaultTimeout(NAV_TIMEOUT_MS);
-			await page.goto(url, {
+			page.setDefaultNavigationTimeout(NAV_TIMEOUT_MS);
+			page.setDefaultTimeout(NAV_TIMEOUT_MS);
+			const response = await page.goto(url, {
 				waitUntil: "networkidle2",
 				timeout: NAV_TIMEOUT_MS,
 			});
+			const status = response?.status();
+			if (status !== undefined && status >= 400 && status < 500) {
+				logger.error(
+					`Supreme droplist returned HTTP ${status}; skipping. url=${url}`
+				);
+				return undefined;
+			}
 			const htmlData = await page.content();
 
 			const $ = load(htmlData);
@@ -102,12 +109,16 @@ export class Supreme {
 					"/" +
 					itemSlug;
 
+				logger.info(
+					`Parsed Supreme product: ${productName} | ${formatPrice}`
+				);
+
 				// Take screenshot using Puppeteer
 				if (imageUrl) {
 					try {
 						const newPage = await browser!.newPage();
 						// Set a longer timeout and modify navigation settings
-						await newPage.setDefaultNavigationTimeout(NAV_TIMEOUT_MS);
+						newPage.setDefaultNavigationTimeout(NAV_TIMEOUT_MS);
 						await newPage.setUserAgent({
 							userAgent: constants.SUPREME.HEADERS.headers["User-Agent"],
 						});
@@ -220,6 +231,6 @@ export class Supreme {
 				await browser.close();
 			}
 		}
-		return supremeTextChannelInfo!;
+		return supremeTextChannelInfo;
 	}
 }
