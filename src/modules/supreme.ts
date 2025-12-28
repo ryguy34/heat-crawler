@@ -50,7 +50,7 @@ export class Supreme {
 				},
 			});
 			const page = await browser.newPage();
-			page.setUserAgent({
+			await page.setUserAgent({
 				userAgent: constants.SUPREME.HEADERS.headers["User-Agent"],
 			});
 			page.setDefaultNavigationTimeout(NAV_TIMEOUT_MS);
@@ -119,12 +119,12 @@ export class Supreme {
 						const newPage = await browser!.newPage();
 						// Set a longer timeout and modify navigation settings
 						newPage.setDefaultNavigationTimeout(NAV_TIMEOUT_MS);
-						newPage.setUserAgent({
+						await newPage.setUserAgent({
 							userAgent: constants.SUPREME.HEADERS.headers["User-Agent"],
 						});
 
 						// Set additional headers
-						newPage.setExtraHTTPHeaders({
+						await newPage.setExtraHTTPHeaders({
 							Accept:
 								"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
 							"Accept-Language": "en-US,en;q=0.5",

@@ -49,7 +49,7 @@ export class Palace {
 				},
 			});
 			const page = await browser.newPage();
-			page.setUserAgent({
+			await page.setUserAgent({
 				userAgent: constants.PALACE.HEADERS.headers["User-Agent"],
 			});
 			page.setDefaultNavigationTimeout(NAV_TIMEOUT_MS);
@@ -126,10 +126,10 @@ export class Palace {
 
 						const newPage = await browser!.newPage();
 						newPage.setDefaultNavigationTimeout(NAV_TIMEOUT_MS);
-						newPage.setUserAgent({
+						await newPage.setUserAgent({
 							userAgent: constants.PALACE.HEADERS.headers["User-Agent"],
 						});
-						newPage.setExtraHTTPHeaders({
+						await newPage.setExtraHTTPHeaders({
 							Accept:
 								"text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
 							"Accept-Language": "en-US,en;q=0.5",
