@@ -59,6 +59,18 @@ Key Features:
 
 ## Setup
 
+### Puppeteer Chrome install
+
+This project uses `puppeteer`/`puppeteer-extra`, which requires a compatible Chrome build.
+
+- `pnpm i` will attempt to download it automatically via `postinstall`.
+- If you see `Could not find Chrome (...)`, run: `pnpm run install:browsers`
+
+If you prefer to use a system-installed Chrome/Chromium, set one of:
+
+- `PUPPETEER_EXECUTABLE_PATH` (preferred)
+- `CHROME_PATH`
+
 Clone the repository and navigate to the project directory:
 
 ```bash

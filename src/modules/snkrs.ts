@@ -44,7 +44,14 @@ export class SNKRS {
 			logger.error("Error gathering SNKRS release links: " + error);
 		}
 
-		const browser = await puppeteer.launch();
+		const executablePath =
+			process.env.PUPPETEER_EXECUTABLE_PATH || process.env.CHROME_PATH;
+		const browser = await puppeteer.launch({
+			headless:
+				process.env.HEADLESS === undefined ||
+				process.env.HEADLESS === "true",
+			...(executablePath ? { executablePath } : {}),
+		});
 		const page = await browser.newPage();
 		var snkrsDrops = [];
 		for (const link of productLinks) {

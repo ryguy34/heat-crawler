@@ -7,7 +7,9 @@
     "dev": "cross-env NODE_ENV=dev tsx watch src/main.ts",
     "prod": "cross-env NODE_ENV=prod tsx watch src/main.ts",
     "build": "tsc",
-    "start": "node ."
+    "start": "node .",
+    "install:browsers": "puppeteer browsers install chrome",
+    "postinstall": "puppeteer browsers install chrome"
   },
   "repository": {
     "type": "git",
@@ -19,7 +21,7 @@
     "url": "https://github.com/ryguy34/snkrs-scraper/issues"
   },
   "homepage": "https://github.com/ryguy34/snkrs-scraper#readme",
-  "packageManager": "pnpm@10.26.2",
+  "packageManager": "pnpm@10.27.0",
   "dependencies": {
     "axios": "^1.13.2",
     "cheerio": "^1.1.2",
