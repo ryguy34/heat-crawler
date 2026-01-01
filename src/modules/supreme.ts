@@ -8,6 +8,7 @@ import {
 	ShopifyProductInfo,
 } from "../interface/ShopifyInterface";
 import constants from "../utility/constants";
+import { log } from "console";
 
 // Add stealth plugin and initialize
 puppeteer.use(StealthPlugin());
@@ -29,12 +30,16 @@ export class Supreme {
 		let productList: ShopifyProductInfo[] = [];
 		let supremeTextChannelInfo: ShopifyChannelInfo | undefined;
 		let browser: Browser | undefined;
+		const executablePath =
+			process.env.PUPPETEER_EXECUTABLE_PATH || process.env.CHROME_PATH;
 		const url = `${constants.SUPREME.COMMUNITY_BASE_URL}/season/${currentSeason}${currentYear}/droplist/${currentWeekThursdayDate}`;
 		try {
+			logger.info("Launching browser for Supreme droplist parsing...");
 			browser = await puppeteer.launch({
 				headless:
 					process.env.HEADLESS === undefined ||
 					process.env.HEADLESS === "true",
+				...(executablePath ? { executablePath } : {}),
 				args: [
 					"--no-sandbox",
 					"--disable-setuid-sandbox",
@@ -110,7 +115,7 @@ export class Supreme {
 					itemSlug;
 
 				logger.info(
-					`Parsed Supreme product: ${productName} | ${formatPrice}`
+					`Parsed Supreme product: ${productName?.trim()} | ${formatPrice.trim()}`
 				);
 
 				// Take screenshot using Puppeteer

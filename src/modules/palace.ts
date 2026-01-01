@@ -28,19 +28,23 @@ export class Palace {
 		var productList: ShopifyProductInfo[] = [];
 		var palaceDiscordTextChannelInfo;
 		let browser: Browser | undefined;
+		const executablePath =
+			process.env.PUPPETEER_EXECUTABLE_PATH || process.env.CHROME_PATH;
 		const url = `${constants.PALACE.COMMUNITY_BASE_URL}/droplists/${currentWeekFridayDate}`;
 		try {
+			logger.info("Launching browser for Palace droplist parsing...");
 			browser = await puppeteer.launch({
 				headless:
 					process.env.HEADLESS === undefined ||
 					process.env.HEADLESS === "true",
+				...(executablePath ? { executablePath } : {}),
 				args: [
 					"--no-sandbox",
 					"--disable-setuid-sandbox",
 					"--disable-infobars",
 					"--window-position=0,0",
-					"--ignore-certifcate-errors",
-					"--ignore-certifcate-errors-spki-list",
+					"--ignore-certificate-errors",
+					"--ignore-certificate-errors-spki-list",
 					"--window-size=1920,1080",
 				],
 				defaultViewport: {
@@ -108,7 +112,9 @@ export class Palace {
 				const categoryUrl = `${constants.PALACE.STORE_BASE_URL}/collections/${category}`;
 				var price = price === "" ? "???" : price;
 
-				logger.info(`Parsed Palace product: ${productName} | ${price}`);
+				logger.info(
+					`Parsed Palace product: ${productName?.trim()} | ${price.trim()}`
+				);
 
 				// Take screenshot using Puppeteer
 				if (imageUrl) {
