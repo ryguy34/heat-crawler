@@ -8,8 +8,8 @@
     "prod": "cross-env NODE_ENV=prod tsx watch src/main.ts",
     "build": "tsc",
     "start": "node .",
-    "install:browsers": "puppeteer browsers install chrome",
-    "postinstall": "puppeteer browsers install chrome"
+    "install:browsers": "cross-env NODE_OPTIONS=--no-deprecation puppeteer browsers install chrome",
+    "postinstall": "cross-env NODE_OPTIONS=--no-deprecation puppeteer browsers install chrome"
   },
   "repository": {
     "type": "git",
