@@ -44,8 +44,8 @@ export class Kith {
 			if (axios.isAxiosError(error)) {
 				logger.error(
 					`Axios error: ${error.message}, Response: ${JSON.stringify(
-						error.response?.data
-					)}`
+						error.response?.data,
+					)}`,
 				);
 			} else if (error instanceof Error) {
 				logger.error(error.message);
@@ -61,7 +61,7 @@ export class Kith {
 		try {
 			const res = await axios.get(
 				constants.KITH.MONDAY_PROGRAM_URL,
-				constants.params
+				constants.params,
 			);
 
 			const htmlData = res.data;
@@ -73,9 +73,10 @@ export class Kith {
 				// find text where "MONDAY 11AM EST" and only parse cards that contain this text
 				var mondayRelease = $(ele).find(".text-10").first().text().trim();
 				if (
-					mondayRelease &&
-					mondayRelease !== "Monday 11am EST" &&
-					mondayRelease !== "ENTER DRAWING IN APP"
+					!mondayRelease ||
+					mondayRelease === "ENTER DRAWING IN APP" ||
+					mondayRelease === "IN APP ONLY" ||
+					mondayRelease === "SOLD OUT"
 				) {
 					// do nothing
 					logger.info("No upcoming Kith Monday Program found");
@@ -100,7 +101,7 @@ export class Kith {
 					// /collections/kith-monday-program/products/nbu9975hk-ph
 					logger.debug(productUrl);
 					var variantCartUrlList = await this.parseProductVariants(
-						productUrl!
+						productUrl!,
 					);
 					logger.debug(variantCartUrlList);
 					productList.push({
@@ -117,8 +118,8 @@ export class Kith {
 			if (axios.isAxiosError(error)) {
 				logger.error(
 					`Axios error: ${error.message}, Response: ${JSON.stringify(
-						error.response?.data
-					)}`
+						error.response?.data,
+					)}`,
 				);
 			} else if (error instanceof Error) {
 				logger.error(error.message);
