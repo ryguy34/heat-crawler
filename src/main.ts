@@ -47,39 +47,39 @@ async function mainSupremeNotifications(date: string): Promise<void> {
 				const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(date);
 				if (!match) {
 					throw new Error(
-						`Invalid date format: ${date}. Expected YYYY-MM-DD.`
+						`Invalid date format: ${date}. Expected YYYY-MM-DD.`,
 					);
 				}
 				return parseInt(match[1], 10);
 			})(),
-			currentSeason
+			currentSeason,
 		);
 
 		if (supremeDiscordTextChannelInfo) {
 			const value = await discord.doesChannelExistUnderCategory(
 				client,
 				supremeDiscordTextChannelInfo.channelName,
-				process.env.SUPREME_CATEGORY_ID!
+				process.env.SUPREME_CATEGORY_ID!,
 			);
 
 			if (!value) {
 				const supremeCategory =
 					await discord.getFullCategoryNameBySubstring(
 						client,
-						process.env.SUPREME_CATEGORY_NAME!
+						process.env.SUPREME_CATEGORY_NAME!,
 					);
 
 				if (supremeCategory) {
 					const newChannel = await discord.createTextChannel(
 						client,
 						supremeCategory,
-						supremeDiscordTextChannelInfo.channelName
+						supremeDiscordTextChannelInfo.channelName,
 					);
 
 					await discord.sendDropInfo(
 						supremeDiscordTextChannelInfo,
 						newChannel!,
-						"Supreme"
+						"Supreme",
 					);
 				}
 			}
@@ -102,26 +102,26 @@ async function mainPalaceNotifications(date: string): Promise<void> {
 			const value = await discord.doesChannelExistUnderCategory(
 				client,
 				palaceDiscordTextChannelInfo.channelName,
-				process.env.PALACE_CATEGORY_ID!
+				process.env.PALACE_CATEGORY_ID!,
 			);
 
 			if (!value) {
 				const palaceCategory = await discord.getFullCategoryNameBySubstring(
 					client,
-					process.env.PALACE_CATEGORY_NAME!
+					process.env.PALACE_CATEGORY_NAME!,
 				);
 
 				if (palaceCategory) {
 					const newChannel = await discord.createTextChannel(
 						client,
 						palaceCategory,
-						palaceDiscordTextChannelInfo.channelName
+						palaceDiscordTextChannelInfo.channelName,
 					);
 
 					await discord.sendDropInfo(
 						palaceDiscordTextChannelInfo,
 						newChannel!,
-						"Palace"
+						"Palace",
 					);
 				}
 			}
@@ -185,25 +185,25 @@ async function mainKithMondayProgramNotifications(): Promise<void> {
 			const value = await discord.doesChannelExistUnderCategory(
 				client,
 				mondayProgramReleaseDate,
-				process.env.KITH_CATEGORY_ID!
+				process.env.KITH_CATEGORY_ID!,
 			);
 
 			if (!value) {
 				const kithCategory = await discord.getFullCategoryNameBySubstring(
 					client,
-					process.env.KITH_CATEGORY_NAME!
+					process.env.KITH_CATEGORY_NAME!,
 				);
 
 				if (kithCategory) {
 					const newChannel = await discord.createTextChannel(
 						client,
 						kithCategory,
-						mondayProgramReleaseDate
+						mondayProgramReleaseDate,
 					);
 
 					await discord.sendKithInfo(
 						kithMondayProgramProductList,
-						newChannel!
+						newChannel!,
 					);
 				}
 			}
