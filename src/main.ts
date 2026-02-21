@@ -7,7 +7,7 @@ import { Supreme } from "./modules/supreme";
 import { Palace } from "./modules/palace";
 import { SNKRS } from "./modules/snkrs";
 import Utility from "./utility/utility";
-import logger from "./utility/logger";
+import logger, { initLogFile } from "./utility/logger";
 import { Kith } from "./modules/kith";
 import express from "express";
 
@@ -229,6 +229,7 @@ client.on("clientReady", async () => {
 
 			switch (store) {
 				case "supreme":
+					initLogFile("supreme");
 					logger.info("Running Supreme api job with date " + date);
 					operationPromise = mainSupremeNotifications(date);
 					await operationPromise;
@@ -236,6 +237,7 @@ client.on("clientReady", async () => {
 					logger.info("Finished Supreme api job");
 					break;
 				case "palace":
+					initLogFile("palace");
 					logger.info("Running Palace api job with date " + date);
 					operationPromise = mainPalaceNotifications(date);
 					await operationPromise;
@@ -258,6 +260,7 @@ client.on("clientReady", async () => {
 
 	//runs every Wednesday at 8PM
 	cron.schedule("0 20 * * 3", async () => {
+		initLogFile("supreme");
 		logger.info("Running Supreme cron job");
 		const targetedDate = Utility.getThursdayOfCurrentWeek(); // returns format: YYYY-MM-DD
 		await mainSupremeNotifications(targetedDate);
@@ -265,12 +268,13 @@ client.on("clientReady", async () => {
 	});
 
 	//runs every Thursday at 8PM
-	cron.schedule("0 20 * * 4", async () => {
-		logger.info("Running Palace cron job");
-		const targetedDate = Utility.getFridayOfCurrentWeek(); // returns format: YYYY-MM-DD
-		await mainPalaceNotifications(targetedDate);
-		logger.info("Palace drops are done");
-	});
+	//cron.schedule("0 20 * * 4", async () => {
+	initLogFile("palace");
+	logger.info("Running Palace cron job");
+	const targetedDate = Utility.getFridayOfCurrentWeek(); // returns format: YYYY-MM-DD
+	await mainPalaceNotifications(targetedDate);
+	logger.info("Palace drops are done");
+	//});
 
 	//runs everyday at 8PM
 	// cron.schedule("0 20 * * *", () => {
@@ -281,6 +285,7 @@ client.on("clientReady", async () => {
 
 	//runs every Sunday at 8PM
 	cron.schedule("0 20 * * 0", async () => {
+		initLogFile("kith");
 		logger.info("Running Kith Monday Program cron job");
 		await mainKithMondayProgramNotifications();
 		logger.info("Kith Monday Program drops are done");

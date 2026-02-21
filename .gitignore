@@ -104,3 +104,6 @@ dist
 
 # ENV files
 .env*
+
+# screenshots
+screenshots
