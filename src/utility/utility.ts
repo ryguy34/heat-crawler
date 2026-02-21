@@ -143,13 +143,13 @@ class Utility {
 	 * Gets the upcoming Monday date for Kith Monday Program drops.
 	 * If today is Monday, returns today's date.
 	 *
-	 * @returns Date string in lowercase mmm-dd format (e.g., "feb-24")
+	 * @returns Date string in lowercase mmm-dd-monday-program format (e.g., "feb-24-monday-program")
 	 */
 	static getUpcomingMonday(): string {
 		const today = new Date();
 		const daysUntilMonday = (8 - today.getDay()) % 7; // Calculate days until next Monday, 0 if today is Monday
 		const nextMonday = addDays(today, daysUntilMonday);
-		return format(nextMonday, "MMM-dd").toLowerCase(); // Format as "mmm-dd" and convert to lowercase
+		return format(nextMonday, "MMM-dd").toLowerCase() + "-monday-program";
 	}
 }
 
