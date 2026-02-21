@@ -58,6 +58,56 @@ export class Kith {
 	}
 
 	/**
+	 * Fetches product JSON and returns both the product name and variant info.
+	 * More reliable than parsing HTML since product names are inconsistently structured.
+	 *
+	 * @param productUrl - The full URL to the Kith product page
+	 * @returns Object with productName and variantCartUrlList, or defaults on error
+	 */
+	async parseProductWithName(productUrl: string): Promise<{
+		productName: string;
+		variantCartUrlList: KithVariantInfo[];
+	}> {
+		const variantCartUrlList: KithVariantInfo[] = [];
+		let productName = "";
+
+		try {
+			const res = await axios.get(productUrl + ".json", constants.params);
+			const product = res.data.product;
+			productName = product.title || "";
+
+			const rawVariantList = product.variants;
+			rawVariantList.forEach((variant: { title: string; id: number }) => {
+				if (variant.title === "Default Title") {
+					variantCartUrlList.push({
+						id: String(variant.id),
+						size: "One Size",
+					});
+				} else {
+					variantCartUrlList.push({
+						id: String(variant.id),
+						size: variant.title,
+					});
+				}
+			});
+		} catch (error: unknown) {
+			if (axios.isAxiosError(error)) {
+				logger.error(
+					`Axios error: ${error.message}, Response: ${JSON.stringify(
+						error.response?.data,
+					)}`,
+				);
+			} else if (error instanceof Error) {
+				logger.error(error.message);
+			} else {
+				logger.error(String(error));
+			}
+		}
+
+		return { productName, variantCartUrlList };
+	}
+
+	/**
 	 * Parses upcoming Kith Monday Program drops from the collection page.
 	 * Filters products to only include those with upcoming Monday releases,
 	 * excluding sold out, app-only, and drawing items.
@@ -174,24 +224,20 @@ export class Kith {
 			for (const ele of productElements) {
 				const productLink = $(ele).find('a[href*="/products/"]').first();
 				const productUrl = "https://kith.com" + productLink.attr("href");
-				// Product name is in a link with font-georgia class
-				const productName = $(ele)
-					.find('a.font-georgia[href*="/products/"]')
-					.text()
-					.trim();
 				const imageUrl =
 					"https://" +
 					($(ele).find("img").attr("src")?.replace("//", "") ||
 						"default-image-url");
 				const productPrice = $(ele).find(".text-10").last().text().trim();
 
+				// Fetch product JSON to get reliable name and variants
+				const { productName, variantCartUrlList } =
+					await this.parseProductWithName(productUrl);
+
 				logger.info(`Product found: ${productName}`);
 				logger.debug(imageUrl);
 				logger.debug(productPrice);
 				logger.debug(productUrl);
-
-				const variantCartUrlList =
-					await this.parseProductVariants(productUrl);
 				logger.debug(variantCartUrlList);
 
 				productList.push({
