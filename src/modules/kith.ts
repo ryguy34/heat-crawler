@@ -3,25 +3,7 @@ import { load } from "cheerio";
 
 import logger from "../utility/logger";
 import constants from "../utility/constants";
-
-/**
- * Product information extracted from a Kith collection page.
- */
-interface KithProductInfo {
-	productName: string;
-	imageUrl: string;
-	productPrice: string;
-	productUrl: string;
-	variantCartUrlList: { size: string; id: string }[];
-}
-
-/**
- * Variant information for a Kith product (size and cart ID).
- */
-interface KithVariantInfo {
-	size: string;
-	id: string;
-}
+import { KithProductInfo, KithVariantInfo } from "../interface/KithInterface";
 
 /**
  * Kith module for scraping product information from kith.com.
