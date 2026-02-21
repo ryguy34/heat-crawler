@@ -16,7 +16,7 @@ puppeteer.use(StealthPlugin());
 // Allow overriding Puppeteer navigation timeouts via env; default to 60s
 const NAV_TIMEOUT_MS = parseInt(
 	process.env.PUPPETEER_NAV_TIMEOUT_MS || "60000",
-	10
+	10,
 );
 
 export class Supreme {
@@ -25,7 +25,7 @@ export class Supreme {
 	async parseSupremeDrop(
 		currentWeekThursdayDate: string,
 		currentYear: number,
-		currentSeason: string
+		currentSeason: string,
 	): Promise<ShopifyChannelInfo | undefined> {
 		let productList: ShopifyProductInfo[] = [];
 		let supremeTextChannelInfo: ShopifyChannelInfo | undefined;
@@ -67,7 +67,7 @@ export class Supreme {
 			const status = response?.status();
 			if (status !== undefined && status >= 400 && status < 500) {
 				logger.error(
-					`Supreme droplist returned HTTP ${status}; skipping. url=${url}`
+					`Supreme droplist returned HTTP ${status}; skipping. url=${url}`,
 				);
 				return undefined;
 			}
@@ -115,7 +115,7 @@ export class Supreme {
 					itemSlug;
 
 				logger.info(
-					`Parsed Supreme product: ${productName?.trim()} | ${formatPrice.trim()}`
+					`Parsed Supreme product: ${productName?.trim()} | ${formatPrice.trim()}`,
 				);
 
 				// Take screenshot using Puppeteer
@@ -156,11 +156,41 @@ export class Supreme {
 							// selector not found or click failed - continue
 						}
 
-						// Try to locate a fancybox content box and use its style/rect to crop the screenshot.
+						// Wait for fancybox content to be visible and image to load
+						let fancyEl = null;
 						try {
-							const fancyEl = await newPage.$(".fancybox-content");
+							// Wait for fancybox-content to appear and be visible
+							await newPage.waitForSelector(".fancybox-content", {
+								visible: true,
+								timeout: 15000,
+							});
+
+							// Wait for image inside fancybox to fully load
+							await newPage.waitForFunction(
+								() => {
+									const img = document.querySelector(
+										".fancybox-content img",
+									) as HTMLImageElement | null;
+									return img && img.complete && img.naturalWidth > 0;
+								},
+								{ timeout: 15000 },
+							);
+
+							// Small render buffer for any final CSS transitions
+							await new Promise((res) => setTimeout(res, 300));
+
+							fancyEl = await newPage.$(".fancybox-content");
+						} catch (waitErr) {
+							logger.warn(
+								`Fancybox/image load wait timed out, proceeding with screenshot: ${waitErr}`,
+							);
+							// Try to get fancybox element anyway for best-effort screenshot
+							fancyEl = await newPage.$(".fancybox-content");
+						}
+
+						// Take screenshot
+						try {
 							if (fancyEl) {
-								// Simpler and more robust: let Puppeteer capture the element directly.
 								try {
 									await fancyEl.screenshot({
 										path: `screenshots/supreme/screenshot_${
@@ -170,7 +200,7 @@ export class Supreme {
 									});
 								} catch (elErr) {
 									logger.error(
-										`Element screenshot failed, falling back: ${elErr}`
+										`Element screenshot failed, falling back: ${elErr}`,
 									);
 									await newPage.screenshot({
 										path: `screenshots/supreme/screenshot_${
@@ -208,7 +238,7 @@ export class Supreme {
 						await newPage.close();
 					} catch (err) {
 						logger.error(
-							`Failed to take screenshot for ${imageUrl}: ${err}`
+							`Failed to take screenshot for ${imageUrl}: ${err}`,
 						);
 					}
 				}
