@@ -172,11 +172,11 @@ export class Kith {
 			const productList: KithProductInfo[] = [];
 
 			for (const ele of productElements) {
-				const productUrl =
-					"https://kith.com" + $(ele).find("a").attr("href");
+				const productLink = $(ele).find('a[href*="/products/"]').first();
+				const productUrl = "https://kith.com" + productLink.attr("href");
+				// Product name is in a link with font-georgia class
 				const productName = $(ele)
-					.find("a.text-black.bg-white")
-					.last()
+					.find('a.font-georgia[href*="/products/"]')
 					.text()
 					.trim();
 				const imageUrl =
