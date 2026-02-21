@@ -27,6 +27,6 @@
 
 ## 4. Verification
 
-- [ ] 4.1 Test endpoint with valid collection slug
-- [ ] 4.2 Test endpoint with invalid/nonexistent collection slug (expect 404)
-- [ ] 4.3 Test duplicate request handling (expect "Already processed")
+- [x] 4.1 Test endpoint with valid collection slug
+- [x] 4.2 Test endpoint with invalid/nonexistent collection slug (expect 404)
+- [x] 4.3 Test duplicate request handling (expect "Already processed")
