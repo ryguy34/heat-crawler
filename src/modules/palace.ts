@@ -16,14 +16,14 @@ puppeteer.use(StealthPlugin());
 // Allow overriding Puppeteer navigation timeouts via env; default to 60s
 const NAV_TIMEOUT_MS = parseInt(
 	process.env.PUPPETEER_NAV_TIMEOUT_MS || "60000",
-	10
+	10,
 );
 
 export class Palace {
 	constructor() {}
 
 	async parsePalaceDrop(
-		currentWeekFridayDate: string
+		currentWeekFridayDate: string,
 	): Promise<ShopifyChannelInfo | undefined> {
 		var productList: ShopifyProductInfo[] = [];
 		var palaceDiscordTextChannelInfo;
@@ -65,7 +65,7 @@ export class Palace {
 			const status = response?.status();
 			if (status !== undefined && status >= 400 && status < 500) {
 				logger.error(
-					`Palace droplist returned HTTP ${status}; skipping. url=${url}`
+					`Palace droplist returned HTTP ${status}; skipping. url=${url}`,
 				);
 				return undefined;
 			}
@@ -113,7 +113,7 @@ export class Palace {
 				var price = price === "" ? "???" : price;
 
 				logger.info(
-					`Parsed Palace product: ${productName?.trim()} | ${price.trim()}`
+					`Parsed Palace product: ${productName?.trim()} | ${price.trim()}`,
 				);
 
 				// Take screenshot using Puppeteer
@@ -124,7 +124,7 @@ export class Palace {
 						const path = require("path");
 						const screenshotsDir = path.resolve(
 							__dirname,
-							"../../screenshots/palace"
+							"../../screenshots/palace",
 						);
 						if (!fs.existsSync(screenshotsDir)) {
 							fs.mkdirSync(screenshotsDir, { recursive: true });
@@ -148,10 +148,43 @@ export class Palace {
 						});
 						const screenshotPath = path.join(
 							screenshotsDir,
-							`screenshot_${itemId || "unknown"}.png`
+							`screenshot_${itemId || "unknown"}.png`,
 						);
+
+						// Wait for fancybox content to be visible and image to load
+						let fancyEl = null;
 						try {
-							const fancyEl = await newPage.$(".fancybox-content");
+							// Wait for fancybox-content to appear and be visible
+							await newPage.waitForSelector(".fancybox-content", {
+								visible: true,
+								timeout: 15000,
+							});
+
+							// Wait for image inside fancybox to fully load
+							await newPage.waitForFunction(
+								() => {
+									const img = document.querySelector(
+										".fancybox-content img",
+									) as HTMLImageElement | null;
+									return img && img.complete && img.naturalWidth > 0;
+								},
+								{ timeout: 15000 },
+							);
+
+							// Small render buffer for any final CSS transitions
+							await new Promise((res) => setTimeout(res, 300));
+
+							fancyEl = await newPage.$(".fancybox-content");
+						} catch (waitErr) {
+							logger.warn(
+								`Fancybox/image load wait timed out, proceeding with screenshot: ${waitErr}`,
+							);
+							// Try to get fancybox element anyway for best-effort screenshot
+							fancyEl = await newPage.$(".fancybox-content");
+						}
+
+						// Take screenshot
+						try {
 							if (fancyEl) {
 								try {
 									await fancyEl.screenshot({
@@ -160,7 +193,7 @@ export class Palace {
 									});
 								} catch (elErr) {
 									logger.error(
-										`Element screenshot failed, falling back: ${elErr}`
+										`Element screenshot failed, falling back: ${elErr}`,
 									);
 									await newPage.screenshot({
 										path: screenshotPath,
@@ -190,7 +223,7 @@ export class Palace {
 						await newPage.close();
 					} catch (err) {
 						logger.error(
-							`Failed to take screenshot for ${imageUrl}: ${err}`
+							`Failed to take screenshot for ${imageUrl}: ${err}`,
 						);
 					}
 				}
@@ -224,7 +257,7 @@ export class Palace {
 
 	async mapPalaceCategory(
 		category: string,
-		itemSlug: string
+		itemSlug: string,
 	): Promise<string> {
 		const categoryMap: { [key: string]: string } = {
 			hoods: "hoods",

@@ -268,13 +268,13 @@ client.on("clientReady", async () => {
 	});
 
 	//runs every Thursday at 8PM
-	//cron.schedule("0 20 * * 4", async () => {
-	initLogFile("palace");
-	logger.info("Running Palace cron job");
-	const targetedDate = Utility.getFridayOfCurrentWeek(); // returns format: YYYY-MM-DD
-	await mainPalaceNotifications(targetedDate);
-	logger.info("Palace drops are done");
-	//});
+	cron.schedule("0 20 * * 4", async () => {
+		initLogFile("palace");
+		logger.info("Running Palace cron job");
+		const targetedDate = Utility.getFridayOfCurrentWeek(); // returns format: YYYY-MM-DD
+		await mainPalaceNotifications(targetedDate);
+		logger.info("Palace drops are done");
+	});
 
 	//runs everyday at 8PM
 	// cron.schedule("0 20 * * *", () => {
