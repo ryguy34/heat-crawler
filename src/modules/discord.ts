@@ -15,23 +15,24 @@ export class Discord {
 	constructor() {}
 
 	/**
-	 * makes a list of embeds for the upcoming products
+	 * Sends product drop notifications for Shopify-based stores (Supreme, Palace).
+	 * Creates and sends embeds with product details including name, price, category link,
+	 * and screenshot. Cleans up screenshot files after sending.
 	 *
-	 * @param {*} textChannelInfo
-	 * @param {*} channel
-	 * @param {*} siteName
-	 * @returns
+	 * @param textChannelInfo - Channel info containing products and opening message
+	 * @param channel - The Discord TextChannel to send messages to
+	 * @param siteName - The store name ("Supreme" or "Palace") for role mentions and branding
 	 */
 	async sendDropInfo(
 		textChannelInfo: ShopifyChannelInfo,
 		channel: TextChannel,
-		siteName: string
+		siteName: string,
 	): Promise<void> {
 		let channelMessage = "";
 		if (siteName === "Supreme") {
 			channelMessage = textChannelInfo.openingMessage.replace(
 				"Supreme",
-				"<@&834439456421314560> Make sure to post W's in <#679913101269008483>"
+				"<@&834439456421314560> Make sure to post W's in <#679913101269008483>",
 			);
 		} else if (siteName === "Palace") {
 			channelMessage =
@@ -59,7 +60,7 @@ export class Discord {
 					{
 						name: " ",
 						value: `[${siteName} Category](${product.categoryUrl})`,
-					}
+					},
 				)
 				.setImage("attachment://screenshot.png")
 				.setTimestamp()
@@ -103,18 +104,19 @@ export class Discord {
 	}
 
 	/**
-	 * makes a list of embeds for the upcoming products
+	 * Sends SNKRS drop notification to a Discord channel.
+	 * Creates an embed with shoe details including title, description, price,
+	 * release date/time, and product images.
 	 *
-	 * @param {*} snkrsChannelInfo
-	 * @param {*} channel
-	 * @returns
+	 * @param snkrsChannelInfo - SNKRS drop info containing title, link, description, price, and images
+	 * @param channel - The Discord TextChannel to send messages to
 	 */
 	async sendSnkrsDropInfo(
 		snkrsChannelInfo: SnkrsDropInfo,
-		channel: TextChannel
+		channel: TextChannel,
 	): Promise<void> {
 		channel.send(
-			"<@&834440275908755566> Make sure to post W's in <#679913101269008483>"
+			"<@&834440275908755566> Make sure to post W's in <#679913101269008483>",
 		);
 		var embed;
 		embed = new EmbedBuilder()
@@ -126,7 +128,7 @@ export class Discord {
 			.addFields(
 				{ name: "Price", value: snkrsChannelInfo.price },
 				{ name: "Release Date", value: snkrsChannelInfo.releaseDate },
-				{ name: "Release Time", value: snkrsChannelInfo.releaseTime }
+				{ name: "Release Time", value: snkrsChannelInfo.releaseTime },
 			)
 			.setTimestamp()
 			.setFooter({
@@ -153,11 +155,13 @@ export class Discord {
 	}
 
 	/**
-	 * makes a list of embeds for the upcoming products and sends them to the channel
+	 * Creates and sends embeds for Kith products to a Discord channel.
+	 * Sends an opening message followed by product embeds with name, price,
+	 * image, and auto-cart links for each variant.
 	 *
-	 * @param {*} kithMondayProgramProductList
-	 * @param {*} channel
-	 * @returns
+	 * @param kithMondayProgramProductList - Array of product objects to display
+	 * @param channel - The Discord TextChannel to send messages to
+	 * @param openingMessage - Optional custom opening message. Defaults to Monday Program announcement if not provided.
 	 */
 	async sendKithInfo(
 		kithMondayProgramProductList: {
@@ -167,11 +171,12 @@ export class Discord {
 			productUrl: string;
 			variantCartUrlList: { size: string; id: string }[];
 		}[],
-		channel: TextChannel
+		channel: TextChannel,
+		openingMessage?: string,
 	): Promise<void> {
-		channel.send(
-			"<@&834439628295241758> Kith Monday Program drops are live at 10AM CST! Make sure to post W's in <#679913101269008483>"
-		);
+		const defaultMessage =
+			"<@&834439628295241758> Kith Monday Program drops are live at 10AM CST! Make sure to post W's in <#679913101269008483>";
+		channel.send(openingMessage ?? defaultMessage);
 		var embeds = [];
 		logger.debug(kithMondayProgramProductList);
 		for (const product of kithMondayProgramProductList) {
@@ -191,7 +196,7 @@ export class Discord {
 						.map((variant) => ({
 							name: "",
 							value: `[${variant.size}](https://kith.com/cart/${variant.id}:1)`,
-						})) || [])
+						})) || []),
 				)
 				.setImage(product.imageUrl)
 				.setTimestamp()
@@ -215,17 +220,17 @@ export class Discord {
 	}
 
 	/**
-	 * creates a new channel given the category and channel name
+	 * Creates a new text channel under a specified category.
 	 *
-	 * @param {*} client
-	 * @param {*} category
-	 * @param {*} channelName
-	 * @returns
+	 * @param client - The Discord.js Client instance
+	 * @param category - The parent category channel to create the text channel under
+	 * @param channelName - The name for the new text channel
+	 * @returns The newly created TextChannel, or undefined if guild not found
 	 */
 	async createTextChannel(
 		client: Client,
 		category: GuildBasedChannel,
-		channelName: string
+		channelName: string,
 	) {
 		const guild = client.guilds.cache.get(process.env.SERVER_ID!);
 
@@ -243,24 +248,24 @@ export class Discord {
 		});
 
 		logger.info(
-			`Channel "${newChannel.name}" created in category "${category.name}".`
+			`Channel "${newChannel.name}" created in category "${category.name}".`,
 		);
 
 		return newChannel!;
 	}
 
 	/**
-	 * returns a boolean of whether or not the channel exists under the given category
+	 * Checks if a channel with the given name exists under a specific category.
 	 *
-	 * @param {*} client
-	 * @param {*} channelName
-	 * @param {*} categoryId
-	 * @returns
+	 * @param client - The Discord.js Client instance
+	 * @param channelName - The exact channel name to search for
+	 * @param categoryId - The ID of the parent category to search within
+	 * @returns The matching channel if found, otherwise undefined
 	 */
 	async doesChannelExistUnderCategory(
 		client: Client,
 		channelName: string,
-		categoryId: string
+		categoryId: string,
 	): Promise<GuildBasedChannel> {
 		logger.info(`Searching for channel: ${channelName}`);
 
@@ -275,11 +280,11 @@ export class Discord {
 
 			if (channelExists) {
 				logger.warn(
-					`Channel ${channelName} exists under categoryId ${categoryId}`
+					`Channel ${channelName} exists under categoryId ${categoryId}`,
 				);
 			} else {
 				logger.info(
-					`Channel ${channelName} doesn't exist under categoryId ${categoryId}`
+					`Channel ${channelName} doesn't exist under categoryId ${categoryId}`,
 				);
 			}
 
@@ -288,21 +293,21 @@ export class Discord {
 	}
 
 	/**
-	 * returns full category by its substring
+	 * Finds a category channel by partial name match.
 	 *
-	 * @param {*} client
-	 * @param {*} partialCategoryName
-	 * @returns
+	 * @param client - The Discord.js Client instance
+	 * @param partialCategoryName - Substring to match against category names
+	 * @returns The matching category channel, or undefined if not found
 	 */
 	async getFullCategoryNameBySubstring(
 		client: Client,
-		partialCategoryName: string
+		partialCategoryName: string,
 	) {
 		const guild = client.guilds.cache.get(process.env.SERVER_ID!);
 
 		const category = guild?.channels.cache.find(
 			(channel) =>
-				channel.type === 4 && channel.name.includes(partialCategoryName)
+				channel.type === 4 && channel.name.includes(partialCategoryName),
 		);
 
 		if (category) {
@@ -315,10 +320,18 @@ export class Discord {
 		return category;
 	}
 
+	/**
+	 * Deletes release channels that are older than the current date.
+	 * Parses channel names in MM-DD format and removes those with dates in the past.
+	 *
+	 * @param client - The Discord.js Client instance
+	 * @param dateToday - The current date to compare against
+	 * @param categoryId - The ID of the category containing release channels to clean up
+	 */
 	async cleanUpOldReleasesByMonthAndDay(
 		client: Client,
 		dateToday: Date,
-		categoryId: string
+		categoryId: string,
 	): Promise<void> {
 		const guild = client.guilds.cache.get(process.env.SERVER_ID!);
 		const monthDayToday = dateToday.getMonth() * 100 + dateToday.getDate();
@@ -332,7 +345,7 @@ export class Discord {
 			const channelDate = new Date(
 				`${dateToday.getFullYear()}-${channelDateList[0]}-${
 					channelDateList[1]
-				}`
+				}`,
 			);
 			const monthDayChannelDay =
 				(channelDate.getMonth() + 1) * 100 + channelDate.getDate();
@@ -346,7 +359,7 @@ export class Discord {
 				if (channelToRemove) {
 					await channelToRemove.delete();
 					console.log(
-						`Channel ${channelToRemove.name} has been successfully removed.`
+						`Channel ${channelToRemove.name} has been successfully removed.`,
 					);
 				} else {
 					console.log(`Channel with ID ${oldChannel.id} not found.`);

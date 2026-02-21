@@ -254,8 +254,59 @@ client.on("clientReady", async () => {
 	});
 
 	app.get("/kith/:title", async (req, res) => {
-		const title = req.params.title.toLowerCase();
-		res.json({ message: "Kith notifications finished", title });
+		const collectionSlug = req.params.title.toLowerCase();
+		const kith = new Kith();
+
+		try {
+			initLogFile("kith");
+			logger.info(`Running Kith collection api job for: ${collectionSlug}`);
+
+			// Check if channel already exists
+			const channelExists = await discord.doesChannelExistUnderCategory(
+				client,
+				collectionSlug,
+				process.env.KITH_CATEGORY_ID!,
+			);
+
+			if (channelExists) {
+				logger.info(`Channel ${collectionSlug} already exists`);
+				res.json({ message: "Already processed", collectionSlug });
+				return;
+			}
+
+			// Parse the collection
+			const products = await kith.parseKithCollection(collectionSlug);
+
+			if (products.length === 0) {
+				logger.info(`Collection not found or empty: ${collectionSlug}`);
+				res.status(404).json({ error: "Collection not found" });
+				return;
+			}
+
+			// Create Discord channel
+			const kithCategory = await discord.getFullCategoryNameBySubstring(
+				client,
+				process.env.KITH_CATEGORY_NAME!,
+			);
+
+			if (kithCategory) {
+				const newChannel = await discord.createTextChannel(
+					client,
+					kithCategory,
+					collectionSlug,
+				);
+
+				// Send notifications with custom message
+				const openingMessage = `<@&834439628295241758> Check out the ${collectionSlug} collection!`;
+				await discord.sendKithInfo(products, newChannel!, openingMessage);
+			}
+
+			res.json({ message: "Kith notifications finished", collectionSlug });
+			logger.info(`Finished Kith collection api job for: ${collectionSlug}`);
+		} catch (error) {
+			logger.error(error);
+			res.status(500).json({ error: "Internal server error" });
+		}
 	});
 
 	//runs every Wednesday at 8PM

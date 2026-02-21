@@ -1,27 +1,35 @@
 import { format, addDays } from "date-fns";
 
+/**
+ * Utility class providing date manipulation and formatting helpers
+ * for scheduling drop notifications across different stores.
+ */
 class Utility {
 	constructor() {}
 
 	/**
+	 * Gets the current date in ISO format (YYYY-MM-DD).
 	 *
-	 * @returns string
+	 * @returns The current date as a string in YYYY-MM-DD format
 	 */
 	static getDate(): string {
 		return new Date().toISOString().slice(0, 10);
 	}
 
 	/**
-	 * Returns in format YYYY
-	 * @returns number
+	 * Gets the current year as a 4-digit number.
+	 *
+	 * @returns The current year (e.g., 2026)
 	 */
 	static getFullYear(): number {
 		return new Date().getFullYear();
 	}
 
 	/**
-	 * Gets current season fall-winter or spring-summer
-	 * @returns string
+	 * Determines the current Supreme season based on the date.
+	 * Fall-Winter runs from July 1st onwards, Spring-Summer before that.
+	 *
+	 * @returns "fall-winter" or "spring-summer"
 	 */
 	static getCurrentSeason(): string {
 		const todaysDate = new Date();
@@ -34,8 +42,10 @@ class Utility {
 	}
 
 	/**
-	 * Gets the closest Thursday date in YYYY-MM-DD (including current day if today is Thursday)
-	 * @returns string
+	 * Gets the upcoming Thursday date for Supreme drops.
+	 * If today is Thursday, returns today's date.
+	 *
+	 * @returns Date string in YYYY-MM-DD format
 	 */
 	static getThursdayOfCurrentWeek(): string {
 		const today = new Date();
@@ -54,8 +64,10 @@ class Utility {
 	}
 
 	/**
-	 * Gets the closest Friday date in YYYY-MM-DD (including current day if today is Friday)
-	 * @returns string
+	 * Gets the upcoming Friday date for Palace drops.
+	 * If today is Friday, returns today's date.
+	 *
+	 * @returns Date string in YYYY-MM-DD format
 	 */
 	static getFridayOfCurrentWeek(): string {
 		const today = new Date();
@@ -74,10 +86,10 @@ class Utility {
 	}
 
 	/**
-	 * Returns string type of numbered version of month passed in
+	 * Converts a 3-letter month abbreviation to its 2-digit number.
 	 *
-	 * @param {*} month
-	 * @returns
+	 * @param month - Month abbreviation (e.g., "Jan", "Feb", "Mar")
+	 * @returns 2-digit month string (e.g., "01", "02", "03"), or undefined if invalid
 	 */
 	static convertMonthToNumber(month: string) {
 		switch (month) {
@@ -109,9 +121,9 @@ class Utility {
 	}
 
 	/**
-	 * Returns tomorrows date in MM-DD format
+	 * Gets tomorrow's date for SNKRS drop scheduling.
 	 *
-	 * @returns
+	 * @returns Date string in MM-DD format
 	 */
 	static getTomorrowsDate() {
 		const currentDate = new Date();
@@ -128,9 +140,10 @@ class Utility {
 	}
 
 	/**
-	 * Returns closest Monday date in MMM-dd format (including current day if today is Monday)
+	 * Gets the upcoming Monday date for Kith Monday Program drops.
+	 * If today is Monday, returns today's date.
 	 *
-	 * @returns
+	 * @returns Date string in lowercase mmm-dd format (e.g., "feb-24")
 	 */
 	static getUpcomingMonday(): string {
 		const today = new Date();

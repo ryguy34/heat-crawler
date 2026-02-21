@@ -4,6 +4,9 @@ import { load } from "cheerio";
 import logger from "../utility/logger";
 import constants from "../utility/constants";
 
+/**
+ * Product information extracted from a Kith collection page.
+ */
 interface KithProductInfo {
 	productName: string;
 	imageUrl: string;
@@ -12,14 +15,29 @@ interface KithProductInfo {
 	variantCartUrlList: { size: string; id: string }[];
 }
 
+/**
+ * Variant information for a Kith product (size and cart ID).
+ */
 interface KithVariantInfo {
 	size: string;
 	id: string;
 }
 
+/**
+ * Kith module for scraping product information from kith.com.
+ * Handles parsing of Monday Program drops and generic collection pages.
+ */
 export class Kith {
 	constructor() {}
 
+	/**
+	 * Fetches variant information (size and ID) for a Kith product.
+	 * Retrieves the product JSON and extracts all available size variants.
+	 * Handles "Default Title" variants by converting them to "One Size".
+	 *
+	 * @param productUrl - The full URL to the Kith product page
+	 * @returns Array of variant objects with size and ID, or empty array on error
+	 */
 	async parseProductVariants(productUrl: string): Promise<KithVariantInfo[]> {
 		const variantInfoList: KithVariantInfo[] = [];
 		try {
@@ -57,6 +75,14 @@ export class Kith {
 		return variantInfoList;
 	}
 
+	/**
+	 * Parses upcoming Kith Monday Program drops from the collection page.
+	 * Filters products to only include those with upcoming Monday releases,
+	 * excluding sold out, app-only, and drawing items.
+	 *
+	 * @returns Array of KithProductInfo objects for upcoming Monday Program products,
+	 *          or empty array if none found or on error
+	 */
 	async parseKithMondayProgramDrop(): Promise<KithProductInfo[]> {
 		try {
 			const res = await axios.get(
@@ -113,6 +139,88 @@ export class Kith {
 					});
 				}
 			}
+			return productList;
+		} catch (error: unknown) {
+			if (axios.isAxiosError(error)) {
+				logger.error(
+					`Axios error: ${error.message}, Response: ${JSON.stringify(
+						error.response?.data,
+					)}`,
+				);
+			} else if (error instanceof Error) {
+				logger.error(error.message);
+			} else {
+				logger.error(String(error));
+			}
+
+			return [];
+		}
+	}
+
+	/**
+	 * Parses all products from a Kith collection page by slug.
+	 * Fetches the collection page, extracts product info from the first
+	 * .collection-break__subcollection-products container, and retrieves
+	 * variant information for each product.
+	 *
+	 * @param slug - The URL slug of the Kith collection (e.g., "lisa-for-kith-women-spring-2026")
+	 * @returns Array of KithProductInfo objects, or empty array if collection not found or fetch fails
+	 */
+	async parseKithCollection(slug: string): Promise<KithProductInfo[]> {
+		try {
+			const collectionUrl = `https://kith.com/collections/${slug}`;
+			const res = await axios.get(collectionUrl, constants.params);
+
+			const htmlData = res.data;
+			const $ = load(htmlData);
+
+			// Select first .collection-break__subcollection-products container only
+			const firstContainer = $(
+				".collection-break__subcollection-products",
+			).first();
+			const productElements = firstContainer
+				.find(".collection-break__subcollection-product")
+				.toArray();
+
+			if (productElements.length === 0) {
+				logger.info(`No products found in collection: ${slug}`);
+				return [];
+			}
+
+			const productList: KithProductInfo[] = [];
+
+			for (const ele of productElements) {
+				const productUrl =
+					"https://kith.com" + $(ele).find("a").attr("href");
+				const productName = $(ele)
+					.find("a.text-black.bg-white")
+					.last()
+					.text()
+					.trim();
+				const imageUrl =
+					"https://" +
+					($(ele).find("img").attr("src")?.replace("//", "") ||
+						"default-image-url");
+				const productPrice = $(ele).find(".text-10").last().text().trim();
+
+				logger.info(`Product found: ${productName}`);
+				logger.debug(imageUrl);
+				logger.debug(productPrice);
+				logger.debug(productUrl);
+
+				const variantCartUrlList =
+					await this.parseProductVariants(productUrl);
+				logger.debug(variantCartUrlList);
+
+				productList.push({
+					productName,
+					imageUrl,
+					productPrice,
+					productUrl,
+					variantCartUrlList,
+				});
+			}
+
 			return productList;
 		} catch (error: unknown) {
 			if (axios.isAxiosError(error)) {

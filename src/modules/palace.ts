@@ -19,9 +19,22 @@ const NAV_TIMEOUT_MS = parseInt(
 	10,
 );
 
+/**
+ * Palace module for scraping product drop information from palacecmty.com.
+ * Uses Puppeteer with stealth plugin to parse weekly droplists and capture product screenshots.
+ */
 export class Palace {
 	constructor() {}
 
+	/**
+	 * Parses the Palace droplist for a specific Friday release date.
+	 * Scrapes product information including name, price, category, and captures
+	 * screenshots of each item from the fancybox gallery.
+	 *
+	 * @param currentWeekFridayDate - The Friday date in YYYY-MM-DD format
+	 * @returns ShopifyChannelInfo with channel name, opening message, and product list,
+	 *          or undefined if the droplist page returns an error
+	 */
 	async parsePalaceDrop(
 		currentWeekFridayDate: string,
 	): Promise<ShopifyChannelInfo | undefined> {
@@ -255,6 +268,14 @@ export class Palace {
 		return palaceDiscordTextChannelInfo!;
 	}
 
+	/**
+	 * Maps Palace community category names to the official store category slugs.
+	 * Handles special cases like hoods within sweatshirts and wallets within accessories.
+	 *
+	 * @param category - The category name from the community site
+	 * @param itemSlug - The item slug used for special case detection
+	 * @returns The mapped store category slug
+	 */
 	async mapPalaceCategory(
 		category: string,
 		itemSlug: string,

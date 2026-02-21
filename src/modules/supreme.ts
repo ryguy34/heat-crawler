@@ -19,9 +19,24 @@ const NAV_TIMEOUT_MS = parseInt(
 	10,
 );
 
+/**
+ * Supreme module for scraping product drop information from supremecommunity.com.
+ * Uses Puppeteer with stealth plugin to parse weekly droplists and capture product screenshots.
+ */
 export class Supreme {
 	constructor() {}
 
+	/**
+	 * Parses the Supreme droplist for a specific Thursday release date.
+	 * Scrapes product information including name, price, category, and captures
+	 * screenshots of each item from the fancybox gallery.
+	 *
+	 * @param currentWeekThursdayDate - The Thursday date in YYYY-MM-DD format
+	 * @param currentYear - The current year (e.g., 2026)
+	 * @param currentSeason - The current Supreme season (e.g., "spring-summer" or "fall-winter")
+	 * @returns ShopifyChannelInfo with channel name, opening message, and product list,
+	 *          or undefined if the droplist page returns an error
+	 */
 	async parseSupremeDrop(
 		currentWeekThursdayDate: string,
 		currentYear: number,
