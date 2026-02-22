@@ -8,6 +8,8 @@
     "prod": "cross-env NODE_ENV=prod tsx watch src/main.ts",
     "build": "tsc",
     "start": "node .",
+    "test": "jest --coverage",
+    "lint": "eslint src/",
     "install:browsers": "cross-env NODE_OPTIONS=--no-deprecation puppeteer browsers install chrome",
     "postinstall": "cross-env NODE_OPTIONS=--no-deprecation puppeteer browsers install chrome"
   },
@@ -35,14 +37,20 @@
     "winston": "^3.19.0"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@types/date-fns": "^2.6.3",
     "@types/express": "^5.0.5",
+    "@types/jest": "^30.0.0",
     "@types/node": "^25.2.2",
     "@types/node-cron": "^3.0.11",
     "cross-env": "^10.1.0",
     "dotenv": "^17.2.4",
+    "eslint": "^10.0.1",
+    "jest": "^30.2.0",
     "pretty": "^2.0.0",
-    "tsx": "^4.21.0"
+    "ts-jest": "^29.4.6",
+    "tsx": "^4.21.0",
+    "typescript-eslint": "^8.56.0"
   },
   "pnpm": {
     "ignoredBuiltDependencies": [
