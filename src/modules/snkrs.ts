@@ -1,4 +1,5 @@
 import axios from "axios";
+import * as cheerio from "cheerio";
 import { load } from "cheerio";
 import puppeteer from "puppeteer";
 import zlib from "zlib";
@@ -9,15 +10,15 @@ import { SnkrsDropInfo } from "../interface/SnkrsInterface";
 export class SNKRS {
 	constructor() {}
 
-	async parseSnkrsDropInfo(tomorrowsDate: string): Promise<SnkrsDropInfo[]> {
-		var productLinks: string[] = [];
+	async parseSnkrsDropInfo(_tomorrowsDate: string): Promise<SnkrsDropInfo[]> {
+		const productLinks: string[] = [];
 		const options = {
 			method: "get",
 			url: constants.SNKRS.URL,
 			headers: constants.SNKRS.HEADERS.headers,
 			responseType: "arraybuffer" as const,
 			transformResponse: [
-				(data: any) => {
+				(data: Buffer) => {
 					if (data.slice(0, 2).toString("hex") === "1f8b") {
 						// Check if data is gzip-encoded
 						return zlib.gunzipSync(data).toString("utf8");
@@ -32,11 +33,11 @@ export class SNKRS {
 			const res = await axios(options);
 			const $ = load(res.data);
 
-			$(".product-card").each((_: number, ele: any) => {
-				var link = $(ele).find("a").attr("href");
+			$(".product-card").each((_: number, ele: cheerio.Element) => {
+				const link = $(ele).find("a").attr("href");
 				// https://www.nike.com/launch/t/acg-rufus-sequoia
 				const productLink = `${constants.SNKRS.BASE_URL}${link}`.split(
-					"?"
+					"?",
 				)[0];
 				productLinks.push(productLink);
 			});
@@ -53,7 +54,7 @@ export class SNKRS {
 			...(executablePath ? { executablePath } : {}),
 		});
 		const page = await browser.newPage();
-		var snkrsDrops = [];
+		const snkrsDrops = [];
 		for (const link of productLinks) {
 			try {
 				options.url = link;
@@ -81,7 +82,7 @@ export class SNKRS {
 				const sku = descriptionAndSku[1].trim().replace("SKU: ", "");
 				const channelName = this.cleanChannelName(name, model, releaseDate);
 
-				var imageLinks = await page.evaluate(() => {
+				let imageLinks = await page.evaluate(() => {
 					const imgs = document.querySelectorAll("img");
 					return Array.from(imgs).map((img) => img.src);
 				});
@@ -128,12 +129,12 @@ export class SNKRS {
 	}
 
 	cleanChannelName(name: string, model: string, date: string): string {
-		var cleanedDate = date.replace("/", "-");
-		var cleanName = name
+		const cleanedDate = date.replace("/", "-");
+		const cleanName = name
 			.replace(/\s+/g, "-")
 			.replace(/[^a-zA-Z0-9-]/g, "")
 			.toLowerCase();
-		var cleanModel = model
+		const cleanModel = model
 			.replace("Air Jordan ", "aj")
 			.replace(/\s+/g, "-")
 			.replace(/[^a-zA-Z0-9-]/g, "")

@@ -5,7 +5,7 @@ import cron from "node-cron";
 import { Discord } from "./modules/discord";
 import { Supreme } from "./modules/supreme";
 import { Palace } from "./modules/palace";
-import { SNKRS } from "./modules/snkrs";
+import { SNKRS as _SNKRS } from "./modules/snkrs";
 import Utility from "./utility/utility";
 import logger, { initLogFile } from "./utility/logger";
 import { Kith } from "./modules/kith";
@@ -222,7 +222,7 @@ client.on("clientReady", async () => {
 	app.get("/drops/:store/:date", async (req, res) => {
 		const store = req.params.store.toLowerCase();
 		const date = req.params.date;
-		const requestKey = `${store}-${date}`;
+		const _requestKey = `${store}-${date}`;
 
 		try {
 			let operationPromise: Promise<void>;

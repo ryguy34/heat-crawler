@@ -125,11 +125,11 @@ export class Kith {
 			const htmlData = res.data;
 			const $ = load(htmlData);
 			const productCards = $(".product-card").toArray();
-			var productList = [];
+			const productList = [];
 
 			for (const ele of productCards) {
 				// find text where "MONDAY 11AM EST" and only parse cards that contain this text
-				var mondayRelease = $(ele).find(".text-10").first().text().trim();
+				const mondayRelease = $(ele).find(".text-10").first().text().trim();
 				if (
 					!mondayRelease ||
 					mondayRelease === "ENTER DRAWING IN APP" ||
@@ -141,24 +141,24 @@ export class Kith {
 					break;
 				} else {
 					// this item is releasing as part of the monday program
-					var productName = $(ele)
+					const productName = $(ele)
 						.find("a.text-black.bg-white")
 						.last()
 						.text()
 						.trim();
-					var imageUrl =
+					const imageUrl =
 						"https://" +
 							$(ele).find("img").attr("src")?.replace("//", "") ||
 						"default-image-url";
-					var productPrice = $(ele).find(".text-10").last().text().trim();
-					var productUrl =
+					const productPrice = $(ele).find(".text-10").last().text().trim();
+					const productUrl =
 						"https://kith.com" + $(ele).find("a").attr("href");
 					logger.info(`Product found: ${productName}`);
 					logger.debug(imageUrl);
 					logger.debug(productPrice);
 					// /collections/kith-monday-program/products/nbu9975hk-ph
 					logger.debug(productUrl);
-					var variantCartUrlList = await this.parseProductVariants(
+					const variantCartUrlList = await this.parseProductVariants(
 						productUrl!,
 					);
 					logger.debug(variantCartUrlList);
