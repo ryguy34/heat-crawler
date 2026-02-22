@@ -1,0 +1,474 @@
+{
+	"info": {
+		"_postman_id": "heat-crawler-api",
+		"name": "Heat Crawler API",
+		"description": "REST API endpoints for manually triggering drop notifications from Supreme, Palace, and Kith collections.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "heat-crawler"
+	},
+	"item": [
+		{
+			"name": "Drop Notifications",
+			"item": [
+				{
+					"name": "Supreme Drop",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has success message\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.eql(\"Supreme notifications finished\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/drops/supreme/{{date}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"drops",
+								"supreme",
+								"{{date}}"
+							]
+						},
+						"description": "Triggers Supreme drop notifications for a specific date. Creates a Discord channel and posts product information if the channel doesn't already exist."
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/drops/supreme/2026-02-27",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"drops",
+										"supreme",
+										"2026-02-27"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Supreme notifications finished\",\n    \"date\": \"2026-02-27\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Palace Drop",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has success message\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.eql(\"Palace notifications finished\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/drops/palace/{{date}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"drops",
+								"palace",
+								"{{date}}"
+							]
+						},
+						"description": "Triggers Palace drop notifications for a specific date. Creates a Discord channel and posts product information with screenshots if the channel doesn't already exist."
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/drops/palace/2026-02-28",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"drops",
+										"palace",
+										"2026-02-28"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Palace notifications finished\",\n    \"date\": \"2026-02-28\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Invalid Store",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 400\", function () {",
+									"    pm.response.to.have.status(400);",
+									"});",
+									"",
+									"pm.test(\"Response has error message\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.error).to.include(\"Unknown store\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/drops/nike/2026-02-27",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"drops",
+								"nike",
+								"2026-02-27"
+							]
+						},
+						"description": "Example of invalid store parameter. Only 'supreme' and 'palace' are supported."
+					},
+					"response": [
+						{
+							"name": "Error",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/drops/nike/2026-02-27",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"drops",
+										"nike",
+										"2026-02-27"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"Unknown store: nike\"\n}"
+						}
+					]
+				}
+			],
+			"description": "Endpoints for triggering drop notifications for specific stores and dates."
+		},
+		{
+			"name": "Kith Collections",
+			"item": [
+				{
+					"name": "Kith Collection",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has success message\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.eql(\"Kith notifications finished\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/kith/{{collection_slug}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"kith",
+								"{{collection_slug}}"
+							]
+						},
+						"description": "Triggers notifications for a specific Kith collection. Creates a Discord channel named after the collection slug and posts product information."
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/kith/monday-program",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"kith",
+										"monday-program"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Kith notifications finished\",\n    \"collectionSlug\": \"monday-program\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Already Processed Collection",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response indicates already processed\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.eql(\"Already processed\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/kith/existing-collection",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"kith",
+								"existing-collection"
+							]
+						},
+						"description": "Example response when a collection has already been processed and a Discord channel exists."
+					},
+					"response": [
+						{
+							"name": "Already Processed",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/kith/existing-collection",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"kith",
+										"existing-collection"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Already processed\",\n    \"collectionSlug\": \"existing-collection\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Collection Not Found",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"pm.test(\"Response has error message\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.error).to.eql(\"Collection not found\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/kith/nonexistent-collection",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"kith",
+								"nonexistent-collection"
+							]
+						},
+						"description": "Example response when a collection doesn't exist or has no products."
+					},
+					"response": [
+						{
+							"name": "Not Found",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/kith/nonexistent-collection",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"kith",
+										"nonexistent-collection"
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"error\": \"Collection not found\"\n}"
+						}
+					]
+				}
+			],
+			"description": "Endpoints for triggering Kith collection notifications."
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080",
+			"description": "Base URL for the Heat Crawler API"
+		},
+		{
+			"key": "date",
+			"value": "2026-02-27",
+			"description": "Target drop date in YYYY-MM-DD format"
+		},
+		{
+			"key": "collection_slug",
+			"value": "monday-program",
+			"description": "Kith collection slug (e.g., monday-program, nike-air-force-1)"
+		}
+	]
+}

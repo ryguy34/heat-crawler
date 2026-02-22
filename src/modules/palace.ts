@@ -2,6 +2,8 @@ import puppeteer from "puppeteer-extra";
 import StealthPlugin from "puppeteer-extra-plugin-stealth";
 import { Browser } from "puppeteer";
 import { load } from "cheerio";
+import fs from "fs";
+import path from "path";
 import {
 	ShopifyChannelInfo,
 	ShopifyProductInfo,
@@ -38,8 +40,8 @@ export class Palace {
 	async parsePalaceDrop(
 		currentWeekFridayDate: string,
 	): Promise<ShopifyChannelInfo | undefined> {
-		var productList: ShopifyProductInfo[] = [];
-		var palaceDiscordTextChannelInfo;
+		const productList: ShopifyProductInfo[] = [];
+		let palaceDiscordTextChannelInfo;
 		let browser: Browser | undefined;
 		const executablePath =
 			process.env.PUPPETEER_EXECUTABLE_PATH || process.env.CHROME_PATH;
@@ -86,24 +88,24 @@ export class Palace {
 
 			const $ = load(htmlData);
 
-			var title = $(".title-font h1").text();
+			const title = $(".title-font h1").text();
 			const parsedChannelName = title
 				.substring(title.indexOf(",") + 1)
 				.trim()
 				.toLowerCase()
 				.split(" ");
 
-			var month = parsedChannelName[0].substring(0, 3);
+			const month = parsedChannelName[0].substring(0, 3);
 			const channelName = `${month}-${parsedChannelName[1]}`;
 
 			const catalogItems = $(".catalog-item").toArray();
 
 			for (const ele of catalogItems) {
-				var itemId = $(ele).find("a").attr("data-itemid");
-				var itemSlug = $(ele).find("a").attr("data-itemslug");
-				var itemName = $(ele).find("a").attr("data-itemname");
-				var category = $(ele).attr("data-category");
-				var price = $(ele)
+				const itemId = $(ele).find("a").attr("data-itemid");
+				const itemSlug = $(ele).find("a").attr("data-itemslug");
+				const itemName = $(ele).find("a").attr("data-itemname");
+				let category = $(ele).attr("data-category");
+				let price = $(ele)
 					.find(".catalog-label-price")
 					.first()
 					.text()
@@ -111,8 +113,8 @@ export class Palace {
 					.replace("€", "$")
 					.trim();
 
-				var parts = itemSlug?.split("-");
-				var season = "";
+				const parts = itemSlug?.split("-");
+				let season = "";
 				if (parts) {
 					season = `${parts[0]}-${parts[1]}`;
 				}
@@ -123,7 +125,7 @@ export class Palace {
 				const productInfoUrl = `${constants.PALACE.COMMUNITY_BASE_URL}/collections/${season}/items/${itemId}/${itemSlug}`;
 				const productName = itemName;
 				const categoryUrl = `${constants.PALACE.STORE_BASE_URL}/collections/${category}`;
-				var price = price === "" ? "???" : price;
+				price = price === "" ? "???" : price;
 
 				logger.info(
 					`Parsed Palace product: ${productName?.trim()} | ${price.trim()}`,
@@ -133,8 +135,6 @@ export class Palace {
 				if (imageUrl) {
 					try {
 						// Ensure screenshots directory exists
-						const fs = require("fs");
-						const path = require("path");
 						const screenshotsDir = path.resolve(
 							__dirname,
 							"../../screenshots/palace",
@@ -241,7 +241,7 @@ export class Palace {
 					}
 				}
 
-				var palaceDropInfo = {
+				const palaceDropInfo = {
 					productName: productName!,
 					productInfoUrl: productInfoUrl,
 					imageUrl: imageUrl,

@@ -8,7 +8,6 @@ import {
 	ShopifyProductInfo,
 } from "../interface/ShopifyInterface";
 import constants from "../utility/constants";
-import { log } from "console";
 
 // Add stealth plugin and initialize
 puppeteer.use(StealthPlugin());
@@ -42,7 +41,7 @@ export class Supreme {
 		currentYear: number,
 		currentSeason: string,
 	): Promise<ShopifyChannelInfo | undefined> {
-		let productList: ShopifyProductInfo[] = [];
+		const productList: ShopifyProductInfo[] = [];
 		let supremeTextChannelInfo: ShopifyChannelInfo | undefined;
 		let browser: Browser | undefined;
 		const executablePath =
@@ -89,8 +88,8 @@ export class Supreme {
 			const htmlData = await page.content();
 
 			const $ = load(htmlData);
-			var title = $("title").text();
-			var channelName = title
+			const title = $("title").text();
+			const channelName = title
 				.substring(title.indexOf("-") + 1, title.lastIndexOf("-"))
 				.trim()
 				.toLocaleLowerCase()
@@ -167,7 +166,7 @@ export class Supreme {
 							await newPage.click("#cookiescript_close");
 							// small delay to allow any animation to finish
 							await new Promise((res) => setTimeout(res, 500));
-						} catch (e) {
+						} catch (_e) {
 							// selector not found or click failed - continue
 						}
 

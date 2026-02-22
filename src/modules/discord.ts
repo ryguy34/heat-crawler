@@ -118,8 +118,7 @@ export class Discord {
 		channel.send(
 			"<@&834440275908755566> Make sure to post W's in <#679913101269008483>",
 		);
-		var embed;
-		embed = new EmbedBuilder()
+		const embed = new EmbedBuilder()
 			.setColor(0xcc0000)
 			.setTitle(snkrsChannelInfo.title)
 			.setURL(snkrsChannelInfo.link)
@@ -136,10 +135,10 @@ export class Discord {
 				iconURL: "attachment://logo.png",
 			});
 
-		var embeds = [];
+		const embeds = [];
 		embeds.push(embed);
 		for (const image of snkrsChannelInfo.imageUrls) {
-			var imageEmbed = new EmbedBuilder()
+			const imageEmbed = new EmbedBuilder()
 				.setURL(snkrsChannelInfo.link)
 				.setImage(image);
 
@@ -177,7 +176,7 @@ export class Discord {
 		const defaultMessage =
 			"<@&834439628295241758> Kith Monday Program drops are live at 10AM CST! Make sure to post W's in <#679913101269008483>";
 		channel.send(openingMessage ?? defaultMessage);
-		var embeds = [];
+		const embeds = [];
 		logger.debug(kithMondayProgramProductList);
 		for (const product of kithMondayProgramProductList) {
 			const embed = new EmbedBuilder()
