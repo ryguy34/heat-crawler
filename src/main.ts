@@ -1,3 +1,16 @@
+/**
+ * @fileoverview Heat Crawler - Discord bot for streetwear drop notifications.
+ *
+ * This module serves as the main entry point for the Heat Crawler application.
+ * It initializes the Discord bot, Express API server, and scheduled cron jobs
+ * to monitor and notify users about upcoming product drops from:
+ * - Supreme (Thursday drops)
+ * - Palace (Friday drops)
+ * - Kith Monday Program (Monday drops)
+ *
+ * @module main
+ */
+
 import { config } from "dotenv";
 import { Client, GatewayIntentBits } from "discord.js";
 import path from "path";
@@ -5,16 +18,21 @@ import cron from "node-cron";
 import { Discord } from "./modules/discord";
 import { Supreme } from "./modules/supreme";
 import { Palace } from "./modules/palace";
-import { SNKRS as _SNKRS } from "./modules/snkrs";
 import Utility from "./utility/utility";
 import logger, { initLogFile } from "./utility/logger";
 import { Kith } from "./modules/kith";
 import express from "express";
 
+/** Express application instance for the REST API */
 const app = express();
+
+/** Port number for the Express server, defaults to 8080 */
 const port = parseInt(process.env.PORT || "8080", 10);
 
+/** Discord utility class instance for channel management */
 const discord = new Discord();
+
+/** Discord.js client instance with required intents for guild/message operations */
 const client = new Client({
 	intents: [
 		GatewayIntentBits.Guilds,
@@ -34,7 +52,15 @@ config({ path: path.resolve(process.cwd(), envFile) });
 client.login(process.env.CLIENT_TOKEN);
 
 /**
- * main function for Supreme notifications to Discord channel
+ * Scrapes Supreme drop information and sends notifications to Discord.
+ *
+ * Parses product data from the Supreme website for the given date,
+ * creates a new Discord channel under the Supreme category if one
+ * doesn't already exist, and posts drop information with product images.
+ *
+ * @param date - Target drop date in YYYY-MM-DD format
+ * @returns Resolves when notifications are sent or if channel already exists
+ * @throws Logs error if parsing or Discord operations fail
  */
 async function mainSupremeNotifications(date: string): Promise<void> {
 	const supreme = new Supreme();
@@ -90,7 +116,15 @@ async function mainSupremeNotifications(date: string): Promise<void> {
 }
 
 /**
- * main function for Palace notifications to Discord channel
+ * Scrapes Palace drop information and sends notifications to Discord.
+ *
+ * Parses product data from the Palace community site for the given date,
+ * creates a new Discord channel under the Palace category if one
+ * doesn't already exist, and posts drop information with screenshots.
+ *
+ * @param date - Target drop date in YYYY-MM-DD format
+ * @returns Resolves when notifications are sent or if channel already exists
+ * @throws Logs error if parsing or Discord operations fail
  */
 async function mainPalaceNotifications(date: string): Promise<void> {
 	const palace = new Palace();
@@ -132,45 +166,14 @@ async function mainPalaceNotifications(date: string): Promise<void> {
 }
 
 /**
- * main function for SNKRS notifications to Discord channel
- */
-// async function mainSnkrsNotifications(): Promise<void> {
-// 	const snkrs = new SNKRS();
-// 	var tomorrowsDate = Utility.getTomorrowsDate();
-
-// 	try {
-// 		const snkrsDrops = await snkrs.parseSnkrsDropInfo(tomorrowsDate);
-
-// 		for (const snkrsDrop of snkrsDrops) {
-// 			const existingChannel = await discord.doesChannelExistUnderCategory(
-// 				client,
-// 				snkrsDrop.channelName,
-// 				constants.SNKRS.CATEGORY_ID
-// 				//constants.TEST.CATEGORY_ID
-// 			);
-
-// 			if (!existingChannel) {
-// 				const snkrsCategory = await discord.getFullCategoryNameBySubstring(
-// 					client,
-// 					"releases"
-// 					//"TEST"
-// 				);
-// 				const snkrsReleaseChannel = await discord.createTextChannel(
-// 					client,
-// 					snkrsCategory!,
-// 					snkrsDrop.channelName
-// 				);
-// 				await discord.sendSnkrsDropInfo(snkrsDrop, snkrsReleaseChannel!);
-// 			}
-// 		}
-// 		//await discord.deleteOldSnkrsReleases(client);
-// 	} catch (error) {
-// 		logger.error(error);
-// 	}
-// }
-
-/**
- * main function for Kith Monday Program notifications to Discord channel
+ * Scrapes Kith Monday Program drop information and sends notifications to Discord.
+ *
+ * Parses the upcoming Monday Program products from the Kith website,
+ * creates a new Discord channel under the Kith category named with
+ * the upcoming Monday's date, and posts product information.
+ *
+ * @returns Resolves when notifications are sent or if channel already exists
+ * @throws Logs error if parsing or Discord operations fail
  */
 async function mainKithMondayProgramNotifications(): Promise<void> {
 	const kith = new Kith();
@@ -213,16 +216,31 @@ async function mainKithMondayProgramNotifications(): Promise<void> {
 	}
 }
 
+/**
+ * Discord client ready event handler.
+ *
+ * Initializes the Express API server and registers all routes and cron jobs
+ * once the Discord bot successfully connects and is ready.
+ */
 client.on("clientReady", async () => {
 	logger.info("Heat Crawler Discord Bot is online");
 	app.listen(port, () => {
 		logger.info(`Heat Crawler API is listening at http://localhost:${port}`);
 	});
 
+	/**
+	 * GET /drops/:store/:date
+	 *
+	 * Manually trigger drop notifications for a specific store and date.
+	 *
+	 * @route GET /drops/:store/:date
+	 * @param store - Store name ("supreme" or "palace")
+	 * @param date - Drop date in YYYY-MM-DD format
+	 * @returns JSON with success message or error
+	 */
 	app.get("/drops/:store/:date", async (req, res) => {
 		const store = req.params.store.toLowerCase();
 		const date = req.params.date;
-		const _requestKey = `${store}-${date}`;
 
 		try {
 			let operationPromise: Promise<void>;
@@ -252,8 +270,15 @@ client.on("clientReady", async () => {
 			res.status(500).json({ error: "Internal server error" });
 		}
 	});
-
-	app.get("/kith/:title", async (req, res) => {
+	/**
+	 * GET /kith/:title
+	 *
+	 * Manually trigger notifications for a specific Kith collection.
+	 *
+	 * @route GET /kith/:title
+	 * @param title - Collection slug (e.g., \"kith-monday-program\")
+	 * @returns JSON with success message, \"Already processed\", or 404 if not found
+	 */ app.get("/kith/:title", async (req, res) => {
 		const collectionSlug = req.params.title.toLowerCase();
 		const kith = new Kith();
 
@@ -309,7 +334,10 @@ client.on("clientReady", async () => {
 		}
 	});
 
-	//runs every Wednesday at 8PM
+	/**
+	 * Supreme cron job - Runs every Wednesday at 8PM EST.
+	 * Fetches Thursday's Supreme drop info and posts to Discord.
+	 */
 	cron.schedule("0 20 * * 3", async () => {
 		initLogFile("supreme");
 		logger.info("Running Supreme cron job");
@@ -318,7 +346,10 @@ client.on("clientReady", async () => {
 		logger.info("Supreme drops are done");
 	});
 
-	//runs every Thursday at 8PM
+	/**
+	 * Palace cron job - Runs every Thursday at 8PM EST.
+	 * Fetches Friday's Palace drop info and posts to Discord.
+	 */
 	cron.schedule("0 20 * * 4", async () => {
 		initLogFile("palace");
 		logger.info("Running Palace cron job");
@@ -327,14 +358,10 @@ client.on("clientReady", async () => {
 		logger.info("Palace drops are done");
 	});
 
-	//runs everyday at 8PM
-	// cron.schedule("0 20 * * *", () => {
-	// 	logger.info("Running SNKRS cron job");
-	// 	await mainSnkrsNotifications();
-	// 	logger.info("SNKRS drops are done");
-	// });
-
-	//runs every Sunday at 8PM
+	/**
+	 * Kith Monday Program cron job - Runs every Sunday at 8PM EST.
+	 * Fetches Monday's Kith drop info and posts to Discord.
+	 */
 	cron.schedule("0 20 * * 0", async () => {
 		initLogFile("kith");
 		logger.info("Running Kith Monday Program cron job");
